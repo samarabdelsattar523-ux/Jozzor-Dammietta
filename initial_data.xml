@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="maker_el_nasr" model="jozoor.maker">
+            <field name="name">El Nasr Workshop</field>
+            <field name="location">Damietta, Egypt</field>
+            <field name="rating">4.9</field>
+            <field name="image_url">https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&amp;fit=crop&amp;w=300&amp;q=80</field>
+        </record>
+
+        <record id="maker_hassan" model="jozoor.maker">
+            <field name="name">Hassan Woodcraft</field>
+            <field name="location">New Damietta, Egypt</field>
+            <field name="rating">4.9</field>
+            <field name="image_url">https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&amp;fit=crop&amp;w=300&amp;q=80</field>
+        </record>
+
+        <record id="maker_maison_fouad" model="jozoor.maker">
+            <field name="name">Maison Fouad</field>
+            <field name="location">Damietta, Egypt</field>
+            <field name="rating">4.9</field>
+            <field name="image_url">https://images.unsplash.com/photo-1549497538-303791108f95?auto=format&amp;fit=crop&amp;w=300&amp;q=80</field>
+        </record>
+
+        <record id="product_marsa_chair" model="product.template">
+            <field name="name">Marsa Lounge Chair</field>
+            <field name="list_price">18500.0</field>
+            <field name="maker_id" ref="maker_el_nasr"/>
+            <field name="jozoor_availability">in_stock</field>
+            <field name="is_jozoor_featured">True</field>
+            <field name="jozoor_image_url">https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&amp;fit=crop&amp;w=900&amp;q=85</field>
+        </record>
+
+        <record id="product_nile_dining" model="product.template">
+            <field name="name">Nile Oak Dining Set</field>
+            <field name="list_price">42000.0</field>
+            <field name="maker_id" ref="maker_hassan"/>
+            <field name="jozoor_availability">in_stock</field>
+            <field name="is_jozoor_featured">True</field>
+            <field name="jozoor_image_url">https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&amp;fit=crop&amp;w=900&amp;q=85</field>
+        </record>
+    </data>
+</odoo>

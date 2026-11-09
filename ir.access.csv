@@ -1,0 +1,3 @@
+id,name,model_id,group_id/id,operation,domain
+access_jozoor_maker_public,jozoor.maker.public,jozoor.maker,base.group_public,r,
+access_jozoor_maker_user,jozoor.maker.user,jozoor.maker,base.group_user,crud,

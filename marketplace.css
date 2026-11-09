@@ -1,0 +1,47 @@
+/* Jozoor Damietta Marketplace Stylesheet */
+:root {
+    --jozoor-green: #1f3b36;
+    --jozoor-gold: #b4823e;
+    --jozoor-bg: #f8f7f3;
+}
+
+.jozoor-marketplace-root {
+    background-color: var(--jozoor-bg);
+    color: #24251f;
+}
+
+.jozoor-hero-title {
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
+    line-height: 1.05;
+    color: var(--jozoor-green);
+    font-weight: 700;
+}
+
+.accent-text {
+    color: var(--jozoor-gold);
+    font-style: italic;
+}
+
+.jozoor-badge {
+    background-color: rgba(180, 130, 62, 0.15);
+    color: var(--jozoor-gold);
+    letter-spacing: 0.15em;
+    font-weight: 700;
+}
+
+.text-accent {
+    color: var(--jozoor-gold);
+}
+
+.btn-primary {
+    background-color: var(--jozoor-green) !important;
+    border-color: var(--jozoor-green) !important;
+}
+
+.btn-primary:hover {
+    background-color: #172d29 !important;
+}
+
+.object-cover {
+    object-fit: cover;
+}

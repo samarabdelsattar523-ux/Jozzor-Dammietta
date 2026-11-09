@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_jozoor_maker_tree" model="ir.ui.view">
+        <field name="name">jozoor.maker.tree</field>
+        <field name="model">jozoor.maker</field>
+        <field name="arch" type="xml">
+            <list string="Damietta Makers">
+                <field name="name"/>
+                <field name="location"/>
+                <field name="rating"/>
+                <field name="product_count"/>
+                <field name="partner_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_jozoor_maker_form" model="ir.ui.view">
+        <field name="name">jozoor.maker.form</field>
+        <field name="model">jozoor.maker</field>
+        <field name="arch" type="xml">
+            <form string="Furniture Maker / Workshop">
+                <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_1920'}"/>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" placeholder="Workshop Name..."/></h1>
+                        <h4><field name="initials" readonly="1"/></h4>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="location"/>
+                            <field name="rating"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="image_url" placeholder="https://..."/>
+                            <field name="product_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="About Workshop" name="bio">
+                            <field name="bio" placeholder="Workshop description, craftsmanship background, specialties..."/>
+                        </page>
+                        <page string="Products Catalog" name="products">
+                            <field name="product_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="list_price"/>
+                                    <field name="jozoor_availability"/>
+                                    <field name="is_jozoor_featured"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_jozoor_maker" model="ir.actions.act_window">
+        <field name="name">Workshops &amp; Makers</field>
+        <field name="res_model">jozoor.maker</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register your first Damietta workshop!
+            </p>
+        </field>
+    </record>
+</odoo>

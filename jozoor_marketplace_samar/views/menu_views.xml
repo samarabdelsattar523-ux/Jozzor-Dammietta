@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_jozoor_root"
+              name="Jozoor Marketplace"
+              web_icon="jozoor_marketplace,static/description/icon.png"
+              sequence="15"/>
+
+    <menuitem id="menu_jozoor_makers"
+              name="Makers &amp; Workshops"
+              parent="menu_jozoor_root"
+              action="action_jozoor_maker"
+              sequence="10"/>
+
+    <menuitem id="menu_jozoor_products"
+              name="Marketplace Products"
+              parent="menu_jozoor_root"
+              action="product.product_template_action"
+              sequence="20"/>
+</odoo>

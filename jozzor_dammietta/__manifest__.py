@@ -19,8 +19,8 @@ for workshops. Ported from the original Next.js / Tailwind design.
     ],
     "assets": {
         "web.assets_frontend": [
-            "sandoq_damietta/static/src/css/sandoq.css",
-            "sandoq_damietta/static/src/js/sandoq.js",
+            "jozzor_dammietta/static/src/css/sandoq.css",
+            "jozzor_dammietta/static/src/js/sandoq.js",
         ],
     },
     "installable": True,

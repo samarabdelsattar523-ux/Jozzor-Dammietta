@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="menu_sandoq" model="website.menu">
+        <field name="name">Sandoq</field>
+        <field name="url">/sandoq</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence" eval="60"/>
+    </record>
+</odoo>

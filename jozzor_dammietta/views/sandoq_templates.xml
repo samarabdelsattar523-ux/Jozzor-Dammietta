@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inline SVG icons (lucide), usage:
+         <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'heart'"/></t> -->
+    <template id="sandoq_icon" name="Sandoq Icon">
+        <svg t-attf-class="sq-icon sq-icon-#{name}" viewBox="0 0 24 24" aria-hidden="true">
+            <t t-if="name == 'arrow-right'"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></t>
+            <t t-elif="name == 'heart'"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></t>
+            <t t-elif="name == 'menu'"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></t>
+            <t t-elif="name == 'x'"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></t>
+            <t t-elif="name == 'search'"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></t>
+            <t t-elif="name == 'shield-check'"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></t>
+            <t t-elif="name == 'sparkles'"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></t>
+            <t t-elif="name == 'star'"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></t>
+            <t t-elif="name == 'truck'"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></t>
+            <t t-elif="name == 'users'"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></t>
+        </svg>
+    </template>
+
+    <template id="sandoq_home" name="Sandoq - Made in Damietta">
+        <t t-call="website.layout">
+            <t t-set="pageName" t-value="'sandoq'"/>
+            <t t-set="additional_title">Sandoq — Made in Damietta</t>
+            <!-- The page ships its own header and footer. Remove these two
+                 lines to use the standard Odoo website header and footer. -->
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+
+            <div id="wrap" class="sq-page">
+
+                <!-- ============ HEADER ============ -->
+                <header class="sq-header" id="sq-header">
+                    <div class="sq-container sq-header-inner">
+                        <a href="#top" class="sq-logo" aria-label="Sandoq home">
+                            <span class="sq-logo-mark"><span>S</span></span>
+                            <span>
+                                <span class="sq-logo-name">sandoq</span>
+                                <span class="sq-logo-tag">made in damietta</span>
+                            </span>
+                        </a>
+                        <nav class="sq-nav" aria-label="Primary navigation">
+                            <a class="is-current" href="#discover">Discover</a>
+                            <a href="#makers">Our makers</a>
+                            <a href="#story">Our story</a>
+                        </nav>
+                        <div class="sq-header-actions">
+                            <a href="#sell" class="sq-btn sq-btn-gold sq-hide-mobile">List your workshop</a>
+                            <button type="button" id="sq-menu-toggle" class="sq-menu-toggle" aria-label="Open menu" aria-expanded="false">
+                                <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'menu'"/></t>
+                                <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'x'"/></t>
+                            </button>
+                        </div>
+                    </div>
+                    <nav class="sq-mobile-nav" id="sq-mobile-nav" hidden="hidden">
+                        <a href="#discover">Discover</a>
+                        <a href="#makers">Our makers</a>
+                        <a href="#story">Our story</a>
+                        <a href="#sell">List your workshop</a>
+                    </nav>
+                </header>
+
+                <main id="top">
+
+                    <!-- ============ HERO ============ -->
+                    <section class="sq-container sq-hero">
+                        <div class="sq-hero-copy">
+                            <div class="sq-eyebrow sq-eyebrow-line"><span class="sq-line"/> The heart of Egyptian furniture</div>
+                            <h1 class="sq-h1">Furniture with a <em>story</em> to tell.</h1>
+                            <p class="sq-lead">Discover beautiful, handcrafted furniture made by the skilled hands of Damietta’s independent workshops.</p>
+                            <div class="sq-cta-row">
+                                <a href="#discover" class="sq-btn sq-btn-dark">Explore the collection
+                                    <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'arrow-right'"/></t>
+                                </a>
+                                <a href="#story" class="sq-btn sq-btn-outline">Why Damietta?</a>
+                            </div>
+                            <div class="sq-stats">
+                                <div><strong>240+</strong>independent makers</div>
+                                <div><strong>12k+</strong>pieces discovered</div>
+                            </div>
+                        </div>
+                        <div class="sq-hero-media">
+                            <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&amp;fit=crop&amp;w=1300&amp;q=90"
+                                 alt="Warm modern living room with handcrafted wooden furniture" loading="eager"/>
+                            <div class="sq-hero-shade"/>
+                            <div class="sq-hero-caption">
+                                <div>
+                                    <p class="sq-hero-kicker">Featured collection</p>
+                                    <p class="sq-hero-title">The Mediterranean Edit</p>
+                                </div>
+                                <span class="sq-hero-count">01 / 04</span>
+                            </div>
+                            <div class="sq-hero-badge">New arrivals</div>
+                        </div>
+                    </section>
+
+                    <!-- ============ DISCOVER ============ -->
+                    <section id="discover" class="sq-discover">
+                        <div class="sq-container">
+                            <div class="sq-discover-head">
+                                <div>
+                                    <p class="sq-eyebrow">Curated for you</p>
+                                    <h2 class="sq-h2">Find your next <em>heirloom.</em></h2>
+                                </div>
+                                <div class="sq-search">
+                                    <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'search'"/></t>
+                                    <input type="text" id="sq-search-input" aria-label="Search furniture" placeholder="Search furniture..." autocomplete="off"/>
+                                </div>
+                            </div>
+
+                            <div class="sq-tabs" role="tablist" aria-label="Furniture categories">
+                                <t t-foreach="categories" t-as="category">
+                                    <button type="button" role="tab"
+                                            t-attf-class="sq-tab #{'is-active' if category_index == 0 else ''}"
+                                            t-att-data-category="category"
+                                            t-att-aria-selected="'true' if category_index == 0 else 'false'">
+                                        <t t-out="category"/>
+                                    </button>
+                                </t>
+                            </div>
+
+                            <div class="sq-grid" id="sq-grid">
+                                <t t-foreach="products" t-as="product">
+                                    <article class="sq-card"
+                                             t-att-data-category="product['category']"
+                                             t-att-data-search="(product['name'] + ' ' + product['maker']).lower()">
+                                        <div class="sq-card-media" t-attf-style="background-color: #{product['color']}">
+                                            <img t-att-src="product['image']" t-att-alt="product['name']" loading="lazy"/>
+                                            <button type="button" class="sq-fav" t-att-aria-label="'Save ' + product['name']" aria-pressed="false">
+                                                <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'heart'"/></t>
+                                            </button>
+                                            <span class="sq-pill"><t t-out="product['category']"/></span>
+                                        </div>
+                                        <div class="sq-card-info">
+                                            <div>
+                                                <h3 class="sq-h3"><t t-out="product['name']"/></h3>
+                                                <p class="sq-muted-sm">by <t t-out="product['maker']"/></p>
+                                            </div>
+                                            <p class="sq-price"><t t-out="product['price']"/></p>
+                                        </div>
+                                    </article>
+                                </t>
+                            </div>
+                            <p class="sq-empty" id="sq-empty" hidden="hidden">No pieces found. Try a different search.</p>
+
+                            <div class="sq-viewall">
+                                <a href="#discover" class="sq-link-underline">View all furniture
+                                    <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'arrow-right'"/></t>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ============ MAKERS ============ -->
+                    <section id="makers" class="sq-container sq-makers">
+                        <div>
+                            <p class="sq-eyebrow">Meet the makers</p>
+                            <h2 class="sq-h2 sq-h2-narrow">The hands behind the <em>craft.</em></h2>
+                            <p class="sq-body">Every piece has a person, a place, and a tradition behind it. Get to know the workshops keeping Damietta’s craft alive.</p>
+                            <a href="#sell" class="sq-link-plain">Meet all makers
+                                <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'arrow-right'"/></t>
+                            </a>
+                        </div>
+                        <div class="sq-makers-grid">
+                            <t t-foreach="makers" t-as="maker">
+                                <div class="sq-maker">
+                                    <div class="sq-maker-photo"><img t-att-src="maker['image']" t-att-alt="maker['name'] + ' workshop'" loading="lazy"/></div>
+                                    <h3 class="sq-h3 sq-h3-sm"><t t-out="maker['name']"/></h3>
+                                    <p class="sq-maker-loc"><t t-out="maker['location']"/></p>
+                                    <div class="sq-rating">
+                                        <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'star'"/></t> 4.9
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </section>
+
+                    <!-- ============ STORY ============ -->
+                    <section id="story" class="sq-story">
+                        <div class="sq-container sq-story-inner">
+                            <div>
+                                <p class="sq-eyebrow sq-eyebrow-gold">More than furniture</p>
+                                <h2 class="sq-h2 sq-h2-light">A direct line from Damietta to your home.</h2>
+                                <p class="sq-story-text">Sandoq makes it easier to buy directly from independent makers. Fair prices for workshops. One-of-a-kind pieces for you. Delivered anywhere.</p>
+                                <div class="sq-features">
+                                    <div>
+                                        <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'shield-check'"/></t>
+                                        <span>Trusted makers</span>
+                                    </div>
+                                    <div>
+                                        <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'truck'"/></t>
+                                        <span>Worldwide delivery</span>
+                                    </div>
+                                    <div>
+                                        <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'sparkles'"/></t>
+                                        <span>Made to last</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sq-quote">
+                                <div class="sq-quote-ring sq-quote-ring-lg"/>
+                                <div class="sq-quote-ring sq-quote-ring-sm"/>
+                                <p class="sq-quote-text">“The best furniture is not just seen. It’s felt.”</p>
+                                <p class="sq-quote-by">— An old Damietta saying</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- ============ SELL ============ -->
+                    <section id="sell" class="sq-container sq-sell">
+                        <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'users'"/></t>
+                        <h2 class="sq-h2 sq-h2-center">Your workshop deserves to be <em>seen.</em></h2>
+                        <p class="sq-body sq-body-center">Join a growing community of Damietta’s furniture makers and reach customers across Egypt and the world.</p>
+                        <a href="mailto:hello@sandoq.co" class="sq-btn sq-btn-gold sq-btn-lg">List your workshop
+                            <t t-call="jozzor_dammietta.sandoq_icon"><t t-set="name" t-value="'arrow-right'"/></t>
+                        </a>
+                    </section>
+                </main>
+
+                <!-- ============ FOOTER ============ -->
+                <footer class="sq-footer">
+                    <div class="sq-container sq-footer-inner">
+                        <div class="sq-footer-brand">sandoq <span>© 2026</span></div>
+                        <div class="sq-footer-links">
+                            <a href="#story">About</a>
+                            <a href="mailto:hello@sandoq.co">Contact</a>
+                            <a href="#">Instagram</a>
+                        </div>
+                    </div>
+                </footer>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

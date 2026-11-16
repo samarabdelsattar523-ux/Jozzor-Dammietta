@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 
 class FurnitureManufacturer(models.Model):
     _name = 'furniture.manufacturer'
@@ -42,12 +42,12 @@ class FurnitureManufacturer(models.Model):
 
     def action_view_products(self):
         self.ensure_one()
-        return {'type': 'ir.actions.act_window', 'name': _('Products'),
+        return {'type': 'ir.actions.act_window', 'name': self.env._('Products'),
                 'res_model': 'product.template', 'view_mode': 'list,form',
                 'domain': [('manufacturer_id', '=', self.id)]}
 
     def action_view_requests(self):
         self.ensure_one()
-        return {'type': 'ir.actions.act_window', 'name': _('Custom Requests'),
+        return {'type': 'ir.actions.act_window', 'name': self.env._('Custom Requests'),
                 'res_model': 'furniture.custom.request', 'view_mode': 'list,form',
                 'domain': [('manufacturer_id', '=', self.id)]}

@@ -1,5 +1,5 @@
 import base64
-from odoo import http, _
+from odoo import http
 from odoo.http import request
 from odoo.exceptions import UserError
 
@@ -7,7 +7,9 @@ class FurnitureMarketplaceController(http.Controller):
 
     @http.route('/furniture-marketplace', type='http', auth='public', website=True, sitemap=True)
     def marketplace_home(self, **kw):
-        categories = request.env['product.public.category'].sudo().search([('website_published', '=', True)])
+        categories = request.env['product.public.category'].sudo().search([]).filtered(
+            lambda c: any(p.website_published and p.marketplace_approval_state == 'approved'
+                          for p in c.product_tmpl_ids))
         products = request.env['product.template'].sudo().search([
             ('sale_ok', '=', True), ('website_published', '=', True),
             ('manufacturer_id', '!=', False), ('marketplace_approval_state', '=', 'approved')
@@ -24,7 +26,7 @@ class FurnitureMarketplaceController(http.Controller):
             try:
                 upload = request.httprequest.files.get('catalog_file')
                 if not upload:
-                    raise UserError(_('Upload a CSV or XLSX catalog.'))
+                    raise UserError(request.env._('Upload a CSV or XLSX catalog.'))
                 attachments = []
                 for f in request.httprequest.files.getlist('documents'):
                     if f and f.filename:
@@ -56,7 +58,7 @@ class FurnitureMarketplaceController(http.Controller):
             try:
                 image = request.httprequest.files.get('reference_image')
                 if not image:
-                    raise UserError(_('Upload a reference image.'))
+                    raise UserError(request.env._('Upload a reference image.'))
                 rec = request.env['furniture.custom.request'].sudo().create({
                     'title': post.get('title'), 'description': post.get('description'),
                     'reference_image': base64.b64encode(image.read()),

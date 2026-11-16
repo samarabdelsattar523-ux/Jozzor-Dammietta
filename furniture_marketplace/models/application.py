@@ -1,5 +1,5 @@
 import base64, csv, io, zipfile, xml.etree.ElementTree as ET
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 class FurnitureManufacturerApplication(models.Model):
@@ -48,10 +48,10 @@ class FurnitureManufacturerApplication(models.Model):
 
     def action_approve(self):
         if not self.env.user.has_group('furniture_marketplace.group_marketplace_manager'):
-            raise UserError(_('Only Marketplace Managers can approve applications.'))
+            raise UserError(self.env._('Only Marketplace Managers can approve applications.'))
         for rec in self:
             if rec.state != 'submitted':
-                raise UserError(_('Only pending applications can be approved.'))
+                raise UserError(self.env._('Only pending applications can be approved.'))
             partner = self.env['res.partner'].search([('email', '=', rec.email)], limit=1)
             pvals = {'name': rec.manufacturer_name, 'email': rec.email, 'phone': rec.phone,
                      'street': rec.address, 'city': rec.city, 'country_id': rec.country_id.id,
@@ -70,27 +70,27 @@ class FurnitureManufacturerApplication(models.Model):
             user = self.env['res.users'].sudo().search([('login', '=', rec.email)], limit=1)
             if user:
                 if user.partner_id != partner:
-                    raise UserError(_('This login already belongs to another contact.'))
-                user.sudo().write({'groups_id': [(4, portal_group.id)]})
+                    raise UserError(self.env._('This login already belongs to another contact.'))
+                user.sudo().write({'group_ids': [(4, portal_group.id)]})
             else:
                 user = self.env['res.users'].sudo().with_context(no_reset_password=True).create({
                     'name': rec.representative, 'login': rec.email, 'email': rec.email,
-                    'partner_id': partner.id, 'groups_id': [(6, 0, [portal_group.id])]})
+                    'partner_id': partner.id, 'group_ids': [(6, 0, [portal_group.id])]})
             manufacturer.user_id = user.id
             rec.write({'manufacturer_id': manufacturer.id, 'state': 'approved'})
             try:
                 user.action_reset_password()
             except Exception:
-                rec.message_post(body=_('Portal account created. Resend the password invitation from the user record if needed.'))
+                rec.message_post(body=self.env._('Portal account created. Resend the password invitation from the user record if needed.'))
             rec._import_catalog(manufacturer)
             rec._send_mail('furniture_marketplace.mail_application_approved')
 
     def action_reject(self):
         if not self.env.user.has_group('furniture_marketplace.group_marketplace_manager'):
-            raise UserError(_('Only Marketplace Managers can reject applications.'))
+            raise UserError(self.env._('Only Marketplace Managers can reject applications.'))
         for rec in self:
             if not rec.rejection_reason:
-                raise ValidationError(_('Enter a rejection reason before rejecting.'))
+                raise ValidationError(self.env._('Enter a rejection reason before rejecting.'))
             rec.state = 'rejected'
             rec._send_mail('furniture_marketplace.mail_application_rejected')
 
@@ -135,28 +135,28 @@ class FurnitureManufacturerApplication(models.Model):
             elif filename.endswith('.xlsx'):
                 rows = self._read_xlsx(raw)
             else:
-                raise UserError(_('Only CSV and XLSX files are supported.'))
+                raise UserError(self.env._('Only CSV and XLSX files are supported.'))
             required = {'product_name', 'category', 'description', 'price', 'quantity'}
             if not rows:
-                raise UserError(_('No product rows were found.'))
+                raise UserError(self.env._('No product rows were found.'))
             missing = required - set(rows[0])
             if missing:
-                raise UserError(_('Missing columns: %s') % ', '.join(sorted(missing)))
+                raise UserError(self.env._('Missing columns: %s') % ', '.join(sorted(missing)))
         except Exception as exc:
-            self.message_post(body=_('Catalog import was not completed: %s') % str(exc))
+            self.message_post(body=self.env._('Catalog import was not completed: %s') % str(exc))
             return
         created = self.env['product.template']
         for row_no, row in enumerate(rows, start=2):
             try:
                 title = str(row.get('product_name') or '').strip()
                 if not title:
-                    raise ValueError(_('Product name is required.'))
+                    raise ValueError(self.env._('Product name is required.'))
                 category_name = str(row.get('category') or '').strip()
                 category = self.env['product.category'].search([('name', '=', category_name)], limit=1)
                 if category_name and not category:
                     category = self.env['product.category'].create({'name': category_name})
                 product = self.env['product.template'].create({
-                    'name': title, 'detailed_type': 'product', 'sale_ok': True,
+                    'name': title, 'type': 'consu', 'is_storable': True, 'sale_ok': True,
                     'list_price': float(row.get('price') or 0),
                     'categ_id': category.id if category else False,
                     'description_sale': str(row.get('description') or ''),
@@ -165,6 +165,6 @@ class FurnitureManufacturerApplication(models.Model):
                     'marketplace_submitted_by_manufacturer': True})
                 created |= product
             except Exception as exc:
-                self.message_post(body=_('Catalog row %s skipped: %s') % (row_no, str(exc)))
+                self.message_post(body=self.env._('Catalog row %s skipped: %s') % (row_no, str(exc)))
         self.imported_product_ids = [(6, 0, created.ids)]
-        self.message_post(body=_('%s products imported as Pending Approval. Quantity values are not posted to inventory.') % len(created))
+        self.message_post(body=self.env._('%s products imported as Pending Approval. Quantity values are not posted to inventory.') % len(created))

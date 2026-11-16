@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 class FurnitureCustomRequest(models.Model):
@@ -51,17 +51,17 @@ class FurnitureCustomRequest(models.Model):
     def action_reject(self):
         for rec in self:
             if not rec.rejection_reason:
-                raise ValidationError(_('Enter a rejection reason.'))
+                raise ValidationError(self.env._('Enter a rejection reason.'))
             rec.state = 'rejected'
 
     def action_create_quotation(self):
         self.ensure_one()
         if self.state not in ('accepted', 'quotation'):
-            raise UserError(_('Accept the request before creating a quotation.'))
+            raise UserError(self.env._('Accept the request before creating a quotation.'))
         if not self.sale_order_id:
             self.sale_order_id = self.env['sale.order'].create({
                 'partner_id': self.partner_id.id, 'origin': self.name,
-                'note': _('Custom furniture request: %s\n%s') % (self.title, self.description)})
+                'note': self.env._('Custom furniture request: %s\n%s') % (self.title, self.description)})
         self.state = 'quotation'
         return {'type': 'ir.actions.act_window', 'res_model': 'sale.order',
                 'res_id': self.sale_order_id.id, 'view_mode': 'form'}

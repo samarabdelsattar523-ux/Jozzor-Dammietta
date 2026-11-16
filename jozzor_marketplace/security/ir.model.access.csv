@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_furniture_manufacturer_user,manufacturer internal,model_furniture_manufacturer,base.group_user,1,1,1,0
-access_furniture_application_user,application internal,model_furniture_manufacturer_application,base.group_user,1,1,1,0
-access_furniture_custom_request_user,custom request internal,model_furniture_custom_request,base.group_user,1,1,1,0
-access_furniture_manufacturer_portal,manufacturer portal,model_furniture_manufacturer,group_manufacturer_portal,1,0,0,0
-access_furniture_custom_request_portal,custom request portal,model_furniture_custom_request,group_manufacturer_portal,1,0,0,0
-access_furniture_product_portal,furniture product portal,product.model_product_template,group_manufacturer_portal,1,1,1,0

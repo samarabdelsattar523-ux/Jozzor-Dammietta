@@ -1,0 +1,8 @@
+id,name,model_id,group_id/id,operation,domain
+access_furniture_manufacturer_user,Manufacturer: internal users,furniture.manufacturer,base.group_user,crud,
+access_furniture_application_user,Application: internal users,furniture.manufacturer.application,base.group_user,crud,
+access_furniture_custom_request_user,Custom request: internal users,furniture.custom.request,base.group_user,crud,
+access_furniture_manufacturer_portal,Manufacturer: own profile,furniture.manufacturer,group_manufacturer_portal,r,"[('user_id', '=', user.id)]"
+access_furniture_custom_request_manufacturer,Custom request: assigned to manufacturer,furniture.custom.request,group_manufacturer_portal,r,"[('manufacturer_id.user_id', '=', user.id)]"
+access_furniture_custom_request_customer,Custom request: portal customer own requests,furniture.custom.request,base.group_portal,r,"[('partner_id', 'child_of', user.partner_id.commercial_partner_id.id)]"
+access_furniture_product_manufacturer,Product: manufacturer own products,product.template,group_manufacturer_portal,cru,"[('manufacturer_id.user_id', '=', user.id)]"

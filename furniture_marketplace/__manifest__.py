@@ -7,11 +7,12 @@
 'license': 'LGPL-3',
 'depends': ['website_sale', 'portal', 'stock', 'sale_management', 'mail'],
 'data': [
-'security/groups.xml', 'security/ir.model.access.csv', 'security/rules.xml',
+'security/groups.xml',
 'data/sequences.xml', 'data/mail_templates.xml',
 'views/manufacturer_views.xml', 'views/application_views.xml',
 'views/custom_request_views.xml', 'views/product_views.xml',
-'views/menus.xml', 'views/website_templates.xml'
+'views/menus.xml', 'views/website_templates.xml',
+'security/ir.access.csv',
 ],
 'assets': {'web.assets_frontend': ['furniture_marketplace/static/src/css/marketplace.css']},
 'installable': True, 'application': True, 'auto_install': False

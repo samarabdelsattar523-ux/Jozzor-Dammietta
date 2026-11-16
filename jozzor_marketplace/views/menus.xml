@@ -1,0 +1,7 @@
+<odoo>
+ <menuitem id="menu_furniture_root" name="Furniture Marketplace" sequence="35" groups="base.group_user"/>
+ <menuitem id="menu_manufacturers" name="Manufacturers" parent="menu_furniture_root" action="action_manufacturers" sequence="10"/>
+ <menuitem id="menu_applications" name="Manufacturer Applications" parent="menu_furniture_root" action="action_applications" sequence="20"/>
+ <menuitem id="menu_custom_requests" name="Custom Furniture Requests" parent="menu_furniture_root" action="action_custom_requests" sequence="30"/>
+ <menuitem id="menu_marketplace_products" name="Products" parent="menu_furniture_root" action="product.product_template_action" sequence="40"/>
+</odoo>

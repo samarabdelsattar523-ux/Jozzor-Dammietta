@@ -1,8 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
- <record id="product_template_form_marketplace" model="ir.ui.view"><field name="name">product.template.form.marketplace</field><field name="model">product.template</field><field name="inherit_id" ref="product.product_template_only_form_view"/>
-  <field name="arch" type="xml"><xpath expr="//field[@name='categ_id']" position="after"><field name="manufacturer_id"/><field name="marketplace_approval_state" readonly="1"/><field name="marketplace_submitted_by_manufacturer" readonly="1"/></xpath>
-   <xpath expr="//sheet" position="before"><header invisible="not manufacturer_id"><button name="action_submit_marketplace_product" type="object" string="Submit for Approval" invisible="not manufacturer_id or marketplace_approval_state == 'pending'"/><button name="action_approve_marketplace_product" type="object" string="Approve Marketplace Product" class="oe_highlight" groups="furniture_marketplace.group_marketplace_manager" invisible="marketplace_approval_state != 'pending'"/><button name="action_reject_marketplace_product" type="object" string="Reject Marketplace Product" groups="furniture_marketplace.group_marketplace_manager" invisible="marketplace_approval_state != 'pending'"/></header></xpath>
-   <xpath expr="//sheet" position="inside"><group string="Marketplace Review" groups="furniture_marketplace.group_marketplace_manager"><field name="marketplace_rejection_reason"/></group></xpath>
-  </field>
- </record>
+    <!-- Manufacturer + approval on the standard product form -->
+    <record id="product_template_form_marketplace" model="ir.ui.view">
+        <field name="name">product.template.form.marketplace</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="manufacturer_id" options="{'no_create': True}"
+                       required="marketplace_approval_state != 'not_required'"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Marketplace" name="marketplace">
+                    <group>
+                        <group>
+                            <field name="marketplace_approval_state" widget="badge"/>
+                            <field name="marketplace_rejection_reason"
+                                   invisible="marketplace_approval_state != 'rejected'"/>
+                            <field name="marketplace_manufacturer_name" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="marketplace_available_qty"/>
+                            <field name="marketplace_stock_status"/>
+                        </group>
+                    </group>
+                    <group string="Specifications">
+                        <field name="marketplace_specifications" nolabel="1"
+                               placeholder="Material: Oak; Color: Walnut; Dimensions: 180x90x75 cm"/>
+                    </group>
+                    <div class="d-flex gap-2">
+                        <button name="action_submit_marketplace_product" type="object" string="Submit for Approval"
+                                class="btn btn-secondary"
+                                invisible="marketplace_approval_state not in ('not_required', 'rejected') or not manufacturer_id"/>
+                        <button name="action_approve_marketplace_product" type="object" string="Approve Product"
+                                class="btn btn-primary" invisible="marketplace_approval_state != 'pending'"
+                                groups="furniture_marketplace.group_marketplace_manager"/>
+                        <button name="action_reject_marketplace_product" type="object" string="Reject Product"
+                                class="btn btn-secondary" invisible="marketplace_approval_state != 'pending'"
+                                groups="furniture_marketplace.group_marketplace_manager"/>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Dedicated list/search for the marketplace "Products" menu -->
+    <record id="product_template_list_marketplace" model="ir.ui.view">
+        <field name="name">product.template.list.marketplace</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="marketplace_approval_state == 'pending'"
+                  decoration-danger="marketplace_approval_state == 'rejected'">
+                <field name="name"/>
+                <field name="manufacturer_id"/>
+                <field name="categ_id"/>
+                <field name="list_price"/>
+                <field name="marketplace_available_qty"/>
+                <field name="marketplace_approval_state" widget="badge"/>
+                <field name="website_published"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="product_template_search_marketplace" model="ir.ui.view">
+        <field name="name">product.template.search.marketplace</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="manufacturer_id"/>
+                <field name="categ_id"/>
+                <filter name="pending" string="Pending Approval" domain="[('marketplace_approval_state', '=', 'pending')]"/>
+                <filter name="approved" string="Approved" domain="[('marketplace_approval_state', '=', 'approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('marketplace_approval_state', '=', 'rejected')]"/>
+                <separator/>
+                <filter name="published" string="Published" domain="[('website_published', '=', True)]"/>
+                <filter name="unpublished" string="Not Published" domain="[('website_published', '=', False)]"/>
+                <group>
+                    <filter name="group_manufacturer" string="Manufacturer" context="{'group_by': 'manufacturer_id'}"/>
+                    <filter name="group_state" string="Approval Status" context="{'group_by': 'marketplace_approval_state'}"/>
+                    <filter name="group_category" string="Category" context="{'group_by': 'categ_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_marketplace_products" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('manufacturer_id', '!=', False)]</field>
+        <field name="context">{'default_marketplace_approval_state': 'pending', 'search_default_group_manufacturer': 1}</field>
+        <field name="search_view_id" ref="product_template_search_marketplace"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('product_template_list_marketplace')}),
+            (0, 0, {'view_mode': 'form'})]"/>
+    </record>
 </odoo>

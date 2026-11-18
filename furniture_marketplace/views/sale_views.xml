@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- One cart -> one checkout -> one sales order; each line stays linked to its manufacturer -->
+    <record id="view_order_line_by_manufacturer_list" model="ir.ui.view">
+        <field name="name">sale.order.line.manufacturer.list</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="order_id"/>
+                <field name="order_partner_id"/>
+                <field name="manufacturer_id"/>
+                <field name="product_id"/>
+                <field name="product_uom_qty"/>
+                <field name="price_subtotal" sum="Total"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_order_line_by_manufacturer_search" model="ir.ui.view">
+        <field name="name">sale.order.line.manufacturer.search</field>
+        <field name="model">sale.order.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="order_id"/>
+                <field name="manufacturer_id"/>
+                <field name="product_id"/>
+                <group>
+                    <filter name="group_manufacturer" string="Manufacturer" context="{'group_by': 'manufacturer_id'}"/>
+                    <filter name="group_order" string="Order" context="{'group_by': 'order_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_order_lines_by_manufacturer" model="ir.actions.act_window">
+        <field name="name">Order Lines by Manufacturer</field>
+        <field name="res_model">sale.order.line</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[('manufacturer_id', '!=', False)]</field>
+        <field name="context">{'search_default_group_manufacturer': 1}</field>
+        <field name="search_view_id" ref="view_order_line_by_manufacturer_search"/>
+        <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('view_order_line_by_manufacturer_list')})]"/>
+    </record>
+</odoo>

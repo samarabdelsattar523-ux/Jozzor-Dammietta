@@ -1,33 +1,425 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
- <template id="marketplace_home" name="Furniture Marketplace">
-  <t t-call="website.layout"><div id="wrap" class="oe_structure"><section class="container py-5">
-   <div class="text-center mb-4"><h1>Furniture Marketplace</h1><p>Furniture from approved manufacturers and workshops.</p><a class="btn btn-primary me-2" href="/custom-furniture-request">Custom Furniture Request</a><a class="btn btn-outline-primary" href="/manufacturer/apply">Join as a Manufacturer</a></div>
-   <h2>Categories</h2><div class="row"><t t-foreach="categories" t-as="category"><div class="col-6 col-md-3 mb-3"><a class="card h-100" t-att-href="'/shop/category/%s' % slug(category)"><div class="card-body"><h5 t-out="category.name"/><small><t t-out="len(category.product_tmpl_ids.filtered(lambda p: p.website_published and p.marketplace_approval_state == 'approved'))"/> products</small></div></a></div></t></div>
-   <h2 class="mt-4">Furniture</h2><div class="row"><t t-foreach="products" t-as="product"><div class="col-6 col-md-3 mb-4"><div class="card h-100"><a t-att-href="product.website_url"><img class="card-img-top" t-att-src="'/web/image/product.template/%s/image_512' % product.id" t-att-alt="product.name"/></a><div class="card-body"><h5 t-out="product.name"/><p t-field="product.list_price"/><small>Manufacturer: <t t-out="product.manufacturer_id.name"/></small><p class="small">Available: <t t-out="product.qty_available"/></p><a class="btn btn-sm btn-primary" t-att-href="product.website_url">View Product</a></div></div></div></t></div>
-  </section></div></t>
- </template>
- <template id="manufacturer_application_form" name="Manufacturer Registration">
-  <t t-call="website.layout"><div class="container py-5"><h1>Join as a Manufacturer</h1><div t-if="error" class="alert alert-danger" t-out="error"/>
-   <form action="/manufacturer/apply" method="post" enctype="multipart/form-data" class="row g-3"><input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-    <div class="col-md-6"><label>Manufacturer / Workshop Name *</label><input class="form-control" name="manufacturer_name" required="required"/></div><div class="col-md-6"><label>Owner / Representative *</label><input class="form-control" name="representative" required="required"/></div>
-    <div class="col-md-6"><label>Email *</label><input class="form-control" type="email" name="email" required="required"/></div><div class="col-md-6"><label>Mobile *</label><input class="form-control" name="phone" required="required"/></div>
-    <div class="col-12"><label>Detailed Address *</label><textarea class="form-control" name="address" required="required"/></div>
-    <div class="col-md-6"><label>Country *</label><select class="form-select" name="country_id" required="required"><option value="">Select</option><t t-foreach="countries" t-as="c"><option t-att-value="c.id" t-out="c.name"/></t></select></div><div class="col-md-6"><label>City *</label><input class="form-control" name="city" required="required"/></div>
-    <div class="col-md-6"><label>Workshop Size *</label><select class="form-select" name="workshop_size" required="required"><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option><option value="enterprise">Enterprise</option></select></div>
-    <div class="col-12"><label>Description</label><textarea class="form-control" name="description"/></div><div class="col-md-6"><label>Product Catalog (CSV/XLSX) *</label><input class="form-control" type="file" name="catalog_file" accept=".csv,.xlsx" required="required"/></div><div class="col-md-6"><label>Additional Documents</label><input class="form-control" type="file" name="documents" multiple="multiple"/></div><div class="col-12"><button class="btn btn-primary">Submit Application</button></div>
-   </form></div></t>
- </template>
- <template id="application_thanks" name="Application Submitted"><t t-call="website.layout"><div class="container py-5"><h1>Application Submitted</h1><p>Reference: <strong t-out="application.name"/></p></div></t></template>
- <template id="custom_request_form" name="Custom Furniture Request"><t t-call="website.layout"><div class="container py-5"><h1>Custom Furniture Request</h1><div t-if="error" class="alert alert-danger" t-out="error"/>
-  <form action="/custom-furniture-request" method="post" enctype="multipart/form-data" class="row g-3"><input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-   <div class="col-md-6"><label>Request Title *</label><input class="form-control" name="title" required="required"/></div><div class="col-md-6"><label>Preferred Manufacturer *</label><select class="form-select" name="manufacturer_id" required="required"><option value="">Select</option><t t-foreach="manufacturers" t-as="m"><option t-att-value="m.id" t-out="m.name"/></t></select></div>
-   <div class="col-12"><label>Furniture Description *</label><textarea class="form-control" name="description" required="required"/></div><div class="col-md-6"><label>Reference Image *</label><input class="form-control" type="file" name="reference_image" accept="image/*" required="required"/></div><div class="col-12"><label>Additional Notes</label><textarea class="form-control" name="notes"/></div><div class="col-12"><button class="btn btn-primary">Submit Request</button></div>
-  </form></div></t></template>
- <template id="custom_request_thanks" name="Request Submitted"><t t-call="website.layout"><div class="container py-5"><h1>Request Submitted</h1><p>Reference: <strong t-out="request_record.name"/></p><a href="/my/furniture-requests">My Requests</a></div></t></template>
- <template id="portal_my_requests" name="My Furniture Requests"><t t-call="portal.portal_layout"><div class="container py-4"><h3>My Custom Furniture Requests</h3><table class="table"><thead><tr><th>Reference</th><th>Title</th><th>Manufacturer</th><th>Status</th></tr></thead><tbody><tr t-foreach="records" t-as="r"><td><a t-att-href="'/my/furniture-requests/%s' % r.id" t-out="r.name"/></td><td t-out="r.title"/><td t-out="r.manufacturer_id.name"/><td t-out="r.state"/></tr></tbody></table></div></t></template>
- <template id="portal_request_detail" name="Furniture Request Detail"><t t-call="portal.portal_layout"><div class="container py-4"><h3 t-out="record.title"/><p>Reference: <span t-out="record.name"/></p><p>Status: <span t-out="record.state"/></p><p t-out="record.description"/></div></t></template>
- <template id="manufacturer_dashboard" name="Manufacturer Dashboard"><t t-call="portal.portal_layout"><div class="container py-4"><h2 t-out="manufacturer.name"/> <div t-if="portal_error" class="alert alert-danger" t-out="portal_error"/><h4>Add Product</h4><form action="/my/manufacturer/product/create" method="post" class="row g-2 mb-4"><input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><div class="col-md-4"><input class="form-control" name="name" placeholder="Product name" required="required"/></div><div class="col-md-2"><input class="form-control" name="list_price" type="number" step="0.01" min="0" placeholder="Price" required="required"/></div><div class="col-md-4"><input class="form-control" name="description_sale" placeholder="Short description"/></div><div class="col-md-2"><button class="btn btn-primary">Create Draft</button></div></form><p class="text-muted">New products are created as Pending Approval and are not published until approved by the marketplace team.</p><h4>My Products</h4>
-  <table class="table"><thead><tr><th>Product</th><th>Price</th><th>Approval</th><th>Published</th><th/></tr></thead><tbody><tr t-foreach="products" t-as="p"><td t-out="p.name"/><td t-field="p.list_price"/><td t-out="p.marketplace_approval_state"/><td t-out="p.website_published"/><td><form action="/my/manufacturer/product/submit" method="post"><input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><input type="hidden" name="product_id" t-att-value="p.id"/><button class="btn btn-sm btn-primary">Submit for Approval</button></form></td></tr></tbody></table>
-  <h4>My Order Items</h4><p class="text-muted">These are order lines assigned to your manufacturer account. The customer places one order and completes one checkout even when the cart contains products from multiple manufacturers.</p><table class="table"><thead><tr><th>Order</th><th>Order Date</th><th>Product</th><th>Quantity</th><th>Line Total</th><th>Order Status</th></tr></thead><tbody><tr t-foreach="order_lines" t-as="line"><td t-out="line.order_id.name"/><td t-field="line.order_id.date_order"/><td t-out="line.product_id.display_name"/><td t-field="line.product_uom_qty"/><td t-field="line.price_subtotal"/><td t-out="line.order_id.state"/></tr></tbody></table>
-  <h4>Assigned Custom Requests</h4><table class="table"><thead><tr><th>Reference</th><th>Title</th><th>Customer</th><th>Status</th></tr></thead><tbody><tr t-foreach="custom_requests" t-as="r"><td t-out="r.name"/><td t-out="r.title"/><td t-out="r.partner_id.name"/><td t-out="r.state"/></tr></tbody></table></div></t></template>
+    <!-- ================================================================ -->
+    <!-- Storefront                                                        -->
+    <!-- ================================================================ -->
+    <template id="marketplace_home" name="Furniture Marketplace">
+        <t t-call="website.layout">
+            <div id="wrap" class="furniture_marketplace">
+                <section class="container py-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                        <div>
+                            <h1 class="mb-1">Furniture Marketplace</h1>
+                            <p class="text-muted mb-0">Furniture from trusted workshops and manufacturers - one cart, one checkout.</p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-primary" href="/custom-furniture-request"><i class="fa fa-pencil-square-o me-1"/>Custom Furniture Request</a>
+                            <a class="btn btn-outline-primary" href="/manufacturer/apply"><i class="fa fa-industry me-1"/>Join as a Manufacturer</a>
+                            <a class="btn btn-outline-secondary" href="/shop/cart"><i class="fa fa-shopping-cart me-1"/>Cart</a>
+                        </div>
+                    </div>
+
+                    <h2 class="h4 mb-3">Categories</h2>
+                    <div class="row g-3 mb-5">
+                        <t t-foreach="categories" t-as="cat">
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="card h-100 fm-category-card">
+                                    <a t-att-href="'/furniture-marketplace?category=%s' % cat.id">
+                                        <img class="card-img-top fm-category-img" loading="lazy"
+                                             t-att-src="'/web/image/product.public.category/%s/image_512' % cat.id" t-att-alt="cat.name"/>
+                                    </a>
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-1">
+                                            <a class="text-decoration-none" t-att-href="'/furniture-marketplace?category=%s' % cat.id" t-out="cat.name"/>
+                                        </h5>
+                                        <span class="badge text-bg-secondary"><t t-out="cat.marketplace_product_count"/> products</span>
+                                        <div class="small mt-2" t-if="cat.child_id">
+                                            <t t-foreach="cat.child_id" t-as="child">
+                                                <a class="me-2 d-inline-block" t-att-href="'/furniture-marketplace?category=%s' % child.id">
+                                                    <t t-out="child.name"/> (<t t-out="child.marketplace_product_count"/>)
+                                                </a>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                        <div t-if="not categories" class="col-12 text-muted">No categories yet.</div>
+                    </div>
+
+                    <h2 class="h4 mb-3" id="products">
+                        <t t-if="current_category"><t t-out="current_category.name"/></t>
+                        <t t-else="">All products</t>
+                        <small class="text-muted fs-6">(<t t-out="total"/>)</small>
+                    </h2>
+                    <form method="get" action="/furniture-marketplace" class="row g-2 align-items-end mb-4">
+                        <div class="col-12 col-md-3">
+                            <input type="text" name="q" class="form-control" placeholder="Search furniture..." t-att-value="search"/>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <select name="category" class="form-select">
+                                <option value="">All categories</option>
+                                <t t-foreach="all_categories" t-as="c">
+                                    <option t-att-value="c.id" t-att-selected="'selected' if current_category and current_category.id == c.id else None"><t t-out="c.display_name"/></option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <select name="manufacturer" class="form-select">
+                                <option value="">All manufacturers</option>
+                                <t t-foreach="manufacturers" t-as="m">
+                                    <option t-att-value="m.id" t-att-selected="'selected' if current_manufacturer == m.id else None"><t t-out="m.name"/></option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <select name="sort" class="form-select">
+                                <t t-foreach="sorts" t-as="s">
+                                    <option t-att-value="s" t-att-selected="'selected' if sort == s else None"><t t-out="sorts[s][0]"/></option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="fm_in_stock" name="in_stock" value="1" t-att-checked="'checked' if in_stock else None"/>
+                                <label class="form-check-label" for="fm_in_stock">In stock only</label>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-1"><button class="btn btn-primary w-100" type="submit">Filter</button></div>
+                    </form>
+
+                    <div class="row g-3">
+                        <t t-foreach="products" t-as="product">
+                            <t t-set="status" t-value="product.marketplace_stock_status"/>
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="card h-100 fm-product-card">
+                                    <a t-att-href="product.website_url">
+                                        <img class="card-img-top fm-product-img" loading="lazy"
+                                             t-att-src="'/web/image/product.template/%s/image_512' % product.id" t-att-alt="product.name"/>
+                                    </a>
+                                    <div class="card-body d-flex flex-column">
+                                        <h6 class="card-title mb-1"><a class="text-decoration-none" t-att-href="product.website_url" t-out="product.name"/></h6>
+                                        <div class="small text-muted mb-1"><i class="fa fa-industry me-1"/><span class="fm-manufacturer" t-out="product.marketplace_manufacturer_name"/></div>
+                                        <div class="fw-bold mb-1">
+                                            <span t-field="product.list_price" t-options='{"widget": "monetary", "display_currency": product.currency_id}'/>
+                                        </div>
+                                        <div class="small mb-2">
+                                            <span t-if="status == 'out_of_stock'" class="badge text-bg-danger">Out of stock</span>
+                                            <span t-elif="status == 'low_stock'" class="badge text-bg-warning">Low stock</span>
+                                            <span t-else="" class="badge text-bg-success">In stock</span>
+                                            <span t-if="status != 'unlimited'" class="ms-1">Available: <t t-out="int(product.marketplace_available_qty)"/></span>
+                                        </div>
+                                        <div class="mt-auto">
+                                            <form t-if="status != 'out_of_stock' and product.product_variant_count == 1" action="/shop/cart/update" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <input type="hidden" name="product_id" t-att-value="product.product_variant_id.id"/>
+                                                <input type="hidden" name="product_template_id" t-att-value="product.id"/>
+                                                <input type="hidden" name="add_qty" value="1"/>
+                                                <button type="submit" class="btn btn-primary btn-sm w-100"><i class="fa fa-shopping-cart me-1"/>Add to cart</button>
+                                            </form>
+                                            <a t-elif="status != 'out_of_stock'" class="btn btn-outline-primary btn-sm w-100" t-att-href="product.website_url">Choose options</a>
+                                            <button t-else="" class="btn btn-secondary btn-sm w-100" disabled="disabled">Out of stock</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                        <div t-if="not products" class="col-12 alert alert-info">No products match your selection.</div>
+                    </div>
+                    <div class="mt-4 d-flex justify-content-center"><t t-call="website.pager"/></div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- Standard /shop product cards: show manufacturer + available quantity -->
+    <template id="products_item_manufacturer" inherit_id="website_sale.products_item" name="Marketplace: manufacturer on product cards">
+        <xpath expr="." position="inside">
+            <div class="fm-card-meta px-2 pb-2 small" t-if="product.marketplace_manufacturer_name">
+                <div class="text-muted"><i class="fa fa-industry me-1"/><span class="fm-manufacturer" t-out="product.marketplace_manufacturer_name"/></div>
+                <t t-set="fm_status" t-value="product.marketplace_stock_status"/>
+                <span t-if="fm_status == 'out_of_stock'" class="badge text-bg-danger">Out of stock</span>
+                <span t-elif="fm_status == 'unlimited'" class="badge text-bg-success">Available</span>
+                <span t-else="" class="badge text-bg-success">Available: <t t-out="int(product.marketplace_available_qty)"/></span>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Product page: manufacturer, stock, specifications -->
+    <template id="product_page_marketplace" inherit_id="website_sale.product" name="Marketplace: manufacturer and specifications">
+        <xpath expr="." position="inside">
+            <section class="container pb-4 fm-product-extra" t-if="product.marketplace_manufacturer_name">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-industry me-1"/>Made by <span class="fm-manufacturer" t-out="product.marketplace_manufacturer_name"/></h5>
+                        <t t-set="fm_status" t-value="product.marketplace_stock_status"/>
+                        <p class="mb-2">
+                            <span t-if="fm_status == 'out_of_stock'" class="badge text-bg-danger">Out of stock</span>
+                            <span t-elif="fm_status == 'low_stock'" class="badge text-bg-warning">Low stock</span>
+                            <span t-else="" class="badge text-bg-success">In stock</span>
+                            <span t-if="fm_status != 'unlimited'" class="ms-2">Available quantity: <strong t-out="int(product.marketplace_available_qty)"/></span>
+                        </p>
+                        <t t-if="product.marketplace_specifications">
+                            <h6 class="mt-3">Specifications</h6>
+                            <table class="table table-sm mb-0">
+                                <tbody>
+                                    <t t-foreach="product.get_marketplace_specs()" t-as="spec">
+                                        <tr><th class="w-25" t-out="spec[0]"/><td t-out="spec[1]"/></tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
+    <!-- ================================================================ -->
+    <!-- Manufacturer registration                                         -->
+    <!-- ================================================================ -->
+    <template id="manufacturer_apply" name="Join as a Manufacturer">
+        <t t-call="website.layout">
+            <div id="wrap" class="furniture_marketplace">
+                <section class="container py-4" style="max-width: 900px;">
+                    <h1>Join as a Manufacturer</h1>
+                    <p class="text-muted">Apply to sell your furniture through the marketplace. After approval you receive a portal account to manage your products.</p>
+                    <div t-if="errors" class="alert alert-danger">
+                        <strong>Please fix the following:</strong>
+                        <ul class="mb-0"><t t-foreach="errors" t-as="err"><li t-out="err"/></t></ul>
+                    </div>
+                    <form action="/manufacturer/apply/validate" method="post" enctype="multipart/form-data" class="row g-3">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="col-md-6">
+                            <label class="form-label" for="manufacturer_name">Manufacturer / Workshop Name *</label>
+                            <input type="text" id="manufacturer_name" name="manufacturer_name" class="form-control" required="required" t-att-value="values.get('manufacturer_name')"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="representative">Owner / Authorized Representative *</label>
+                            <input type="text" id="representative" name="representative" class="form-control" required="required" t-att-value="values.get('representative')"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" class="form-control" required="required" t-att-value="values.get('email')"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="phone">Mobile Number *</label>
+                            <input type="tel" id="phone" name="phone" class="form-control" required="required" t-att-value="values.get('phone')"/>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="address">Detailed Address *</label>
+                            <textarea id="address" name="address" class="form-control" rows="2" required="required" t-out="values.get('address')"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="country_id">Country *</label>
+                            <select id="country_id" name="country_id" class="form-select" required="required">
+                                <option value="">Select...</option>
+                                <t t-foreach="countries" t-as="c">
+                                    <option t-att-value="c.id" t-att-selected="'selected' if str(c.id) == str(values.get('country_id')) else None" t-out="c.name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="city">City *</label>
+                            <input type="text" id="city" name="city" class="form-control" required="required" t-att-value="values.get('city')"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="workshop_size_id">Workshop Size *</label>
+                            <select id="workshop_size_id" name="workshop_size_id" class="form-select" required="required">
+                                <option value="">Select...</option>
+                                <t t-foreach="sizes" t-as="s">
+                                    <option t-att-value="s.id" t-att-selected="'selected' if str(s.id) == str(values.get('workshop_size_id')) else None" t-out="s.name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="description">Workshop Description</label>
+                            <textarea id="description" name="description" class="form-control" rows="3" t-out="values.get('description')"/>
+                        </div>
+                        <div class="col-12">
+                            <div class="card bg-light"><div class="card-body">
+                                <label class="form-label fw-bold" for="catalog">Product Catalog (Excel or CSV) *</label>
+                                <input type="file" id="catalog" name="catalog" class="form-control" accept=".csv,.xlsx" required="required"/>
+                                <div class="form-text">
+                                    Use our template:
+                                    <a href="/furniture_marketplace/static/src/files/catalog_template.xlsx" download="">Excel template</a> ·
+                                    <a href="/furniture_marketplace/static/src/files/catalog_template.csv" download="">CSV template</a>.
+                                    Your file is validated now and you can review the products before submitting. Products stay hidden until the platform approves them.
+                                </div>
+                                <label class="form-label mt-3" for="images">Product images (optional)</label>
+                                <input type="file" id="images" name="images" class="form-control" accept=".png,.jpg,.jpeg,.gif,.webp" multiple="multiple"/>
+                                <div class="form-text">If the "image" column of your catalog contains file names, upload those images here (or use public http(s) URLs).</div>
+                            </div></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="documents">Additional Documents</label>
+                            <input type="file" id="documents" name="documents" class="form-control" multiple="multiple"/>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg">Validate and Review</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="manufacturer_apply_review" name="Review your application">
+        <t t-call="website.layout">
+            <div id="wrap" class="furniture_marketplace">
+                <section class="container py-4">
+                    <h1>Review your application</h1>
+                    <div class="alert alert-success">Your catalog file is valid: <strong t-out="len(application.catalog_line_ids)"/> product(s) found. Check the data below, then submit.</div>
+                    <div class="card mb-3"><div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-3">Workshop</dt><dd class="col-sm-9" t-out="application.manufacturer_name"/>
+                            <dt class="col-sm-3">Representative</dt><dd class="col-sm-9" t-out="application.representative"/>
+                            <dt class="col-sm-3">Email / Phone</dt><dd class="col-sm-9"><t t-out="application.email"/> / <t t-out="application.phone"/></dd>
+                            <dt class="col-sm-3">Location</dt><dd class="col-sm-9"><t t-out="application.address"/>, <t t-out="application.city"/>, <t t-out="application.country_id.name"/></dd>
+                            <dt class="col-sm-3">Workshop size</dt><dd class="col-sm-9" t-out="application.workshop_size_id.name"/>
+                        </dl>
+                    </div></div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead><tr><th>#</th><th>Product</th><th>Category</th><th class="text-end">Price</th><th class="text-end">Qty</th><th>Image</th><th>Specifications</th></tr></thead>
+                            <tbody>
+                                <t t-foreach="application.catalog_line_ids" t-as="line">
+                                    <tr>
+                                        <td t-out="line.sequence"/><td t-out="line.product_name"/><td t-out="line.category"/>
+                                        <td class="text-end" t-out="'%.2f' % line.price"/><td class="text-end" t-out="int(line.quantity)"/>
+                                        <td t-out="line.image_ref"/><td t-out="line.specifications"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <form action="/manufacturer/apply/submit" method="post" class="d-flex gap-2">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="app_id" t-att-value="application.id"/>
+                        <input type="hidden" name="token" t-att-value="application.access_token"/>
+                        <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
+                        <a href="/manufacturer/apply" class="btn btn-outline-secondary btn-lg">Start over</a>
+                    </form>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="manufacturer_apply_thanks" name="Application submitted">
+        <t t-call="website.layout">
+            <div id="wrap" class="furniture_marketplace">
+                <section class="container py-5 text-center">
+                    <h1>Thank you!</h1>
+                    <p class="lead">Your application <strong t-out="application.name"/> was submitted and is pending approval.</p>
+                    <p>A confirmation e-mail was sent to <strong t-out="application.email"/>. You will receive your portal access once the application is approved.</p>
+                    <a href="/furniture-marketplace" class="btn btn-primary">Back to the marketplace</a>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- ================================================================ -->
+    <!-- Custom furniture request (customers)                              -->
+    <!-- ================================================================ -->
+    <template id="custom_request_form" name="Custom Furniture Request">
+        <t t-call="website.layout">
+            <div id="wrap" class="furniture_marketplace">
+                <section class="container py-4" style="max-width: 800px;">
+                    <h1>Custom Furniture Request</h1>
+                    <p class="text-muted">Can't find what you need? Describe it, upload a reference image and choose the manufacturer you prefer. A quotation is only created after the manufacturer reviewed the request and terms are agreed.</p>
+                    <div t-if="errors" class="alert alert-danger"><ul class="mb-0"><t t-foreach="errors" t-as="err"><li t-out="err"/></t></ul></div>
+                    <div class="alert alert-light border">
+                        <strong>Customer:</strong> <t t-out="partner.name"/> ·
+                        <t t-out="partner.email"/> <t t-if="partner.phone">· <t t-out="partner.phone"/></t>
+                    </div>
+                    <form action="/custom-furniture-request/submit" method="post" enctype="multipart/form-data" class="row g-3">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="col-12">
+                            <label class="form-label" for="title">Request Title *</label>
+                            <input type="text" id="title" name="title" class="form-control" required="required" t-att-value="values.get('title')"/>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="description">Furniture Description *</label>
+                            <textarea id="description" name="description" rows="4" class="form-control" required="required" t-out="values.get('description')"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="reference_image">Reference Image *</label>
+                            <input type="file" id="reference_image" name="reference_image" class="form-control" accept=".png,.jpg,.jpeg,.gif,.webp" required="required"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="manufacturer_id">Preferred Manufacturer *</label>
+                            <select id="manufacturer_id" name="manufacturer_id" class="form-select" required="required">
+                                <option value="">Select...</option>
+                                <t t-foreach="manufacturers" t-as="m">
+                                    <option t-att-value="m.id" t-att-selected="'selected' if str(m.id) == str(values.get('manufacturer_id')) else None" t-out="m.name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="notes">Additional Notes</label>
+                            <textarea id="notes" name="notes" rows="3" class="form-control" t-out="values.get('notes')"/>
+                        </div>
+                        <div class="col-12"><button type="submit" class="btn btn-primary btn-lg">Submit Request</button></div>
+                    </form>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- Customer portal: my requests -->
+    <template id="my_requests" name="My Custom Furniture Requests">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3">
+                <h2>My Custom Furniture Requests</h2>
+                <a href="/custom-furniture-request" class="btn btn-primary mb-3">New request</a>
+                <div t-if="not requests" class="alert alert-info">You have no requests yet.</div>
+                <div class="table-responsive" t-if="requests">
+                    <table class="table table-hover">
+                        <thead><tr><th>Reference</th><th>Title</th><th>Manufacturer</th><th>Date</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <t t-foreach="requests" t-as="r">
+                                <tr>
+                                    <td><a t-att-href="'/my/furniture-requests/%s' % r.id" t-out="r.name"/></td>
+                                    <td t-out="r.title"/><td t-out="r.manufacturer_id.name"/><td t-out="r.request_date"/>
+                                    <td><span class="badge text-bg-secondary" t-out="r.state_label()"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="my_request_detail" name="My Custom Furniture Request">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3">
+                <div t-if="submitted" class="alert alert-success">Your request was submitted. We will keep you updated by e-mail.</div>
+                <a href="/my/furniture-requests">&#8592; All my requests</a>
+                <h2 class="mt-2"><t t-out="req.name"/> - <t t-out="req.title"/></h2>
+                <p><span class="badge text-bg-primary fs-6" t-out="req.state_label()"/></p>
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <img class="img-fluid rounded border" t-att-src="'/web/image/furniture.custom.request/%s/reference_image' % req.id" alt="Reference image"/>
+                    </div>
+                    <div class="col-md-7">
+                        <dl class="row">
+                            <dt class="col-sm-4">Manufacturer</dt><dd class="col-sm-8" t-out="req.manufacturer_id.name"/>
+                            <dt class="col-sm-4">Request date</dt><dd class="col-sm-8" t-out="req.request_date"/>
+                            <dt class="col-sm-4">Description</dt><dd class="col-sm-8" style="white-space: pre-wrap;" t-out="req.description"/>
+                            <dt class="col-sm-4" t-if="req.notes">Notes</dt><dd class="col-sm-8" t-if="req.notes" style="white-space: pre-wrap;" t-out="req.notes"/>
+                            <dt class="col-sm-4" t-if="req.rejection_reason">Rejection reason</dt><dd class="col-sm-8" t-if="req.rejection_reason" t-out="req.rejection_reason"/>
+                            <dt class="col-sm-4" t-if="req.agreed_price">Agreed price</dt>
+                            <dd class="col-sm-8" t-if="req.agreed_price"><span t-field="req.agreed_price" t-options='{"widget": "monetary", "display_currency": req.currency_id}'/></dd>
+                        </dl>
+                        <a t-if="order_url" t-att-href="order_url" class="btn btn-primary">View quotation / order</a>
+                        <form t-if="can_cancel" t-attf-action="/my/furniture-requests/#{req.id}/cancel" method="post" class="d-inline">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <button type="submit" class="btn btn-outline-danger">Cancel request</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
 </odoo>

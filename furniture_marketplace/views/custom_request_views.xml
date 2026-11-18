@@ -1,7 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
- <record id="custom_request_list" model="ir.ui.view"><field name="name">furniture.custom.request.list</field><field name="model">furniture.custom.request</field><field name="arch" type="xml"><list><field name="name"/><field name="title"/><field name="partner_id"/><field name="manufacturer_id"/><field name="request_date"/><field name="state"/></list></field></record>
- <record id="custom_request_form" model="ir.ui.view"><field name="name">furniture.custom.request.form</field><field name="model">furniture.custom.request</field><field name="arch" type="xml"><form><header>
-  <button name="action_submit" type="object" string="Submit" invisible="state != 'draft'"/><button name="action_start_review" type="object" string="Start Review" invisible="state != 'submitted'"/><button name="action_accept" type="object" string="Accept" invisible="state != 'review'"/><button name="action_reject" type="object" string="Reject" invisible="state not in ('submitted','review')"/><button name="action_create_quotation" type="object" string="Create Quotation" class="oe_highlight" invisible="state not in ('accepted','quotation')"/><button name="action_confirm_request" type="object" string="Confirm" invisible="state != 'quotation'"/><button name="action_start_production" type="object" string="Start Production" invisible="state != 'confirmed'"/><button name="action_complete" type="object" string="Complete" invisible="state != 'production'"/><field name="state" widget="statusbar"/></header>
-  <sheet><group><group><field name="name"/><field name="title"/><field name="partner_id"/><field name="manufacturer_id"/></group><group><field name="request_date"/><field name="sale_order_id"/><field name="reference_image" filename="reference_image_filename"/></group></group><field name="description"/><field name="notes"/><field name="rejection_reason"/></sheet><chatter/></form></field></record>
- <record id="action_custom_requests" model="ir.actions.act_window"><field name="name">Custom Furniture Requests</field><field name="res_model">furniture.custom.request</field><field name="view_mode">list,form</field></record>
+    <record id="view_custom_request_list" model="ir.ui.view">
+        <field name="name">furniture.custom.request.list</field>
+        <field name="model">furniture.custom.request</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="title"/>
+                <field name="partner_id"/>
+                <field name="manufacturer_id"/>
+                <field name="request_date"/>
+                <field name="agreed_price" optional="show"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_custom_request_form" model="ir.ui.view">
+        <field name="name">furniture.custom.request.form</field>
+        <field name="model">furniture.custom.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_start_review" type="object" string="Start Review" invisible="state != 'submitted'"/>
+                    <button name="action_accept" type="object" string="Accept" class="btn-primary"
+                            invisible="state not in ('submitted', 'under_review')"/>
+                    <button name="action_reject" type="object" string="Reject" invisible="state not in ('submitted', 'under_review')"/>
+                    <button name="action_create_quotation" type="object" string="Create Quotation" class="btn-primary"
+                            invisible="state != 'accepted'"/>
+                    <button name="action_confirm_request" type="object" string="Confirm" invisible="state != 'quotation'"/>
+                    <button name="action_start_production" type="object" string="Start Production" invisible="state != 'confirmed'"/>
+                    <button name="action_complete" type="object" string="Mark Completed" invisible="state != 'in_production'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state in ('completed', 'cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,submitted,under_review,accepted,quotation,confirmed,in_production,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_order" type="object" class="oe_stat_button" icon="fa-file-text-o"
+                                invisible="not sale_order_id">
+                            <div class="o_stat_info"><span class="o_stat_text">Quotation / Order</span></div>
+                        </button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="title"/>
+                            <field name="manufacturer_id" options="{'no_create': True}"/>
+                            <field name="request_date"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="customer_email"/>
+                            <field name="customer_phone"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="reference_image" widget="image" options="{'size': [0, 300]}" filename="reference_image_name"/>
+                        <field name="reference_image_name" invisible="1"/>
+                        <field name="description"/>
+                        <field name="notes"/>
+                        <field name="rejection_reason" invisible="state != 'rejected'"/>
+                    </group>
+                    <group string="Commercial terms (set after review, before the quotation)">
+                        <field name="currency_id" invisible="1"/>
+                        <field name="agreed_price"/>
+                        <field name="commercial_terms"/>
+                        <field name="sale_order_id"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_custom_request_search" model="ir.ui.view">
+        <field name="name">furniture.custom.request.search</field>
+        <field name="model">furniture.custom.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="title"/>
+                <field name="partner_id"/>
+                <field name="manufacturer_id"/>
+                <filter name="open" string="Open" domain="[('state', 'not in', ('completed', 'cancelled', 'rejected'))]"/>
+                <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter name="in_production" string="In Production" domain="[('state', '=', 'in_production')]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_manufacturer" string="Manufacturer" context="{'group_by': 'manufacturer_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_custom_request" model="ir.actions.act_window">
+        <field name="name">Custom Furniture Requests</field>
+        <field name="res_model">furniture.custom.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
 </odoo>

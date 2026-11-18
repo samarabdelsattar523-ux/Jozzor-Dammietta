@@ -1,5 +1,15 @@
-<odoo>
- <record id="seq_manufacturer" model="ir.sequence"><field name="name">Furniture Manufacturer</field><field name="code">furniture.manufacturer</field><field name="prefix">MFR/%(year)s/</field><field name="padding">5</field></record>
- <record id="seq_application" model="ir.sequence"><field name="name">Manufacturer Application</field><field name="code">furniture.manufacturer.application</field><field name="prefix">APP/%(year)s/</field><field name="padding">5</field></record>
- <record id="seq_custom_request" model="ir.sequence"><field name="name">Custom Furniture Request</field><field name="code">furniture.custom.request</field><field name="prefix">CFR/%(year)s/</field><field name="padding">5</field></record>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_manufacturer_application" model="ir.sequence">
+        <field name="name">Manufacturer Application</field>
+        <field name="code">furniture.manufacturer.application</field>
+        <field name="prefix">APP/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+    <record id="seq_custom_request" model="ir.sequence">
+        <field name="name">Custom Furniture Request</field>
+        <field name="code">furniture.custom.request</field>
+        <field name="prefix">CFR/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
 </odoo>

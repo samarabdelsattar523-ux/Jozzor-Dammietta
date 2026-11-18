@@ -1,17 +1,107 @@
-<odoo>
- <record id="mail_application_received" model="mail.template">
-  <field name="name">Manufacturer Application Received</field><field name="model_id" ref="model_furniture_manufacturer_application"/>
-  <field name="subject">Manufacturer application received - {{ object.name }}</field><field name="email_to">{{ object.email }}</field>
-  <field name="body_html" type="html"><div><p>Hello <t t-out="object.representative"/>,</p><p>Your application <t t-out="object.name"/> has been received.</p></div></field>
- </record>
- <record id="mail_application_approved" model="mail.template">
-  <field name="name">Manufacturer Application Approved</field><field name="model_id" ref="model_furniture_manufacturer_application"/>
-  <field name="subject">Your manufacturer application has been approved</field><field name="email_to">{{ object.email }}</field>
-  <field name="body_html" type="html"><div><p>Hello <t t-out="object.representative"/>,</p><p>Your application is approved. Your account invitation will arrive separately.</p></div></field>
- </record>
- <record id="mail_application_rejected" model="mail.template">
-  <field name="name">Manufacturer Application Rejected</field><field name="model_id" ref="model_furniture_manufacturer_application"/>
-  <field name="subject">Update on your manufacturer application</field><field name="email_to">{{ object.email }}</field>
-  <field name="body_html" type="html"><div><p>Hello <t t-out="object.representative"/>,</p><p>Your application was not approved.</p><p><t t-out="object.rejection_reason"/></p></div></field>
- </record>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="mail_application_received" model="mail.template">
+        <field name="name">Manufacturer Application: received</field>
+        <field name="model_id" ref="model_furniture_manufacturer_application"/>
+        <field name="subject">Application received - {{ object.name }}</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+<p>Dear <t t-out="object.representative"/>,</p><p>We received the application of <b><t t-out="object.manufacturer_name"/></b> (reference <b><t t-out="object.name"/></b>). Our team will review it and contact you shortly.</p><p>You will receive your portal access once the application is approved.</p>
+<p style="margin-top:24px;">Best regards,<br/><t t-out="object.env.company.name"/></p>
+</div>
+        </field>
+    </record>
+    <record id="mail_application_approved" model="mail.template">
+        <field name="name">Manufacturer Application: approved</field>
+        <field name="model_id" ref="model_furniture_manufacturer_application"/>
+        <field name="subject">Your application {{ object.name }} was approved</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+<p>Dear <t t-out="object.representative"/>,</p><p>Congratulations! <b><t t-out="object.manufacturer_name"/></b> has been approved as a marketplace manufacturer.</p><p>You will receive a separate e-mail with a link to set your password. Then sign in to the Manufacturer Portal at <t t-out="object.get_base_url()"/>/my/manufacturer to manage your products.</p><p>Products from your catalog are submitted for product approval and become visible to customers once approved.</p>
+<p style="margin-top:24px;">Best regards,<br/><t t-out="object.env.company.name"/></p>
+</div>
+        </field>
+    </record>
+    <record id="mail_application_rejected" model="mail.template">
+        <field name="name">Manufacturer Application: rejected</field>
+        <field name="model_id" ref="model_furniture_manufacturer_application"/>
+        <field name="subject">Update on your application {{ object.name }}</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+<p>Dear <t t-out="object.representative"/>,</p><p>Thank you for your interest. Unfortunately we cannot approve the application of <b><t t-out="object.manufacturer_name"/></b> at this time.</p><p><b>Reason:</b> <t t-out="object.rejection_reason"/></p>
+<p style="margin-top:24px;">Best regards,<br/><t t-out="object.env.company.name"/></p>
+</div>
+        </field>
+    </record>
+    <record id="mail_product_approved" model="mail.template">
+        <field name="name">Marketplace Product: approved</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="subject">Product approved: {{ object.name }}</field>
+        <field name="email_to">{{ object.manufacturer_id.email }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+<p>Your product <b><t t-out="object.name"/></b> has been approved by the marketplace team.</p>
+<p style="margin-top:24px;">Best regards,<br/><t t-out="object.env.company.name"/></p>
+</div>
+        </field>
+    </record>
+    <record id="mail_product_rejected" model="mail.template">
+        <field name="name">Marketplace Product: rejected</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="subject">Product rejected: {{ object.name }}</field>
+        <field name="email_to">{{ object.manufacturer_id.email }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+<p>Your product <b><t t-out="object.name"/></b> was not approved.</p><p><b>Reason:</b> <t t-out="object.marketplace_rejection_reason"/></p><p>You can edit the product in your portal and submit it again.</p>
+<p style="margin-top:24px;">Best regards,<br/><t t-out="object.env.company.name"/></p>
+</div>
+        </field>
+    </record>
+    <record id="mail_request_submitted_customer" model="mail.template">
+        <field name="name">Custom Request: confirmation to customer</field>
+        <field name="model_id" ref="model_furniture_custom_request"/>
+        <field name="subject">Your custom furniture request {{ object.name }}</field>
+        <field name="email_to">{{ object.partner_id.email }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+<p>Dear <t t-out="object.partner_id.name"/>,</p><p>We received your request <b><t t-out="object.title"/></b> (<t t-out="object.name"/>). The selected manufacturer will review it and we will keep you updated.</p>
+<p style="margin-top:24px;">Best regards,<br/><t t-out="object.env.company.name"/></p>
+</div>
+        </field>
+    </record>
+    <record id="mail_request_submitted_manufacturer" model="mail.template">
+        <field name="name">Custom Request: new request for manufacturer</field>
+        <field name="model_id" ref="model_furniture_custom_request"/>
+        <field name="subject">New custom furniture request {{ object.name }}</field>
+        <field name="email_to">{{ object.manufacturer_id.email }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+<p>A customer submitted a custom furniture request addressed to <b><t t-out="object.manufacturer_id.name"/></b>: <b><t t-out="object.title"/></b>.</p><p>Review it in your Manufacturer Portal.</p>
+<p style="margin-top:24px;">Best regards,<br/><t t-out="object.env.company.name"/></p>
+</div>
+        </field>
+    </record>
+    <record id="mail_request_state_changed" model="mail.template">
+        <field name="name">Custom Request: status update</field>
+        <field name="model_id" ref="model_furniture_custom_request"/>
+        <field name="subject">Request {{ object.name }}: {{ object.state_label() }}</field>
+        <field name="email_to">{{ object.partner_id.email }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+<p>Dear <t t-out="object.partner_id.name"/>,</p><p>The status of your request <b><t t-out="object.title"/></b> (<t t-out="object.name"/>) is now: <b><t t-out="object.state_label()"/></b>.</p><t t-if="object.rejection_reason and object.state == 'rejected'"><p><b>Reason:</b> <t t-out="object.rejection_reason"/></p></t>
+<p style="margin-top:24px;">Best regards,<br/><t t-out="object.env.company.name"/></p>
+</div>
+        </field>
+    </record>
 </odoo>

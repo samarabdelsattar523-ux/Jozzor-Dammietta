@@ -1,9 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
- <record id="application_list" model="ir.ui.view"><field name="name">furniture.manufacturer.application.list</field><field name="model">furniture.manufacturer.application</field>
-  <field name="arch" type="xml"><list><field name="name"/><field name="manufacturer_name"/><field name="email"/><field name="phone"/><field name="submitted_on"/><field name="state"/></list></field></record>
- <record id="application_form" model="ir.ui.view"><field name="name">furniture.manufacturer.application.form</field><field name="model">furniture.manufacturer.application</field>
-  <field name="arch" type="xml"><form><header><button name="action_submit" type="object" string="Submit" invisible="state != 'draft'"/><button name="action_approve" type="object" string="Approve" class="oe_highlight" groups="furniture_marketplace.group_marketplace_manager" invisible="state != 'submitted'"/><button name="action_reject" type="object" string="Reject" groups="furniture_marketplace.group_marketplace_manager" invisible="state != 'submitted'"/><field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,rejected"/></header>
-   <sheet><group><group><field name="name"/><field name="manufacturer_name"/><field name="representative"/><field name="email"/><field name="phone"/></group><group><field name="country_id"/><field name="city"/><field name="workshop_size"/><field name="submitted_on"/><field name="manufacturer_id"/></group></group>
-   <notebook><page string="Business"><field name="address"/><field name="description"/></page><page string="Catalog"><field name="catalog_file" filename="catalog_filename"/><field name="catalog_filename"/><field name="imported_product_ids" widget="many2many_tags"/></page><page string="Documents"><field name="document_ids" widget="many2many_binary"/></page><page string="Review"><field name="rejection_reason"/><field name="internal_notes"/></page></notebook></sheet><chatter/></form></field></record>
- <record id="action_applications" model="ir.actions.act_window"><field name="name">Manufacturer Applications</field><field name="res_model">furniture.manufacturer.application</field><field name="view_mode">list,form</field></record>
+    <record id="view_application_list" model="ir.ui.view">
+        <field name="name">furniture.manufacturer.application.list</field>
+        <field name="model">furniture.manufacturer.application</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'approved'" decoration-danger="state == 'rejected'"
+                  decoration-warning="state == 'submitted'">
+                <field name="name"/>
+                <field name="manufacturer_name"/>
+                <field name="representative"/>
+                <field name="email"/>
+                <field name="country_id"/>
+                <field name="city"/>
+                <field name="workshop_size_id"/>
+                <field name="registration_date"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_application_form" model="ir.ui.view">
+        <field name="name">furniture.manufacturer.application.form</field>
+        <field name="model">furniture.manufacturer.application</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                            invisible="state != 'submitted'" groups="furniture_marketplace.group_marketplace_manager"
+                            confirm="Approving creates the contact, the portal user and sends the invitation. Continue?"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state not in ('submitted', 'draft')" groups="furniture_marketplace.group_marketplace_manager"/>
+                    <button name="action_reset_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'rejected'" groups="furniture_marketplace.group_marketplace_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group string="Business">
+                            <field name="manufacturer_name"/>
+                            <field name="representative"/>
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="workshop_size_id" options="{'no_create': True}"/>
+                        </group>
+                        <group string="Location">
+                            <field name="country_id"/>
+                            <field name="city"/>
+                            <field name="address"/>
+                            <field name="registration_date"/>
+                            <field name="submitted_on"/>
+                        </group>
+                    </group>
+                    <group invisible="state != 'rejected'">
+                        <field name="rejection_reason"/>
+                    </group>
+                    <group invisible="not manufacturer_id">
+                        <field name="manufacturer_id"/>
+                        <field name="reviewed_by"/>
+                        <field name="reviewed_on"/>
+                    </group>
+                    <notebook>
+                        <page string="Workshop Description" name="description"><field name="description"/></page>
+                        <page string="Product Catalog" name="catalog">
+                            <group>
+                                <field name="catalog_import_id"/>
+                                <field name="catalog_file" filename="catalog_filename"/>
+                                <field name="catalog_filename" invisible="1"/>
+                            </group>
+                            <field name="catalog_line_ids" readonly="1">
+                                <list>
+                                    <field name="sequence"/>
+                                    <field name="product_name"/>
+                                    <field name="category"/>
+                                    <field name="description" optional="hide"/>
+                                    <field name="price"/>
+                                    <field name="quantity"/>
+                                    <field name="image_ref"/>
+                                    <field name="specifications" optional="hide"/>
+                                    <field name="import_state" widget="badge"/>
+                                    <field name="product_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <field name="document_ids" widget="many2many_binary"/>
+                        </page>
+                        <page string="Internal Notes" name="notes">
+                            <field name="internal_notes" placeholder="Visible to the platform team only..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_application_search" model="ir.ui.view">
+        <field name="name">furniture.manufacturer.application.search</field>
+        <field name="model">furniture.manufacturer.application</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="manufacturer_name"/>
+                <field name="email"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="submitted" string="Pending Approval" domain="[('state', '=', 'submitted')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
+                    <filter name="group_month" string="Registration Month" context="{'group_by': 'registration_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_application_all" model="ir.actions.act_window">
+        <field name="name">All Requests</field>
+        <field name="res_model">furniture.manufacturer.application</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_application_draft" model="ir.actions.act_window">
+        <field name="name">Draft</field>
+        <field name="res_model">furniture.manufacturer.application</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'draft')]</field>
+    </record>
+    <record id="action_application_pending" model="ir.actions.act_window">
+        <field name="name">Pending Approval</field>
+        <field name="res_model">furniture.manufacturer.application</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'submitted')]</field>
+    </record>
+    <record id="action_application_approved" model="ir.actions.act_window">
+        <field name="name">Approved</field>
+        <field name="res_model">furniture.manufacturer.application</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'approved')]</field>
+    </record>
+    <record id="action_application_rejected" model="ir.actions.act_window">
+        <field name="name">Rejected</field>
+        <field name="res_model">furniture.manufacturer.application</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'rejected')]</field>
+    </record>
 </odoo>

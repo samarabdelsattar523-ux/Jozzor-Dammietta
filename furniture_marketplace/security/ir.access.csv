@@ -1,8 +1,22 @@
 id,name,model_id,group_id/id,operation,domain
 access_furniture_manufacturer_user,Manufacturer: internal users,furniture.manufacturer,base.group_user,crud,
+access_furniture_manufacturer_company,Manufacturer: active companies only,furniture.manufacturer,,crud,"['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]"
+access_furniture_manufacturer_portal,Manufacturer: own profile,furniture.manufacturer,furniture_marketplace.group_manufacturer_portal,r,"[('user_id', '=', user.id)]"
+access_furniture_manufacturer_type_user,Manufacturer type: internal users read,furniture.manufacturer.type,base.group_user,r,
+access_furniture_manufacturer_type_admin,Manufacturer type: administrators,furniture.manufacturer.type,furniture_marketplace.group_marketplace_admin,crud,
+access_furniture_workshop_size_user,Workshop size: internal users read,furniture.workshop.size,base.group_user,r,
+access_furniture_workshop_size_admin,Workshop size: administrators,furniture.workshop.size,furniture_marketplace.group_marketplace_admin,crud,
+access_furniture_marketplace_settings_manager,Settings: managers read,furniture.marketplace.settings,furniture_marketplace.group_marketplace_manager,r,
+access_furniture_marketplace_settings_admin,Settings: administrators,furniture.marketplace.settings,furniture_marketplace.group_marketplace_admin,crud,
 access_furniture_application_user,Application: internal users,furniture.manufacturer.application,base.group_user,crud,
+access_furniture_catalog_import_user,Catalog upload: internal users read,furniture.catalog.import,base.group_user,r,
+access_furniture_catalog_import_manager,Catalog upload: managers,furniture.catalog.import,furniture_marketplace.group_marketplace_manager,crud,
+access_furniture_catalog_import_manufacturer,Catalog upload: own manufacturer read,furniture.catalog.import,furniture_marketplace.group_manufacturer_portal,r,"[('manufacturer_id.user_id', '=', user.id)]"
+access_furniture_catalog_line_user,Catalog line: internal users read,furniture.catalog.line,base.group_user,r,
+access_furniture_catalog_line_manager,Catalog line: managers,furniture.catalog.line,furniture_marketplace.group_marketplace_manager,crud,
+access_furniture_catalog_line_manufacturer,Catalog line: own manufacturer read,furniture.catalog.line,furniture_marketplace.group_manufacturer_portal,r,"[('manufacturer_id.user_id', '=', user.id)]"
+access_furniture_reject_wizard_manager,Rejection wizard: managers,furniture.reject.wizard,furniture_marketplace.group_marketplace_manager,crud,
 access_furniture_custom_request_user,Custom request: internal users,furniture.custom.request,base.group_user,crud,
-access_furniture_manufacturer_portal,Manufacturer: own profile,furniture.manufacturer,group_manufacturer_portal,r,"[('user_id', '=', user.id)]"
-access_furniture_custom_request_manufacturer,Custom request: assigned to manufacturer,furniture.custom.request,group_manufacturer_portal,r,"[('manufacturer_id.user_id', '=', user.id)]"
+access_furniture_custom_request_manufacturer,Custom request: assigned to manufacturer,furniture.custom.request,furniture_marketplace.group_manufacturer_portal,r,"[('manufacturer_id.user_id', '=', user.id)]"
 access_furniture_custom_request_customer,Custom request: portal customer own requests,furniture.custom.request,base.group_portal,r,"[('partner_id', 'child_of', user.partner_id.commercial_partner_id.id)]"
-access_furniture_product_manufacturer,Product: manufacturer own products,product.template,group_manufacturer_portal,cru,"[('manufacturer_id.user_id', '=', user.id)]"
+access_furniture_product_manufacturer,Product: manufacturer own products,product.template,furniture_marketplace.group_manufacturer_portal,cru,"[('manufacturer_id.user_id', '=', user.id)]"

@@ -1,19 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="res_groups_privilege_furniture_marketplace" model="res.groups.privilege">
+    <!-- Privilege: the label shown in the user form (Settings > Users), e.g. "Furniture Marketplace: Manager" -->
+    <record id="res_groups_privilege_marketplace" model="res.groups.privilege">
         <field name="name">Furniture Marketplace</field>
-        <field name="sequence">40</field>
-        <field name="category_id" ref="base.module_category_website"/>
+        <field name="sequence">14</field>
     </record>
 
     <record id="group_marketplace_manager" model="res.groups">
-        <field name="name">Marketplace Manager</field>
-        <field name="privilege_id" ref="res_groups_privilege_furniture_marketplace"/>
+        <field name="name">Manager</field>
+        <field name="privilege_id" ref="res_groups_privilege_marketplace"/>
+        <field name="sequence">10</field>
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Reviews applications and products, monitors custom requests.</field>
     </record>
 
-    <!-- Helper group for manufacturer portal users: hidden from the privilege list. -->
+    <record id="group_marketplace_admin" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="privilege_id" ref="res_groups_privilege_marketplace"/>
+        <field name="sequence">20</field>
+        <field name="implied_ids" eval="[(4, ref('group_marketplace_manager'))]"/>
+        <field name="comment">Full control of the marketplace, including configuration.</field>
+    </record>
+
+    <!-- Hidden helper group (no privilege): granted automatically to approved manufacturers. Own data only. -->
     <record id="group_manufacturer_portal" model="res.groups">
-        <field name="name">Manufacturer Portal User</field>
+        <field name="name">Marketplace: Manufacturer Portal User</field>
         <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="comment">Granted automatically to approved manufacturers. Own data only.</field>
+    </record>
+
+    <!-- Odoo Administrators are marketplace administrators. -->
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_marketplace_admin'))]"/>
     </record>
 </odoo>

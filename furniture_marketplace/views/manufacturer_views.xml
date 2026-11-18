@@ -1,11 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
- <record id="manufacturer_list" model="ir.ui.view"><field name="name">furniture.manufacturer.list</field><field name="model">furniture.manufacturer</field>
-  <field name="arch" type="xml"><list><field name="code"/><field name="name"/><field name="email"/><field name="phone"/><field name="country_id"/><field name="city"/><field name="user_id"/><field name="active"/></list></field></record>
- <record id="manufacturer_form" model="ir.ui.view"><field name="name">furniture.manufacturer.form</field><field name="model">furniture.manufacturer</field>
-  <field name="arch" type="xml"><form><header><button name="action_view_products" type="object" string="Products"/><button name="action_view_requests" type="object" string="Custom Requests"/></header><sheet>
-   <div class="oe_button_box" name="button_box"><button name="action_view_products" type="object" class="oe_stat_button" icon="fa-cubes"><field name="product_count" widget="statinfo" string="Products"/></button><button name="action_view_requests" type="object" class="oe_stat_button" icon="fa-list"><field name="request_count" widget="statinfo" string="Requests"/></button></div>
-   <group><group><field name="name"/><field name="code"/><field name="partner_id"/><field name="user_id"/><field name="approved"/><field name="active"/></group><group><field name="representative"/><field name="email"/><field name="phone"/><field name="workshop_size"/></group></group><group><field name="address"/><field name="country_id"/><field name="city"/><field name="description"/></group>
-   <notebook><page string="Products"><field name="product_ids" readonly="1"/></page><page string="Requests"><field name="request_ids" readonly="1"/></page></notebook>
-  </sheet><chatter/></form></field></record>
- <record id="action_manufacturers" model="ir.actions.act_window"><field name="name">Manufacturers</field><field name="res_model">furniture.manufacturer</field><field name="view_mode">list,form</field></record>
+    <record id="view_manufacturer_list" model="ir.ui.view">
+        <field name="name">furniture.manufacturer.list</field>
+        <field name="model">furniture.manufacturer</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="type_id"/>
+                <field name="representative"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="country_id"/>
+                <field name="city"/>
+                <field name="workshop_size_id"/>
+                <field name="product_count"/>
+                <field name="approved" widget="boolean"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_manufacturer_form" model="ir.ui.view">
+        <field name="name">furniture.manufacturer.form</field>
+        <field name="model">furniture.manufacturer</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_portal_user" type="object" string="Send portal invitation"
+                            invisible="not approved" groups="furniture_marketplace.group_marketplace_manager"/>
+                    <button name="action_suspend" type="object" string="Suspend" invisible="not approved"
+                            groups="furniture_marketplace.group_marketplace_manager"
+                            confirm="Suspending disables the portal login and unpublishes all products. Continue?"/>
+                    <button name="action_activate" type="object" string="Re-activate" class="btn-primary"
+                            invisible="approved" groups="furniture_marketplace.group_marketplace_manager"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_products" type="object" class="oe_stat_button" icon="fa-cubes">
+                            <field name="product_count" widget="statinfo" string="Products"/>
+                        </button>
+                        <button name="action_view_requests" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                            <field name="request_count" widget="statinfo" string="Custom Requests"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Suspended" bg_color="text-bg-danger" invisible="approved"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="representative"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="type_id"/>
+                        </group>
+                        <group>
+                            <field name="country_id"/>
+                            <field name="city"/>
+                            <field name="address"/>
+                            <field name="workshop_size_id"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="application_id" readonly="1"/>
+                            <field name="approved"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description"><field name="description"/></page>
+                        <page string="Products" name="products">
+                            <field name="product_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="list_price"/>
+                                    <field name="marketplace_available_qty"/>
+                                    <field name="marketplace_approval_state" widget="badge"/>
+                                    <field name="website_published"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_manufacturer_search" model="ir.ui.view">
+        <field name="name">furniture.manufacturer.search</field>
+        <field name="model">furniture.manufacturer</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="city"/>
+                <filter name="approved" string="Approved / Active" domain="[('approved', '=', True)]"/>
+                <filter name="suspended" string="Suspended" domain="[('approved', '=', False)]"/>
+                <group>
+                    <filter name="group_type" string="Type" context="{'group_by': 'type_id'}"/>
+                    <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
+                    <filter name="group_size" string="Workshop Size" context="{'group_by': 'workshop_size_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_manufacturer" model="ir.actions.act_window">
+        <field name="name">Manufacturers</field>
+        <field name="res_model">furniture.manufacturer</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_approved': 1}</field>
+    </record>
 </odoo>

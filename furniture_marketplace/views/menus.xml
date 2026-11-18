@@ -1,7 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
- <menuitem id="menu_furniture_root" name="Furniture Marketplace" sequence="35" groups="base.group_user"/>
- <menuitem id="menu_manufacturers" name="Manufacturers" parent="menu_furniture_root" action="action_manufacturers" sequence="10"/>
- <menuitem id="menu_applications" name="Manufacturer Applications" parent="menu_furniture_root" action="action_applications" sequence="20"/>
- <menuitem id="menu_custom_requests" name="Custom Furniture Requests" parent="menu_furniture_root" action="action_custom_requests" sequence="30"/>
- <menuitem id="menu_marketplace_products" name="Products" parent="menu_furniture_root" action="product.product_template_action" sequence="40"/>
+    <!-- Website entry points used by the "Customer View" menu -->
+    <record id="action_url_storefront" model="ir.actions.act_url">
+        <field name="name">Storefront</field>
+        <field name="url">/furniture-marketplace</field>
+        <field name="target">new</field>
+    </record>
+    <record id="action_url_custom_request" model="ir.actions.act_url">
+        <field name="name">Custom Furniture Request</field>
+        <field name="url">/custom-furniture-request</field>
+        <field name="target">new</field>
+    </record>
+    <record id="action_url_cart" model="ir.actions.act_url">
+        <field name="name">Shopping Cart</field>
+        <field name="url">/shop/cart</field>
+        <field name="target">new</field>
+    </record>
+    <record id="action_url_join" model="ir.actions.act_url">
+        <field name="name">Join as a Manufacturer</field>
+        <field name="url">/manufacturer/apply</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_root" name="Furniture Marketplace" sequence="40"
+              web_icon="furniture_marketplace,static/description/icon.png"
+              groups="furniture_marketplace.group_marketplace_manager"/>
+
+    <!-- A. Customer View -->
+    <menuitem id="menu_customer_view" name="Customer View" parent="menu_root" sequence="85"/>
+    <menuitem id="menu_customer_storefront" name="Marketplace Storefront" parent="menu_customer_view"
+              action="action_url_storefront" sequence="10"/>
+    <menuitem id="menu_customer_cart" name="Shopping Cart &amp; Checkout" parent="menu_customer_view"
+              action="action_url_cart" sequence="20"/>
+    <menuitem id="menu_customer_custom_request" name="Custom Furniture Request" parent="menu_customer_view"
+              action="action_url_custom_request" sequence="30"/>
+    <menuitem id="menu_customer_join" name="Join as a Manufacturer" parent="menu_customer_view"
+              action="action_url_join" sequence="40"/>
+
+    <!-- B. Manufacturer -->
+    <menuitem id="menu_manufacturer" name="Manufacturer" parent="menu_root" sequence="20"/>
+    <menuitem id="menu_manufacturer_list" name="Manufacturers" parent="menu_manufacturer"
+              action="action_manufacturer" sequence="10"/>
+    <menuitem id="menu_manufacturer_catalogs" name="Catalog Uploads" parent="menu_manufacturer"
+              action="action_catalog_import" sequence="20"/>
+    <menuitem id="menu_manufacturer_order_lines" name="Order Lines by Manufacturer" parent="menu_manufacturer"
+              action="action_order_lines_by_manufacturer" sequence="30"/>
+
+    <!-- C. Requests -->
+    <menuitem id="menu_requests" name="Requests" parent="menu_root" sequence="30"/>
+    <menuitem id="menu_requests_all" name="All Requests" parent="menu_requests" action="action_application_all" sequence="10"/>
+    <menuitem id="menu_requests_draft" name="Draft" parent="menu_requests" action="action_application_draft" sequence="20"/>
+    <menuitem id="menu_requests_pending" name="Pending Approval" parent="menu_requests" action="action_application_pending" sequence="30"/>
+    <menuitem id="menu_requests_approved" name="Approved" parent="menu_requests" action="action_application_approved" sequence="40"/>
+    <menuitem id="menu_requests_rejected" name="Rejected" parent="menu_requests" action="action_application_rejected" sequence="50"/>
+    <menuitem id="menu_custom_requests" name="Custom Furniture Requests" parent="menu_requests"
+              action="action_custom_request" sequence="90"/>
+
+    <!-- D. Products -->
+    <menuitem id="menu_products" name="Products" parent="menu_root" action="action_marketplace_products" sequence="40"/>
+
+    <!-- E. Configuration (administrators only) -->
+    <menuitem id="menu_configuration" name="Configuration" parent="menu_root" sequence="90"
+              groups="furniture_marketplace.group_marketplace_admin"/>
+    <menuitem id="menu_cfg_manufacturer_types" name="Manufacturer Categories / Types" parent="menu_configuration"
+              action="action_manufacturer_type" sequence="10"/>
+    <menuitem id="menu_cfg_workshop_sizes" name="Workshop Size Options" parent="menu_configuration"
+              action="action_workshop_size" sequence="20"/>
+    <menuitem id="menu_cfg_product_categories" name="Furniture Product Categories" parent="menu_configuration" sequence="30"/>
+    <menuitem id="menu_cfg_internal_categories" name="Internal Categories" parent="menu_cfg_product_categories"
+              action="action_product_category" sequence="10"/>
+    <menuitem id="menu_cfg_website_categories" name="Website Categories" parent="menu_cfg_product_categories"
+              action="action_public_category" sequence="20"/>
+    <menuitem id="menu_cfg_manufacturer_approval" name="Manufacturer Approval Settings" parent="menu_configuration"
+              action="action_settings_manufacturer_approval" sequence="40"/>
+    <menuitem id="menu_cfg_product_approval" name="Product Approval Settings" parent="menu_configuration"
+              action="action_settings_product_approval" sequence="50"/>
+    <menuitem id="menu_cfg_marketplace" name="Marketplace Settings" parent="menu_configuration"
+              action="action_settings_marketplace" sequence="60"/>
+    <menuitem id="menu_cfg_portal" name="Portal Permissions" parent="menu_configuration"
+              action="action_settings_portal" sequence="70"/>
+    <menuitem id="menu_cfg_email" name="Email Templates and Notifications" parent="menu_configuration"
+              action="action_email_templates" sequence="80"/>
+    <menuitem id="menu_cfg_groups" name="Security Groups and Access Rights" parent="menu_configuration"
+              action="action_marketplace_groups" sequence="90"/>
 </odoo>

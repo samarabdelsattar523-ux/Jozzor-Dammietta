@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="manufacturer_nav" name="Manufacturer portal navigation">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <a href="/my/manufacturer" class="btn btn-outline-primary btn-sm">Dashboard</a>
+            <a t-if="cfg.portal_allow_product_create" href="/my/manufacturer/product/new" class="btn btn-outline-primary btn-sm">New product</a>
+            <a t-if="cfg.portal_allow_catalog_upload" href="/my/manufacturer/catalog" class="btn btn-outline-primary btn-sm">Upload catalog</a>
+            <a t-if="cfg.portal_allow_profile_edit" href="/my/manufacturer/profile" class="btn btn-outline-primary btn-sm">Company profile</a>
+        </div>
+    </template>
+
+    <template id="manufacturer_dashboard" name="Manufacturer Dashboard">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3">
+                <h2><t t-out="maker.name"/> - Manufacturer Portal</h2>
+                <t t-call="furniture_marketplace.manufacturer_nav"/>
+                <div t-if="notice" class="alert alert-success" t-out="notice"/>
+                <div t-if="error" class="alert alert-warning" t-out="error"/>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4"><div class="card"><div class="card-body text-center">
+                        <div class="display-6" t-out="len(products)"/><div class="text-muted">Products</div></div></div></div>
+                    <div class="col-md-4"><div class="card"><div class="card-body text-center">
+                        <div class="display-6" t-out="pending_count"/><div class="text-muted">Pending approval</div></div></div></div>
+                    <div class="col-md-4"><div class="card"><div class="card-body text-center">
+                        <div class="display-6" t-out="len(requests)"/><div class="text-muted">Custom requests</div></div></div></div>
+                </div>
+
+                <h4>My products</h4>
+                <div t-if="not products" class="alert alert-info">No products yet. Upload a catalog or create a product.</div>
+                <div class="table-responsive" t-if="products">
+                    <table class="table table-sm align-middle">
+                        <thead><tr><th>Product</th><th class="text-end">Price</th><th class="text-end">Available</th><th>Approval</th><th>Published</th><th/></tr></thead>
+                        <tbody>
+                            <t t-foreach="products" t-as="p">
+                                <tr>
+                                    <td t-out="p.name"/>
+                                    <td class="text-end"><span t-field="p.list_price" t-options='{"widget": "monetary", "display_currency": p.currency_id}'/></td>
+                                    <td class="text-end" t-out="int(p.marketplace_available_qty)"/>
+                                    <td>
+                                        <span t-if="p.marketplace_approval_state == 'approved'" class="badge text-bg-success">Approved</span>
+                                        <span t-elif="p.marketplace_approval_state == 'rejected'" class="badge text-bg-danger" t-att-title="p.marketplace_rejection_reason">Rejected</span>
+                                        <span t-elif="p.marketplace_approval_state == 'pending'" class="badge text-bg-warning">Pending</span>
+                                        <span t-else="" class="badge text-bg-secondary">Draft</span>
+                                    </td>
+                                    <td><i t-if="p.website_published" class="fa fa-check text-success"/><i t-else="" class="fa fa-minus text-muted"/></td>
+                                    <td class="text-end">
+                                        <a t-if="cfg.portal_allow_product_create" t-attf-href="/my/manufacturer/product/#{p.id}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                        <form t-if="p.marketplace_approval_state in ('not_required', 'rejected')" t-attf-action="/my/manufacturer/product/#{p.id}/submit" method="post" class="d-inline">
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                            <button type="submit" class="btn btn-sm btn-primary">Submit for approval</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 class="mt-4">Custom manufacturing requests</h4>
+                <div t-if="not requests" class="text-muted mb-3">No requests assigned to you.</div>
+                <div class="table-responsive" t-if="requests">
+                    <table class="table table-sm">
+                        <thead><tr><th>Reference</th><th>Title</th><th>Date</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <t t-foreach="requests" t-as="r">
+                                <tr>
+                                    <td><a t-attf-href="/my/manufacturer/request/#{r.id}" t-out="r.name"/></td>
+                                    <td t-out="r.title"/><td t-out="r.request_date"/>
+                                    <td><span class="badge text-bg-secondary" t-out="r.state_label()"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 class="mt-4" t-if="imports">Recent catalog uploads</h4>
+                <ul t-if="imports">
+                    <t t-foreach="imports" t-as="i">
+                        <li><a t-attf-href="/my/manufacturer/catalog/#{i.id}"><t t-out="i.name"/></a> - <t t-out="i.line_count"/> products (<t t-out="i.state"/>)</li>
+                    </t>
+                </ul>
+            </div>
+        </t>
+    </template>
+
+    <template id="manufacturer_profile" name="Manufacturer Profile">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3" style="max-width: 800px;">
+                <h2>Company profile</h2>
+                <t t-call="furniture_marketplace.manufacturer_nav"/>
+                <div t-if="errors" class="alert alert-danger"><ul class="mb-0"><t t-foreach="errors" t-as="e"><li t-out="e"/></t></ul></div>
+                <p class="text-muted">The name and e-mail can only be changed by the platform team.</p>
+                <form action="/my/manufacturer/profile" method="post" class="row g-3">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="col-md-6"><label class="form-label">Workshop name</label><input type="text" class="form-control" t-att-value="maker.name" disabled="disabled"/></div>
+                    <div class="col-md-6"><label class="form-label">E-mail</label><input type="text" class="form-control" t-att-value="maker.email" disabled="disabled"/></div>
+                    <div class="col-md-6"><label class="form-label" for="representative">Representative</label><input type="text" id="representative" name="representative" class="form-control" t-att-value="maker.representative"/></div>
+                    <div class="col-md-6"><label class="form-label" for="phone">Mobile number *</label><input type="tel" id="phone" name="phone" class="form-control" required="required" t-att-value="maker.phone"/></div>
+                    <div class="col-12"><label class="form-label" for="address">Detailed address *</label><textarea id="address" name="address" class="form-control" rows="2" required="required" t-out="maker.address"/></div>
+                    <div class="col-md-6"><label class="form-label" for="city">City *</label><input type="text" id="city" name="city" class="form-control" required="required" t-att-value="maker.city"/></div>
+                    <div class="col-md-6"><label class="form-label" for="country_id">Country *</label>
+                        <select id="country_id" name="country_id" class="form-select" required="required">
+                            <t t-foreach="countries" t-as="c"><option t-att-value="c.id" t-att-selected="'selected' if maker.country_id == c else None" t-out="c.name"/></t>
+                        </select></div>
+                    <div class="col-12"><label class="form-label" for="description">Workshop description</label><textarea id="description" name="description" class="form-control" rows="3" t-out="maker.description"/></div>
+                    <div class="col-12"><button type="submit" class="btn btn-primary">Save</button></div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="manufacturer_product_form" name="Manufacturer Product Form">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3" style="max-width: 800px;">
+                <h2><t t-if="product">Edit product</t><t t-else="">New product</t></h2>
+                <t t-call="furniture_marketplace.manufacturer_nav"/>
+                <div t-if="errors" class="alert alert-danger"><ul class="mb-0"><t t-foreach="errors" t-as="e"><li t-out="e"/></t></ul></div>
+                <div class="alert alert-info">Saving sends the product to the platform for approval; it is hidden from customers until approved.</div>
+                <form action="/my/manufacturer/product/save" method="post" enctype="multipart/form-data" class="row g-3">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="product_id" t-att-value="product.id if product else ''"/>
+                    <div class="col-12"><label class="form-label" for="name">Product name *</label>
+                        <input type="text" id="name" name="name" class="form-control" required="required" t-att-value="post.get('name') or (product.name if product else '')"/></div>
+                    <div class="col-md-6"><label class="form-label" for="price">Selling price *</label>
+                        <input type="number" step="0.01" min="0" id="price" name="price" class="form-control" required="required" t-att-value="post.get('price') or (product.list_price if product else '')"/></div>
+                    <div class="col-md-6" t-if="cfg.portal_allow_stock_update"><label class="form-label" for="quantity">Available quantity</label>
+                        <input type="number" step="1" min="0" id="quantity" name="quantity" class="form-control" t-att-value="post.get('quantity') or (int(product.marketplace_available_qty) if product else '')"/></div>
+                    <div class="col-md-6"><label class="form-label" for="public_categ_id">Website category *</label>
+                        <select id="public_categ_id" name="public_categ_id" class="form-select" required="required">
+                            <option value="">Select...</option>
+                            <t t-foreach="public_categories" t-as="c">
+                                <option t-att-value="c.id" t-att-selected="'selected' if (str(c.id) == str(post.get('public_categ_id')) or (product and c in product.public_categ_ids)) else None" t-out="c.display_name"/>
+                            </t>
+                        </select></div>
+                    <div class="col-md-6"><label class="form-label" for="categ_id">Internal category</label>
+                        <select id="categ_id" name="categ_id" class="form-select">
+                            <option value="">(same as website category)</option>
+                            <t t-foreach="categories" t-as="c">
+                                <option t-att-value="c.id" t-att-selected="'selected' if (str(c.id) == str(post.get('categ_id')) or (product and product.categ_id == c)) else None" t-out="c.display_name"/>
+                            </t>
+                        </select></div>
+                    <div class="col-12"><label class="form-label" for="description">Description</label>
+                        <textarea id="description" name="description" rows="4" class="form-control" t-out="post.get('description') or (product.description_sale if product else '')"/></div>
+                    <div class="col-12"><label class="form-label" for="specifications">Specifications</label>
+                        <textarea id="specifications" name="specifications" rows="3" class="form-control" placeholder="Material: Oak; Color: Walnut; Dimensions: 180x90x75 cm"
+                                  t-out="post.get('specifications') or (product.marketplace_specifications if product else '')"/></div>
+                    <div class="col-md-6"><label class="form-label" for="image">Main image</label>
+                        <input type="file" id="image" name="image" class="form-control" accept=".png,.jpg,.jpeg,.gif,.webp"/></div>
+                    <div class="col-md-6"><label class="form-label" for="extra_images">Additional images</label>
+                        <input type="file" id="extra_images" name="extra_images" class="form-control" accept=".png,.jpg,.jpeg,.gif,.webp" multiple="multiple"/></div>
+                    <div class="col-12"><button type="submit" class="btn btn-primary">Save and submit for approval</button>
+                        <a href="/my/manufacturer" class="btn btn-outline-secondary">Cancel</a></div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="manufacturer_catalog_upload" name="Manufacturer Catalog Upload">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3" style="max-width: 800px;">
+                <h2>Upload product catalog</h2>
+                <t t-call="furniture_marketplace.manufacturer_nav"/>
+                <div t-if="errors" class="alert alert-danger">
+                    <strong>The file has problems - nothing was imported:</strong>
+                    <ul class="mb-0"><t t-foreach="errors" t-as="e"><li t-out="e"/></t></ul>
+                </div>
+                <p>Download the template, fill it in, then upload it. You can review every row before the products are created.</p>
+                <p>
+                    <a href="/furniture_marketplace/static/src/files/catalog_template.xlsx" download="" class="btn btn-outline-secondary btn-sm">Excel template</a>
+                    <a href="/furniture_marketplace/static/src/files/catalog_template.csv" download="" class="btn btn-outline-secondary btn-sm">CSV template</a>
+                </p>
+                <form action="/my/manufacturer/catalog/validate" method="post" enctype="multipart/form-data" class="row g-3">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="col-12"><label class="form-label" for="catalog">Catalog file (.xlsx / .csv) *</label>
+                        <input type="file" id="catalog" name="catalog" class="form-control" accept=".csv,.xlsx" required="required"/></div>
+                    <div class="col-12"><label class="form-label" for="images">Product images (when the catalog references file names)</label>
+                        <input type="file" id="images" name="images" class="form-control" accept=".png,.jpg,.jpeg,.gif,.webp" multiple="multiple"/></div>
+                    <div class="col-12"><button type="submit" class="btn btn-primary">Validate and review</button></div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="manufacturer_catalog_review" name="Manufacturer Catalog Review">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3">
+                <h2>Review catalog: <t t-out="imp.name"/></h2>
+                <t t-call="furniture_marketplace.manufacturer_nav"/>
+                <div t-if="imp.state == 'draft'" class="alert alert-success"><t t-out="imp.line_count"/> product(s) are valid. Confirm to create them; they will be submitted for platform approval.</div>
+                <div t-else="" class="alert alert-info">This catalog was already imported (<t t-out="imp.imported_count"/> created, <t t-out="imp.error_count"/> failed).</div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead><tr><th>#</th><th>Product</th><th>Category</th><th class="text-end">Price</th><th class="text-end">Qty</th><th>Image</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <t t-foreach="imp.line_ids" t-as="l">
+                                <tr>
+                                    <td t-out="l.sequence"/><td t-out="l.product_name"/><td t-out="l.category"/>
+                                    <td class="text-end" t-out="'%.2f' % l.price"/><td class="text-end" t-out="int(l.quantity)"/>
+                                    <td t-out="l.image_ref"/>
+                                    <td><span t-out="l.import_state"/> <small class="text-danger" t-out="l.error_message"/> <small class="text-warning" t-out="l.warning"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+                <form t-if="imp.state == 'draft'" t-attf-action="/my/manufacturer/catalog/#{imp.id}/confirm" method="post" class="d-flex gap-2">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <button type="submit" class="btn btn-primary">Confirm and import</button>
+                    <a href="/my/manufacturer/catalog" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="manufacturer_request_detail" name="Manufacturer: custom request">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3">
+                <a href="/my/manufacturer">&#8592; Dashboard</a>
+                <h2 class="mt-2"><t t-out="req.name"/> - <t t-out="req.title"/></h2>
+                <p><span class="badge text-bg-primary fs-6" t-out="req.state_label()"/></p>
+                <div class="row">
+                    <div class="col-md-5 mb-3"><img class="img-fluid rounded border" t-att-src="'/web/image/furniture.custom.request/%s/reference_image' % req.id" alt="Reference image"/></div>
+                    <div class="col-md-7">
+                        <dl class="row">
+                            <dt class="col-sm-4">Customer</dt><dd class="col-sm-8"><t t-out="req.partner_id.name"/> · <t t-out="req.customer_email"/> <t t-if="req.customer_phone">· <t t-out="req.customer_phone"/></t></dd>
+                            <dt class="col-sm-4">Request date</dt><dd class="col-sm-8" t-out="req.request_date"/>
+                            <dt class="col-sm-4">Description</dt><dd class="col-sm-8" style="white-space: pre-wrap;" t-out="req.description"/>
+                            <dt class="col-sm-4" t-if="req.notes">Notes</dt><dd class="col-sm-8" t-if="req.notes" style="white-space: pre-wrap;" t-out="req.notes"/>
+                            <dt class="col-sm-4" t-if="req.agreed_price">Agreed price</dt>
+                            <dd class="col-sm-8" t-if="req.agreed_price"><span t-field="req.agreed_price" t-options='{"widget": "monetary", "display_currency": req.currency_id}'/></dd>
+                        </dl>
+                        <t t-if="cfg.portal_allow_request_review">
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                <t t-foreach="[('review', 'Start review', ('submitted',)), ('accept', 'Accept', ('submitted', 'under_review')), ('start_production', 'Start production', ('confirmed',)), ('complete', 'Mark completed', ('in_production',))]" t-as="a">
+                                    <form t-if="req.state in a[2]" t-attf-action="/my/manufacturer/request/#{req.id}/#{a[0]}" method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button type="submit" class="btn btn-primary btn-sm" t-out="a[1]"/>
+                                    </form>
+                                </t>
+                            </div>
+                            <form t-if="req.state in ('submitted', 'under_review')" t-attf-action="/my/manufacturer/request/#{req.id}/reject" method="post" class="d-flex gap-2">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="text" name="reason" class="form-control form-control-sm" placeholder="Reason for rejection" required="required"/>
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                            </form>
+                            <p class="text-muted small mt-2">Quotations and pricing are handled by the platform team once you accept the request.</p>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

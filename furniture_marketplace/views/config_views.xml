@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Workshop sizes -->
+    <record id="view_workshop_size_list" model="ir.ui.view">
+        <field name="name">furniture.workshop.size.list</field>
+        <field name="model">furniture.workshop.size</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="action_workshop_size" model="ir.actions.act_window">
+        <field name="name">Workshop Sizes</field>
+        <field name="res_model">furniture.workshop.size</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Manufacturer types -->
+    <record id="view_manufacturer_type_list" model="ir.ui.view">
+        <field name="name">furniture.manufacturer.type.list</field>
+        <field name="model">furniture.manufacturer.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="action_manufacturer_type" model="ir.actions.act_window">
+        <field name="name">Manufacturer Categories / Types</field>
+        <field name="res_model">furniture.manufacturer.type</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Settings (4 focused forms on the same single record) -->
+    <record id="view_settings_marketplace" model="ir.ui.view">
+        <field name="name">furniture.marketplace.settings.marketplace</field>
+        <field name="model">furniture.marketplace.settings</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false" string="Marketplace Settings">
+                <sheet>
+                    <h2>Marketplace Settings</h2>
+                    <group><field name="products_per_page"/></group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_settings_manufacturer_approval" model="ir.ui.view">
+        <field name="name">furniture.marketplace.settings.manufacturer.approval</field>
+        <field name="model">furniture.marketplace.settings</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false" string="Manufacturer Approval Settings">
+                <sheet>
+                    <h2>Manufacturer Approval Settings</h2>
+                    <group>
+                        <field name="notify_email" placeholder="procurement@yourcompany.com"/>
+                        <field name="auto_import_catalog"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_settings_product_approval" model="ir.ui.view">
+        <field name="name">furniture.marketplace.settings.product.approval</field>
+        <field name="model">furniture.marketplace.settings</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false" string="Product Approval Settings">
+                <sheet>
+                    <h2>Product Approval Settings</h2>
+                    <group>
+                        <field name="auto_publish_on_approval"/>
+                        <field name="catalog_max_rows"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_settings_portal" model="ir.ui.view">
+        <field name="name">furniture.marketplace.settings.portal</field>
+        <field name="model">furniture.marketplace.settings</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false" string="Portal Permissions">
+                <sheet>
+                    <h2>Customer and Manufacturer Portal Permissions</h2>
+                    <group string="Manufacturers">
+                        <field name="portal_allow_profile_edit"/>
+                        <field name="portal_allow_product_create"/>
+                        <field name="portal_allow_catalog_upload"/>
+                        <field name="portal_allow_stock_update"/>
+                        <field name="portal_allow_request_review"/>
+                    </group>
+                    <group string="Customers">
+                        <field name="customer_allow_request_cancel"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_settings_marketplace" model="ir.actions.act_window">
+        <field name="name">Marketplace Settings</field>
+        <field name="res_model">furniture.marketplace.settings</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="settings_default"/>
+        <field name="view_id" ref="view_settings_marketplace"/>
+    </record>
+    <record id="action_settings_manufacturer_approval" model="ir.actions.act_window">
+        <field name="name">Manufacturer Approval Settings</field>
+        <field name="res_model">furniture.marketplace.settings</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="settings_default"/>
+        <field name="view_id" ref="view_settings_manufacturer_approval"/>
+    </record>
+    <record id="action_settings_product_approval" model="ir.actions.act_window">
+        <field name="name">Product Approval Settings</field>
+        <field name="res_model">furniture.marketplace.settings</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="settings_default"/>
+        <field name="view_id" ref="view_settings_product_approval"/>
+    </record>
+    <record id="action_settings_portal" model="ir.actions.act_window">
+        <field name="name">Portal Permissions</field>
+        <field name="res_model">furniture.marketplace.settings</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="settings_default"/>
+        <field name="view_id" ref="view_settings_portal"/>
+    </record>
+
+    <!-- Reuse standard models for categories / templates / groups -->
+    <record id="action_product_category" model="ir.actions.act_window">
+        <field name="name">Furniture Product Categories (internal)</field>
+        <field name="res_model">product.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_public_category" model="ir.actions.act_window">
+        <field name="name">Website Furniture Categories</field>
+        <field name="res_model">product.public.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_email_templates" model="ir.actions.act_window">
+        <field name="name">Email Templates and Notifications</field>
+        <field name="res_model">mail.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('model', 'in', ['furniture.manufacturer.application', 'furniture.custom.request'])]</field>
+    </record>
+    <record id="action_marketplace_groups" model="ir.actions.act_window">
+        <field name="name">Security Groups and Access Rights</field>
+        <field name="res_model">res.groups</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('name', 'ilike', 'Marketplace')]</field>
+    </record>
+
+    <!-- Rejection wizard -->
+    <record id="view_reject_wizard_form" model="ir.ui.view">
+        <field name="name">furniture.reject.wizard.form</field>
+        <field name="model">furniture.reject.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="res_model" invisible="1"/>
+                    <field name="res_id" invisible="1"/>
+                    <field name="reason" placeholder="Explain why this is rejected - the applicant/customer is notified."/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Reject" class="btn-danger" data-hotkey="q"/>
+                    <button string="Cancel" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

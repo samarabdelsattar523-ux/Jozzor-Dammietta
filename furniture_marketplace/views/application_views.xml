@@ -5,7 +5,7 @@
         <field name="model">furniture.manufacturer.application</field>
         <field name="arch" type="xml">
             <list decoration-success="state == 'approved'" decoration-danger="state == 'rejected'"
-                  decoration-warning="state == 'submitted'">
+                  decoration-warning="state in ('submitted', 'more_info')">
                 <field name="name"/>
                 <field name="manufacturer_name"/>
                 <field name="representative"/>
@@ -30,8 +30,10 @@
                     <button name="action_approve" type="object" string="Approve" class="btn-primary"
                             invisible="state != 'submitted'" groups="furniture_marketplace.group_marketplace_manager"
                             confirm="Approving creates the contact, the portal user and sends the invitation. Continue?"/>
+                    <button name="action_request_info" type="object" string="Request More Information"
+                            invisible="state != 'submitted'" groups="furniture_marketplace.group_marketplace_manager"/>
                     <button name="action_reject" type="object" string="Reject"
-                            invisible="state not in ('submitted', 'draft')" groups="furniture_marketplace.group_marketplace_manager"/>
+                            invisible="state not in ('submitted', 'draft', 'more_info')" groups="furniture_marketplace.group_marketplace_manager"/>
                     <button name="action_reset_draft" type="object" string="Reset to Draft"
                             invisible="state != 'rejected'" groups="furniture_marketplace.group_marketplace_manager"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved"/>
@@ -56,6 +58,23 @@
                     </group>
                     <group invisible="state != 'rejected'">
                         <field name="rejection_reason"/>
+                    </group>
+                    <group invisible="not info_request">
+                        <field name="info_request"/>
+                    </group>
+                    <group>
+                        <group string="Legal">
+                            <field name="legal_name"/>
+                            <field name="commercial_registration"/>
+                            <field name="tax_id"/>
+                            <field name="terms_accepted"/>
+                            <field name="accuracy_declared"/>
+                        </group>
+                        <group string="Banking (restricted)" groups="furniture_marketplace.group_marketplace_manager">
+                            <field name="bank_name"/>
+                            <field name="bank_account_holder"/>
+                            <field name="bank_iban"/>
+                        </group>
                     </group>
                     <group invisible="not manufacturer_id">
                         <field name="manufacturer_id"/>

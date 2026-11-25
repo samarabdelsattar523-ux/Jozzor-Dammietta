@@ -107,7 +107,7 @@
                                             <span t-if="status == 'out_of_stock'" class="badge text-bg-danger">Out of stock</span>
                                             <span t-elif="status == 'low_stock'" class="badge text-bg-warning">Low stock</span>
                                             <span t-else="" class="badge text-bg-success">In stock</span>
-                                            <span t-if="status != 'unlimited'" class="ms-1">Available: <t t-out="int(product.marketplace_available_qty)"/></span>
+                                            <span t-if="status != 'unlimited' and product.marketplace_show_exact_qty()" class="ms-1">Available: <t t-out="int(product.marketplace_available_qty)"/></span>
                                         </div>
                                         <div class="mt-auto">
                                             <form t-if="status != 'out_of_stock' and product.product_variant_count == 1" action="/shop/cart/update" method="post">
@@ -157,7 +157,7 @@
                             <span t-if="fm_status == 'out_of_stock'" class="badge text-bg-danger">Out of stock</span>
                             <span t-elif="fm_status == 'low_stock'" class="badge text-bg-warning">Low stock</span>
                             <span t-else="" class="badge text-bg-success">In stock</span>
-                            <span t-if="fm_status != 'unlimited'" class="ms-2">Available quantity: <strong t-out="int(product.marketplace_available_qty)"/></span>
+                            <span t-if="fm_status != 'unlimited' and product.marketplace_show_exact_qty()" class="ms-2">Available quantity: <strong t-out="int(product.marketplace_available_qty)"/></span>
                         </p>
                         <t t-if="product.marketplace_specifications">
                             <h6 class="mt-3">Specifications</h6>
@@ -232,6 +232,31 @@
                                 </t>
                             </select>
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="legal_name">Legal / Company Name</label>
+                            <input type="text" id="legal_name" name="legal_name" class="form-control" t-att-value="values.get('legal_name')"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="commercial_registration">Commercial Registration No.</label>
+                            <input type="text" id="commercial_registration" name="commercial_registration" class="form-control" t-att-value="values.get('commercial_registration')"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="tax_id">Tax ID</label>
+                            <input type="text" id="tax_id" name="tax_id" class="form-control" t-att-value="values.get('tax_id')"/>
+                        </div>
+                        <div class="col-12"><h6 class="mt-2 mb-0">Banking details (optional, only visible to the platform team)</h6></div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="bank_name">Bank Name</label>
+                            <input type="text" id="bank_name" name="bank_name" class="form-control" t-att-value="values.get('bank_name')"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="bank_account_holder">Account Holder</label>
+                            <input type="text" id="bank_account_holder" name="bank_account_holder" class="form-control" t-att-value="values.get('bank_account_holder')"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="bank_iban">IBAN / Account No.</label>
+                            <input type="text" id="bank_iban" name="bank_iban" class="form-control" t-att-value="values.get('bank_iban')"/>
+                        </div>
                         <div class="col-12">
                             <label class="form-label" for="description">Workshop Description</label>
                             <textarea id="description" name="description" class="form-control" rows="3" t-out="(values.get('description')) or ''"/>
@@ -254,6 +279,16 @@
                         <div class="col-12">
                             <label class="form-label" for="documents">Additional Documents</label>
                             <input type="file" id="documents" name="documents" class="form-control" multiple="multiple"/>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms_accepted" name="terms_accepted" required="required" t-att-checked="'checked' if values.get('terms_accepted') else None"/>
+                                <label class="form-check-label" for="terms_accepted">I accept the marketplace terms and conditions *</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="accuracy_declared" name="accuracy_declared" required="required" t-att-checked="'checked' if values.get('accuracy_declared') else None"/>
+                                <label class="form-check-label" for="accuracy_declared">I declare that the information and documents provided are accurate *</label>
+                            </div>
                         </div>
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary btn-lg">Validate and Review</button>
@@ -338,9 +373,30 @@
                             <label class="form-label" for="title">Request Title *</label>
                             <input type="text" id="title" name="title" class="form-control" required="required" t-att-value="values.get('title')"/>
                         </div>
+                        <div class="col-md-8">
+                            <label class="form-label" for="public_categ_id">Furniture Category *</label>
+                            <select id="public_categ_id" name="public_categ_id" class="form-select" required="required">
+                                <option value="">Select...</option>
+                                <t t-foreach="categories" t-as="c">
+                                    <option t-att-value="c.id" t-att-selected="'selected' if str(c.id) == str(values.get('public_categ_id')) else None" t-out="c.display_name"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="quantity">Quantity *</label>
+                            <input type="number" min="1" step="1" id="quantity" name="quantity" class="form-control" required="required" t-att-value="values.get('quantity')"/>
+                        </div>
                         <div class="col-12">
                             <label class="form-label" for="description">Furniture Description *</label>
                             <textarea id="description" name="description" rows="4" class="form-control" required="required" t-out="(values.get('description')) or ''"/>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Dimensions (cm, optional)</label>
+                            <div class="row g-2">
+                                <div class="col-4"><input type="number" min="0" step="any" name="length_cm" class="form-control" placeholder="Length" t-att-value="values.get('length_cm')"/></div>
+                                <div class="col-4"><input type="number" min="0" step="any" name="width_cm" class="form-control" placeholder="Width" t-att-value="values.get('width_cm')"/></div>
+                                <div class="col-4"><input type="number" min="0" step="any" name="height_cm" class="form-control" placeholder="Height" t-att-value="values.get('height_cm')"/></div>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="reference_image">Reference Image *</label>
@@ -354,6 +410,10 @@
                                     <option t-att-value="m.id" t-att-selected="'selected' if str(m.id) == str(values.get('manufacturer_id')) else None" t-out="m.name"/>
                                 </t>
                             </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="delivery_address">Delivery Location</label>
+                            <textarea id="delivery_address" name="delivery_address" rows="2" class="form-control" t-out="(values.get('delivery_address')) or ''"/>
                         </div>
                         <div class="col-12">
                             <label class="form-label" for="notes">Additional Notes</label>
@@ -405,13 +465,36 @@
                     <div class="col-md-7">
                         <dl class="row">
                             <dt class="col-sm-4">Manufacturer</dt><dd class="col-sm-8" t-out="req.manufacturer_id.name"/>
+                            <dt class="col-sm-4" t-if="req.public_categ_id">Category</dt><dd class="col-sm-8" t-if="req.public_categ_id" t-out="req.public_categ_id.display_name"/>
+                            <dt class="col-sm-4">Quantity</dt><dd class="col-sm-8" t-out="req.quantity"/>
+                            <dt class="col-sm-4" t-if="req.dimensions_label()">Dimensions</dt><dd class="col-sm-8" t-if="req.dimensions_label()" t-out="req.dimensions_label()"/>
+                            <dt class="col-sm-4" t-if="req.delivery_address">Delivery location</dt><dd class="col-sm-8" t-if="req.delivery_address" style="white-space: pre-wrap;" t-out="req.delivery_address"/>
                             <dt class="col-sm-4">Request date</dt><dd class="col-sm-8" t-out="req.request_date or ''"/>
                             <dt class="col-sm-4">Description</dt><dd class="col-sm-8" style="white-space: pre-wrap;" t-out="req.description"/>
                             <dt class="col-sm-4" t-if="req.notes">Notes</dt><dd class="col-sm-8" t-if="req.notes" style="white-space: pre-wrap;" t-out="req.notes"/>
                             <dt class="col-sm-4" t-if="req.rejection_reason">Rejection reason</dt><dd class="col-sm-8" t-if="req.rejection_reason" t-out="req.rejection_reason"/>
-                            <dt class="col-sm-4" t-if="req.agreed_price">Agreed price</dt>
+                            <dt class="col-sm-4" t-if="req.agreed_price">Unit price</dt>
                             <dd class="col-sm-8" t-if="req.agreed_price"><span t-field="req.agreed_price" t-options='{"widget": "monetary", "display_currency": req.currency_id}'/></dd>
+                            <dt class="col-sm-4" t-if="req.agreed_price">Total</dt>
+                            <dd class="col-sm-8" t-if="req.agreed_price"><span t-field="req.amount_total" t-options='{"widget": "monetary", "display_currency": req.currency_id}'/></dd>
+                            <dt class="col-sm-4" t-if="req.lead_time_days">Lead time</dt><dd class="col-sm-8" t-if="req.lead_time_days"><t t-out="req.lead_time_days"/> days</dd>
+                            <dt class="col-sm-4" t-if="req.commercial_terms">Terms</dt><dd class="col-sm-8" t-if="req.commercial_terms" style="white-space: pre-wrap;" t-out="req.commercial_terms"/>
                         </dl>
+                        <div t-if="req.state == 'quoted'" class="card border-primary mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">The manufacturer sent you a quotation</h5>
+                                <p class="text-muted small">Accepting creates an order you can confirm and pay. Production starts only after that.</p>
+                                <form t-attf-action="/my/furniture-requests/#{req.id}/accept" method="post" class="d-inline">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-success">Accept quotation</button>
+                                </form>
+                                <form t-attf-action="/my/furniture-requests/#{req.id}/decline" method="post" class="d-flex gap-2 mt-2">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="text" name="reason" class="form-control" placeholder="Reason (optional)"/>
+                                    <button type="submit" class="btn btn-outline-danger">Decline</button>
+                                </form>
+                            </div>
+                        </div>
                         <a t-if="order_url" t-att-href="order_url" class="btn btn-primary">View quotation / order</a>
                         <form t-if="can_cancel" t-attf-action="/my/furniture-requests/#{req.id}/cancel" method="post" class="d-inline">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
@@ -419,6 +502,53 @@
                         </form>
                     </div>
                 </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Customer order page: fulfilment status per manufacturer -->
+    <template id="sale_order_portal_allocations" inherit_id="sale.sale_order_portal_content" name="Marketplace: fulfilment per manufacturer">
+        <xpath expr="//section[@id='details']" position="before">
+            <t t-set="fm_allocations" t-value="sale_order.sudo().allocation_ids"/>
+            <div t-if="fm_allocations" class="p-3 border-start border-end">
+                <h5 class="mb-2">Fulfilment by manufacturer</h5>
+                <ul class="list-unstyled mb-0">
+                    <li t-foreach="fm_allocations" t-as="a" class="d-flex justify-content-between">
+                        <span><i class="fa fa-industry me-1"/><t t-out="a.manufacturer_id.name"/></span>
+                        <span class="badge text-bg-light border" t-out="a.state_label()"/>
+                    </li>
+                </ul>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="manufacturer_apply_update" name="Application: send requested information">
+        <t t-call="website.layout">
+            <div id="wrap" class="furniture_marketplace">
+                <section class="container py-4" style="max-width: 800px;">
+                    <h1>Application <t t-out="application.name"/></h1>
+                    <t t-if="done">
+                        <div class="alert alert-success">Thank you, your answer was sent. Your application is pending approval again.</div>
+                    </t>
+                    <t t-else="">
+                        <div class="alert alert-warning">
+                            <strong>The platform team needs more information:</strong>
+                            <div style="white-space: pre-wrap;" t-out="application.info_request or ''"/>
+                        </div>
+                        <form t-attf-action="/manufacturer/apply/update/#{application.id}/#{application.access_token}" method="post" enctype="multipart/form-data" class="row g-3">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="col-12">
+                                <label class="form-label" for="reply">Your answer *</label>
+                                <textarea id="reply" name="reply" rows="4" class="form-control" required="required"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label" for="documents">Documents</label>
+                                <input type="file" id="documents" name="documents" class="form-control" multiple="multiple"/>
+                            </div>
+                            <div class="col-12"><button type="submit" class="btn btn-primary btn-lg">Send and resubmit</button></div>
+                        </form>
+                    </t>
+                </section>
             </div>
         </t>
     </template>

@@ -27,9 +27,19 @@ class FurnitureManufacturerApplication(models.Model):
     city = fields.Char(required=True)
     workshop_size_id = fields.Many2one('furniture.workshop.size', 'Workshop Size', required=True)
     description = fields.Text('Workshop Description')
+    legal_name = fields.Char('Legal / Company Name')
+    commercial_registration = fields.Char('Commercial Registration No.')
+    tax_id = fields.Char('Tax ID')
+    # banking data: platform managers only (spec 7.2 / 12)
+    bank_name = fields.Char(groups='furniture_marketplace.group_marketplace_manager')
+    bank_account_holder = fields.Char('Account Holder', groups='furniture_marketplace.group_marketplace_manager')
+    bank_iban = fields.Char('IBAN / Account No.', groups='furniture_marketplace.group_marketplace_manager')
+    terms_accepted = fields.Boolean('Accepted Marketplace Terms', readonly=True)
+    accuracy_declared = fields.Boolean('Declared Information Accurate', readonly=True)
+    info_request = fields.Text('Information Requested', tracking=True, copy=False)
     registration_date = fields.Date(default=fields.Date.context_today, readonly=True)
     state = fields.Selection([
-        ('draft', 'Draft'), ('submitted', 'Pending Approval'),
+        ('draft', 'Draft'), ('submitted', 'Pending Approval'), ('more_info', 'More Information Required'),
         ('approved', 'Approved'), ('rejected', 'Rejected')],
         default='draft', required=True, tracking=True, copy=False)
     rejection_reason = fields.Text(copy=False, tracking=True)
@@ -87,6 +97,36 @@ class FurnitureManufacturerApplication(models.Model):
             rec._send_template('mail_application_received')
             rec._notify_internal()
 
+    def action_request_info(self):
+        check_marketplace_manager(self.env)
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window', 'name': self.env._('Request More Information'),
+            'res_model': 'furniture.reject.wizard', 'view_mode': 'form', 'target': 'new',
+            'context': {'default_res_model': self._name, 'default_res_id': self.id, 'default_mode': 'info'},
+        }
+
+    def _do_request_info(self, message):
+        check_marketplace_manager(self.env)
+        for rec in self.filtered(lambda r: r.state == 'submitted'):
+            rec.write({'state': 'more_info', 'info_request': message,
+                       'reviewed_by': self.env.user.id, 'reviewed_on': fields.Datetime.now()})
+            rec._send_template('mail_application_more_info')
+
+    def update_url(self):
+        self.ensure_one()
+        return '%s/manufacturer/apply/update/%s/%s' % (self.get_base_url(), self.id, self.access_token)
+
+    def _resubmit(self, reply, attachments):
+        """Applicant answered the information request from the website."""
+        self.ensure_one()
+        if attachments:
+            self.write({'document_ids': [(4, att.id) for att in attachments]})
+        self.write({'state': 'submitted', 'submitted_on': fields.Datetime.now()})
+        self.message_post(body=self.env._('The applicant sent the requested information: %s', reply or '-'),
+                          attachment_ids=attachments.ids)
+        self._notify_internal()
+
     def action_reset_draft(self):
         check_marketplace_manager(self.env)
         self.filtered(lambda r: r.state == 'rejected').write({'state': 'draft', 'rejection_reason': False})
@@ -115,6 +155,9 @@ class FurnitureManufacturerApplication(models.Model):
             'address': self.address or False, 'city': self.city, 'country_id': self.country_id.id,
             'workshop_size_id': self.workshop_size_id.id, 'description': self.description,
             'application_id': self.id, 'approved': True, 'active': True,
+            'legal_name': self.legal_name, 'commercial_registration': self.commercial_registration,
+            'tax_id': self.tax_id, 'bank_name': self.sudo().bank_name,
+            'bank_account_holder': self.sudo().bank_account_holder, 'bank_iban': self.sudo().bank_iban,
         }
         if manufacturer:
             manufacturer.write(mvals)
@@ -152,7 +195,7 @@ class FurnitureManufacturerApplication(models.Model):
     def _do_reject(self, reason):
         check_marketplace_manager(self.env)
         for rec in self:
-            if rec.state not in ('submitted', 'draft'):
+            if rec.state not in ('submitted', 'draft', 'more_info'):
                 raise UserError(self.env._('This application cannot be rejected in its current state.'))
             rec.write({'state': 'rejected', 'rejection_reason': reason,
                        'reviewed_by': self.env.user.id, 'reviewed_on': fields.Datetime.now()})

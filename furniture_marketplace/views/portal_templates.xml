@@ -3,6 +3,7 @@
     <template id="manufacturer_nav" name="Manufacturer portal navigation">
         <div class="d-flex flex-wrap gap-2 mb-3">
             <a href="/my/manufacturer" class="btn btn-outline-primary btn-sm">Dashboard</a>
+            <a href="/my/manufacturer/orders" class="btn btn-outline-primary btn-sm">Orders</a>
             <a t-if="cfg.portal_allow_product_create" href="/my/manufacturer/product/new" class="btn btn-outline-primary btn-sm">New product</a>
             <a t-if="cfg.portal_allow_catalog_upload" href="/my/manufacturer/catalog" class="btn btn-outline-primary btn-sm">Upload catalog</a>
             <a t-if="cfg.portal_allow_profile_edit" href="/my/manufacturer/profile" class="btn btn-outline-primary btn-sm">Company profile</a>
@@ -18,12 +19,14 @@
                 <div t-if="error" class="alert alert-warning" t-out="error"/>
 
                 <div class="row g-3 mb-4">
-                    <div class="col-md-4"><div class="card"><div class="card-body text-center">
+                    <div class="col-6 col-md-3"><div class="card"><div class="card-body text-center">
                         <div class="display-6" t-out="len(products)"/><div class="text-muted">Products</div></div></div></div>
-                    <div class="col-md-4"><div class="card"><div class="card-body text-center">
+                    <div class="col-6 col-md-3"><div class="card"><div class="card-body text-center">
                         <div class="display-6" t-out="pending_count"/><div class="text-muted">Pending approval</div></div></div></div>
-                    <div class="col-md-4"><div class="card"><div class="card-body text-center">
+                    <div class="col-6 col-md-3"><div class="card"><div class="card-body text-center">
                         <div class="display-6" t-out="len(requests)"/><div class="text-muted">Custom requests</div></div></div></div>
+                    <div class="col-6 col-md-3"><a href="/my/manufacturer/orders" class="text-decoration-none"><div class="card"><div class="card-body text-center">
+                        <div class="display-6" t-out="open_orders"/><div class="text-muted">Orders to fulfil</div></div></div></a></div>
                 </div>
 
                 <h4>My products</h4>
@@ -219,20 +222,29 @@
                 <a href="/my/manufacturer">&#8592; Dashboard</a>
                 <h2 class="mt-2"><t t-out="req.name"/> - <t t-out="req.title"/></h2>
                 <p><span class="badge text-bg-primary fs-6" t-out="req.state_label()"/></p>
+                <div t-if="error" class="alert alert-warning" t-out="error"/>
                 <div class="row">
                     <div class="col-md-5 mb-3"><img class="img-fluid rounded border" t-att-src="'/web/image/furniture.custom.request/%s/reference_image' % req.id" alt="Reference image"/></div>
                     <div class="col-md-7">
                         <dl class="row">
                             <dt class="col-sm-4">Customer</dt><dd class="col-sm-8"><t t-out="req.partner_id.name"/> · <t t-out="req.customer_email"/> <t t-if="req.customer_phone">· <t t-out="req.customer_phone"/></t></dd>
                             <dt class="col-sm-4">Request date</dt><dd class="col-sm-8" t-out="req.request_date or ''"/>
+                            <dt class="col-sm-4" t-if="req.public_categ_id">Category</dt><dd class="col-sm-8" t-if="req.public_categ_id" t-out="req.public_categ_id.display_name"/>
+                            <dt class="col-sm-4">Quantity</dt><dd class="col-sm-8" t-out="req.quantity"/>
+                            <dt class="col-sm-4" t-if="req.dimensions_label()">Dimensions</dt><dd class="col-sm-8" t-if="req.dimensions_label()" t-out="req.dimensions_label()"/>
+                            <dt class="col-sm-4" t-if="req.delivery_address">Delivery location</dt><dd class="col-sm-8" t-if="req.delivery_address" style="white-space: pre-wrap;" t-out="req.delivery_address"/>
                             <dt class="col-sm-4">Description</dt><dd class="col-sm-8" style="white-space: pre-wrap;" t-out="req.description"/>
                             <dt class="col-sm-4" t-if="req.notes">Notes</dt><dd class="col-sm-8" t-if="req.notes" style="white-space: pre-wrap;" t-out="req.notes"/>
-                            <dt class="col-sm-4" t-if="req.agreed_price">Agreed price</dt>
+                            <dt class="col-sm-4" t-if="req.agreed_price">Unit price</dt>
                             <dd class="col-sm-8" t-if="req.agreed_price"><span t-field="req.agreed_price" t-options='{"widget": "monetary", "display_currency": req.currency_id}'/></dd>
+                            <dt class="col-sm-4" t-if="req.agreed_price">Total</dt>
+                            <dd class="col-sm-8" t-if="req.agreed_price"><span t-field="req.amount_total" t-options='{"widget": "monetary", "display_currency": req.currency_id}'/></dd>
+                            <dt class="col-sm-4" t-if="req.lead_time_days">Lead time</dt><dd class="col-sm-8" t-if="req.lead_time_days"><t t-out="req.lead_time_days"/> days</dd>
+                            <dt class="col-sm-4" t-if="req.commercial_terms">Terms</dt><dd class="col-sm-8" t-if="req.commercial_terms" style="white-space: pre-wrap;" t-out="req.commercial_terms"/>
                         </dl>
                         <t t-if="cfg.portal_allow_request_review">
                             <div class="d-flex flex-wrap gap-2 mb-2">
-                                <t t-foreach="[('review', 'Start review', ('submitted',)), ('accept', 'Accept', ('submitted', 'under_review')), ('start_production', 'Start production', ('confirmed',)), ('complete', 'Mark completed', ('in_production',))]" t-as="a">
+                                <t t-foreach="[('review', 'Start review', ('submitted',)), ('start_production', 'Start production', ('confirmed',)), ('complete', 'Mark completed', ('in_production',))]" t-as="a">
                                     <form t-if="req.state in a[2]" t-attf-action="/my/manufacturer/request/#{req.id}/#{a[0]}" method="post">
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                         <button type="submit" class="btn btn-primary btn-sm" t-out="a[1]"/>
@@ -244,8 +256,95 @@
                                 <input type="text" name="reason" class="form-control form-control-sm" placeholder="Reason for rejection" required="required"/>
                                 <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
                             </form>
-                            <p class="text-muted small mt-2">Quotations and pricing are handled by the platform team once you accept the request.</p>
+                            <form t-if="req.state in ('submitted', 'under_review')" t-attf-action="/my/manufacturer/request/#{req.id}/quote" method="post" class="card card-body mt-3">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <h6>Send a quotation to the customer</h6>
+                                <div class="row g-2">
+                                    <div class="col-md-6"><label class="form-label small" for="price">Unit price *</label>
+                                        <input type="number" min="0.01" step="any" id="price" name="price" class="form-control form-control-sm" required="required"/></div>
+                                    <div class="col-md-6"><label class="form-label small" for="lead_time">Lead time (days)</label>
+                                        <input type="number" min="0" step="1" id="lead_time" name="lead_time" class="form-control form-control-sm"/></div>
+                                    <div class="col-12"><label class="form-label small" for="terms">Terms (material, deposit, delivery...)</label>
+                                        <textarea id="terms" name="terms" rows="2" class="form-control form-control-sm"></textarea></div>
+                                    <div class="col-12"><button type="submit" class="btn btn-primary btn-sm">Send quotation</button></div>
+                                </div>
+                            </form>
+                            <p t-if="req.state == 'quoted'" class="alert alert-info mt-3 mb-0">Quotation sent. Waiting for the customer's decision.</p>
                         </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="manufacturer_orders" name="Manufacturer: orders">
+        <t t-call="portal.portal_layout">
+            <div class="container py-3">
+                <h2>Orders to fulfil</h2>
+                <t t-call="furniture_marketplace.manufacturer_nav"/>
+                <div t-if="not allocations" class="alert alert-info">No orders yet. Order lines for your products appear here once the customer's order is confirmed.</div>
+                <div class="table-responsive" t-if="allocations">
+                    <table class="table table-sm align-middle">
+                        <thead><tr><th>Order</th><th>Date</th><th>Customer</th><th class="text-end">Amount</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <t t-foreach="allocations" t-as="a">
+                                <tr>
+                                    <td><a t-attf-href="/my/manufacturer/order/#{a.id}" t-out="a.order_id.name"/></td>
+                                    <td t-out="a.date_order" t-options='{"widget": "date"}'/>
+                                    <td t-out="a.partner_id.name or ''"/>
+                                    <td class="text-end"><span t-field="a.amount_untaxed" t-options='{"widget": "monetary", "display_currency": a.currency_id}'/></td>
+                                    <td><span t-attf-class="badge #{'text-bg-danger' if a.state == 'exception' else 'text-bg-success' if a.state in ('dispatched', 'delivered') else 'text-bg-secondary' if a.state == 'cancelled' else 'text-bg-primary'}" t-out="a.state_label()"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="manufacturer_order_detail" name="Manufacturer: order detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="a" t-value="alloc"/>
+            <div class="container py-3">
+                <a href="/my/manufacturer/orders">&#8592; Orders</a>
+                <h2 class="mt-2">Order <t t-out="a.order_id.name"/></h2>
+                <p><span t-attf-class="badge #{'text-bg-danger' if a.state == 'exception' else 'text-bg-success' if a.state in ('dispatched', 'delivered') else 'text-bg-secondary' if a.state == 'cancelled' else 'text-bg-primary'}" t-out="a.state_label()"/></p>
+                <div t-if="error" class="alert alert-warning" t-out="error"/>
+                <div class="row">
+                    <div class="col-md-5 mb-3">
+                        <h5>Deliver to</h5>
+                        <address class="mb-0" style="white-space: pre-wrap;" t-out="a.partner_shipping_id.sudo()._display_address() or ''"/>
+                        <div><t t-out="a.partner_shipping_id.name"/> <t t-if="a.partner_shipping_id.phone">· <t t-out="a.partner_shipping_id.phone"/></t></div>
+                    </div>
+                    <div class="col-md-7">
+                        <h5>Your products in this order</h5>
+                        <table class="table table-sm">
+                            <thead><tr><th>Product</th><th class="text-end">Qty</th><th class="text-end">Subtotal</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="a.line_ids" t-as="l">
+                                    <td style="white-space: pre-wrap;" t-out="l.name"/>
+                                    <td class="text-end" t-out="l.product_uom_qty"/>
+                                    <td class="text-end"><span t-field="l.price_subtotal" t-options='{"widget": "monetary", "display_currency": a.currency_id}'/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <t t-foreach="[('accept', 'Accept order', 'new'), ('prepare', 'Start preparing', 'accepted'), ('ready', 'Ready for dispatch', 'preparing'), ('dispatch', 'Mark dispatched', 'ready')]" t-as="step">
+                                <form t-if="a.state == step[2]" t-attf-action="/my/manufacturer/order/#{a.id}/#{step[0]}" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-primary" t-out="step[1]"/>
+                                </form>
+                            </t>
+                        </div>
+                        <form t-if="a.state not in ('dispatched', 'delivered', 'cancelled', 'exception')" t-attf-action="/my/manufacturer/order/#{a.id}/exception" method="post" class="d-flex gap-2">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="text" name="note" class="form-control" placeholder="Cannot fulfil? Explain why (out of stock, delay...)" required="required"/>
+                            <button type="submit" class="btn btn-outline-danger">Report problem</button>
+                        </form>
+                        <div t-if="a.state == 'exception'" class="alert alert-danger mt-2">
+                            Reported problem: <t t-out="a.exception_note"/><br/>The platform team will contact you and the customer.
+                        </div>
                     </div>
                 </div>
             </div>

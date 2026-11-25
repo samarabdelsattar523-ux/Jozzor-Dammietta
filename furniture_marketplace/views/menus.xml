@@ -43,6 +43,8 @@
               action="action_manufacturer" sequence="10"/>
     <menuitem id="menu_manufacturer_catalogs" name="Catalog Uploads" parent="menu_manufacturer"
               action="action_catalog_import" sequence="20"/>
+    <menuitem id="menu_manufacturer_allocations" name="Fulfilment Allocations" parent="menu_manufacturer"
+              action="action_allocations" sequence="25"/>
     <menuitem id="menu_manufacturer_order_lines" name="Order Lines by Manufacturer" parent="menu_manufacturer"
               action="action_order_lines_by_manufacturer" sequence="30"/>
 

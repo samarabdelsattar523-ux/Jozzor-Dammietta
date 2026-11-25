@@ -7,3 +7,4 @@ from . import product
 from . import public_category
 from . import custom_request
 from . import sale
+from . import allocation

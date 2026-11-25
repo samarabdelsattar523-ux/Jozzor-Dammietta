@@ -51,6 +51,10 @@ class ProductTemplate(models.Model):
             rec.marketplace_stock_status = ('out_of_stock' if qty <= 0
                                             else 'low_stock' if qty <= 5 else 'in_stock')
 
+    def marketplace_show_exact_qty(self):
+        """Exact stock is only public when the platform enables it (spec 15 / 21)."""
+        return self.env['furniture.marketplace.settings'].sudo().get_settings().show_exact_stock
+
     def get_marketplace_specs(self):
         """[(label, value)] for website display."""
         self.ensure_one()

@@ -19,4 +19,7 @@ access_furniture_reject_wizard_manager,Rejection wizard: managers,furniture.reje
 access_furniture_custom_request_user,Custom request: internal users,furniture.custom.request,base.group_user,crud,
 access_furniture_custom_request_manufacturer,Custom request: assigned to manufacturer,furniture.custom.request,furniture_marketplace.group_manufacturer_portal,r,"[('manufacturer_id.user_id', '=', user.id)]"
 access_furniture_custom_request_customer,Custom request: portal customer own requests,furniture.custom.request,base.group_portal,r,"[('partner_id', 'child_of', user.partner_id.commercial_partner_id.id)]"
+access_furniture_allocation_user,Allocation: internal users read,furniture.order.allocation,base.group_user,r,
+access_furniture_allocation_manager,Allocation: managers,furniture.order.allocation,furniture_marketplace.group_marketplace_manager,crud,
+access_furniture_allocation_manufacturer,Allocation: own manufacturer read,furniture.order.allocation,furniture_marketplace.group_manufacturer_portal,r,"[('manufacturer_id.user_id', '=', user.id)]"
 access_furniture_product_manufacturer,Product: manufacturer own products,product.template,furniture_marketplace.group_manufacturer_portal,cru,"[('manufacturer_id.user_id', '=', user.id)]"

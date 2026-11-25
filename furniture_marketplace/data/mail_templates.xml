@@ -39,6 +39,20 @@
 </div>
         </field>
     </record>
+    <record id="mail_application_more_info" model="mail.template">
+        <field name="name">Manufacturer Application: more information required</field>
+        <field name="model_id" ref="model_furniture_manufacturer_application"/>
+        <field name="subject">More information needed for your application {{ object.name }}</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+<p>Dear <t t-out="object.representative"/>,</p><p>To continue reviewing the application of <b><t t-out="object.manufacturer_name"/></b> we need more information:</p><p style="white-space: pre-wrap;"><t t-out="object.info_request"/></p><p><a t-att-href="object.update_url()">Send the requested information</a></p>
+<p style="margin-top:24px;">Best regards,<br/><t t-out="object.env.company.name"/></p>
+</div>
+        </field>
+    </record>
+
     <record id="mail_product_approved" model="mail.template">
         <field name="name">Marketplace Product: approved</field>
         <field name="model_id" ref="product.model_product_template"/>

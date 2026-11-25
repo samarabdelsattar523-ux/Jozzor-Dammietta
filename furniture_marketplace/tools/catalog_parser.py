@@ -17,7 +17,7 @@ except ImportError:
         return s % args if args else s
 
 REQUIRED = ('product_name', 'category', 'description', 'price', 'quantity')
-OPTIONAL = ('image', 'specifications')
+OPTIONAL = ('sku', 'image', 'specifications')
 IMAGE_EXT = ('.png', '.jpg', '.jpeg', '.gif', '.webp')
 MAX_BYTES = 5 * 1024 * 1024
 MAX_UNZIPPED = 50 * 1024 * 1024
@@ -30,6 +30,8 @@ ALIASES = {
     'product_image': 'image', 'image_reference': 'image', 'image_url': 'image',
     'product_specifications': 'specifications', 'specs': 'specifications',
     'specification': 'specifications',
+    'internal_reference': 'sku', 'default_code': 'sku', 'reference': 'sku', 'code': 'sku',
+    'product_code': 'sku', 'item_code': 'sku',
 }
 NS = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
 T_TAG = '{%s}t' % NS
@@ -156,6 +158,7 @@ def parse_catalog(filename, raw, max_rows=500):
         return [], [_('Missing required column(s): %s. Please use the provided template.', ', '.join(missing))]
 
     rows = []
+    seen = {}  # duplicate rows inside the same file: by SKU, otherwise by product name
     for offset, raw_row in enumerate(table[1:], start=2):
         if not any(str(c).strip() for c in raw_row):
             continue
@@ -180,12 +183,18 @@ def parse_catalog(filename, raw, max_rows=500):
                 row_errors.append(_('Quantity cannot be negative.'))
         except ValueError:
             row_errors.append(_('Quantity must be a number (got "%s").', data.get('quantity', '')))
+        key = (data.get('sku') or data.get('product_name') or '').strip().lower()
+        if key and key in seen:
+            row_errors.append(_('Duplicate of row %d (same SKU or product name).', seen[key]))
+        elif key:
+            seen[key] = offset
         image = data.get('image', '')
         if image and not (re.match(r'https?://', image, re.I) or image.lower().endswith(IMAGE_EXT)):
             row_errors.append(_('Image must be an http(s) URL or an image file name (%s).', ', '.join(IMAGE_EXT)))
         rows.append({
             'row_no': offset,
             'product_name': data.get('product_name', ''),
+            'sku': data.get('sku', ''),
             'category': data.get('category', ''),
             'description': data.get('description', ''),
             'price': price,

@@ -6,14 +6,14 @@ from urllib.parse import quote
 from odoo import _, http
 from odoo.http import request
 
-from .main import IMAGE_EXT, _int, read_upload, settings
+from ..models.allocation import MANUFACTURER_TRANSITIONS
+from .main import IMAGE_EXT, _float, _int, read_upload, settings
 
 _logger = logging.getLogger(__name__)
 
 # transitions a manufacturer may trigger on a request assigned to them
 REQUEST_ACTIONS = {
     'review': ('submitted', 'action_start_review'),
-    'accept': ('submitted,under_review', 'action_accept'),
     'start_production': ('confirmed', 'action_start_production'),
     'complete': ('in_production', 'action_complete'),
 }
@@ -62,8 +62,11 @@ class FurnitureManufacturerPortal(http.Controller):
         requests_ = env['furniture.custom.request'].sudo().search([('manufacturer_id', '=', maker.id)])
         imports = env['furniture.catalog.import'].sudo().search([('manufacturer_id', '=', maker.id)], limit=10)
         pending_count = sum(1 for p in products if p.marketplace_approval_state == 'pending')
+        open_orders = env['furniture.order.allocation'].sudo().search_count(
+            [('manufacturer_id', '=', maker.id), ('state', 'not in', ('delivered', 'cancelled'))])
         return request.render('furniture_marketplace.manufacturer_dashboard', self._base_values(
             maker, products=products, requests=requests_, imports=imports, pending_count=pending_count,
+            open_orders=open_orders,
             notice=kw.get('notice'), error=kw.get('error')))
 
     # ------------------------------------------------------------------
@@ -308,7 +311,7 @@ class FurnitureManufacturerPortal(http.Controller):
         if not rec:
             return request.not_found()
         return request.render('furniture_marketplace.manufacturer_request_detail',
-                              self._base_values(maker, req=rec, notice=kw.get('notice')))
+                              self._base_values(maker, req=rec, notice=kw.get('notice'), error=kw.get('error')))
 
     @http.route('/my/manufacturer/request/<int:req_id>/<string:action>', type='http', auth='user', website=True,
                 methods=['POST'], csrf=True)
@@ -323,7 +326,59 @@ class FurnitureManufacturerPortal(http.Controller):
             if rec.state in ('submitted', 'under_review') and (reason or '').strip():
                 rec._do_reject(reason.strip())
             return request.redirect('/my/manufacturer/request/%s' % req_id)
+        if action == 'quote':
+            price = _float(kw.get('price'))
+            if rec.state not in ('submitted', 'under_review') or not price or price <= 0:
+                return request.redirect('/my/manufacturer/request/%s?error=%s' % (
+                    req_id, quote(_('Enter a unit price greater than zero.'))))
+            rec.action_send_quote(price=price, lead_time=max(_int(kw.get('lead_time')), 0),
+                                  terms=(kw.get('terms') or '').strip())
+            return request.redirect('/my/manufacturer/request/%s' % req_id)
         spec = REQUEST_ACTIONS.get(action)
         if spec and rec.state in spec[0].split(','):
             getattr(rec, spec[1])()
         return request.redirect('/my/manufacturer/request/%s' % req_id)
+
+    # ------------------------------------------------------------------
+    # order fulfilment: only this manufacturer's allocations (spec 8.4)
+    # ------------------------------------------------------------------
+    def _own_allocation(self, maker, alloc_id):
+        return request.env['furniture.order.allocation'].sudo().search(
+            [('id', '=', _int(alloc_id)), ('manufacturer_id', '=', maker.id)], limit=1)
+
+    @http.route('/my/manufacturer/orders', type='http', auth='user', website=True)
+    def orders(self, **kw):
+        maker, redirect = self._guard()
+        if redirect:
+            return redirect
+        allocations = request.env['furniture.order.allocation'].sudo().search(
+            [('manufacturer_id', '=', maker.id)], order='id desc')
+        return request.render('furniture_marketplace.manufacturer_orders',
+                              self._base_values(maker, allocations=allocations))
+
+    @http.route('/my/manufacturer/order/<int:alloc_id>', type='http', auth='user', website=True)
+    def order_detail(self, alloc_id, **kw):
+        maker, redirect = self._guard()
+        if redirect:
+            return redirect
+        alloc = self._own_allocation(maker, alloc_id)
+        if not alloc:
+            return request.not_found()
+        return request.render('furniture_marketplace.manufacturer_order_detail',
+                              self._base_values(maker, alloc=alloc, error=kw.get('error')))
+
+    @http.route('/my/manufacturer/order/<int:alloc_id>/<string:action>', type='http', auth='user',
+                website=True, methods=['POST'], csrf=True)
+    def order_action(self, alloc_id, action, note=None, **kw):
+        maker, redirect = self._guard()
+        if redirect:
+            return redirect
+        alloc = self._own_allocation(maker, alloc_id)
+        if not alloc:
+            return request.not_found()
+        if action == 'exception':
+            if (note or '').strip():
+                alloc._report_exception(note.strip())
+        elif action in MANUFACTURER_TRANSITIONS and alloc.state == MANUFACTURER_TRANSITIONS[action][0]:
+            alloc._manufacturer_transition(action)
+        return request.redirect('/my/manufacturer/order/%s' % alloc.id)

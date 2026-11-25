@@ -34,6 +34,7 @@
                             <field name="category"/>
                             <field name="price"/>
                             <field name="quantity"/>
+                            <field name="sku" optional="show"/>
                             <field name="image_ref"/>
                             <field name="import_state" widget="badge"/>
                             <field name="product_id"/>

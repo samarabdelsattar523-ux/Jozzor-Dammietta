@@ -1,4 +1,4 @@
-﻿product_name,category,description,price,quantity,image,specifications
-Oak Dining Table,Dining Room / Tables,Solid oak dining table seating six.,650.0,10,https://example.com/images/oak-table.jpg,Material: Solid oak; Seats: 6; Dimensions: 180x90x75 cm
-Velvet Armchair,Living Room / Chairs,Comfortable velvet armchair with wooden legs.,240.5,25,velvet-armchair.jpg,Material: Velvet; Color: Emerald; Weight: 12 kg
-Walnut Bookshelf,Office / Storage,Five-shelf walnut bookshelf.,310,8,,Material: Walnut veneer; Shelves: 5
+﻿product_name,sku,category,description,price,quantity,image,specifications
+Oak Dining Table,TBL-OAK-180,Dining Room / Tables,Solid oak dining table seating six.,650.0,10,https://example.com/images/oak-table.jpg,Material: Solid oak; Seats: 6; Dimensions: 180x90x75 cm
+Velvet Armchair,CHR-VLV-01,Living Room / Chairs,Comfortable velvet armchair with wooden legs.,240.5,25,velvet-armchair.jpg,Material: Velvet; Color: Emerald; Weight: 12 kg
+Walnut Bookshelf,SHF-WAL-5,Office / Storage,Five-shelf walnut bookshelf.,310,8,,Material: Walnut veneer; Shelves: 5

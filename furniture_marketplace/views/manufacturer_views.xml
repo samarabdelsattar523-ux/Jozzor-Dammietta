@@ -64,6 +64,20 @@
                         </group>
                     </group>
                     <notebook>
+                        <page string="Legal &amp; Banking" name="legal_banking">
+                            <group>
+                                <group string="Legal">
+                                    <field name="legal_name"/>
+                                    <field name="commercial_registration"/>
+                                    <field name="tax_id"/>
+                                </group>
+                                <group string="Banking (restricted)" groups="furniture_marketplace.group_marketplace_manager">
+                                    <field name="bank_name"/>
+                                    <field name="bank_account_holder"/>
+                                    <field name="bank_iban"/>
+                                </group>
+                            </group>
+                        </page>
                         <page string="Description" name="description"><field name="description"/></page>
                         <page string="Products" name="products">
                             <field name="product_ids" readonly="1">

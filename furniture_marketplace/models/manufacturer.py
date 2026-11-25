@@ -17,7 +17,8 @@ class FurnitureManufacturer(models.Model):
 
     name = fields.Char('Manufacturer / Workshop', required=True, tracking=True)
     active = fields.Boolean(default=True)
-    approved = fields.Boolean('Approved / Active in Marketplace', default=True, tracking=True)
+    approved = fields.Boolean('Approved / Active in Marketplace', default=False, tracking=True,
+                              help='Set by application approval or the Activate button.')
     partner_id = fields.Many2one('res.partner', 'Contact', required=True, ondelete='restrict')
     user_id = fields.Many2one('res.users', 'Portal User', ondelete='set null', copy=False)
     type_id = fields.Many2one('furniture.manufacturer.type', 'Category / Type')
@@ -29,6 +30,12 @@ class FurnitureManufacturer(models.Model):
     country_id = fields.Many2one('res.country')
     workshop_size_id = fields.Many2one('furniture.workshop.size', 'Workshop Size')
     description = fields.Text('Workshop Description')
+    legal_name = fields.Char('Legal / Company Name')
+    commercial_registration = fields.Char('Commercial Registration No.')
+    tax_id = fields.Char('Tax ID')
+    bank_name = fields.Char(groups='furniture_marketplace.group_marketplace_manager', tracking=True)
+    bank_account_holder = fields.Char('Account Holder', groups='furniture_marketplace.group_marketplace_manager', tracking=True)
+    bank_iban = fields.Char('IBAN / Account No.', groups='furniture_marketplace.group_marketplace_manager', tracking=True)
     application_id = fields.Many2one('furniture.manufacturer.application', 'Application', copy=False)
     product_ids = fields.One2many('product.template', 'manufacturer_id', 'Products')
     product_count = fields.Integer(compute='_compute_counts')

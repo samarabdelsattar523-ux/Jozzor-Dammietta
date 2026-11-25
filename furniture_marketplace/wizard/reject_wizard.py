@@ -12,10 +12,15 @@ class FurnitureRejectWizard(models.TransientModel):
     res_model = fields.Char(required=True)
     res_id = fields.Integer(required=True)
     reason = fields.Text('Rejection Reason', required=True)
+    mode = fields.Selection([('reject', 'Reject'), ('info', 'Request information')], default='reject', required=True)
 
     def action_confirm(self):
         self.ensure_one()
         if self.res_model not in ALLOWED:
             raise UserError(self.env._('Unsupported record type.'))
-        self.env[self.res_model].browse(self.res_id)._do_reject(self.reason)
+        record = self.env[self.res_model].browse(self.res_id)
+        if self.mode == 'info':
+            record._do_request_info(self.reason)
+        else:
+            record._do_reject(self.reason)
         return {'type': 'ir.actions.act_window_close'}

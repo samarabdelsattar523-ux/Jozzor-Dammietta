@@ -24,8 +24,12 @@
                 <header>
                     <button name="action_submit" type="object" string="Submit" class="btn-primary" invisible="state != 'draft'"/>
                     <button name="action_start_review" type="object" string="Start Review" invisible="state != 'submitted'"/>
-                    <button name="action_accept" type="object" string="Accept" class="btn-primary"
+                    <button name="action_send_quote" type="object" string="Send Quotation to Customer" class="btn-primary"
                             invisible="state not in ('submitted', 'under_review')"/>
+                    <button name="action_accept" type="object" string="Accept (no quotation round)"
+                            invisible="state not in ('submitted', 'under_review')"/>
+                    <button name="action_customer_accept" type="object" string="Customer Accepted" class="btn-primary"
+                            invisible="state != 'quoted'"/>
                     <button name="action_reject" type="object" string="Reject" invisible="state not in ('submitted', 'under_review')"/>
                     <button name="action_create_quotation" type="object" string="Create Quotation" class="btn-primary"
                             invisible="state != 'accepted'"/>
@@ -34,7 +38,7 @@
                     <button name="action_complete" type="object" string="Mark Completed" invisible="state != 'in_production'"/>
                     <button name="action_cancel" type="object" string="Cancel" invisible="state in ('completed', 'cancelled')"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="draft,submitted,under_review,accepted,quotation,confirmed,in_production,completed"/>
+                           statusbar_visible="draft,submitted,under_review,quoted,accepted,quotation,confirmed,in_production,completed"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -48,6 +52,8 @@
                         <group>
                             <field name="title"/>
                             <field name="manufacturer_id" options="{'no_create': True}"/>
+                            <field name="public_categ_id"/>
+                            <field name="quantity"/>
                             <field name="request_date"/>
                         </group>
                         <group>
@@ -60,12 +66,20 @@
                         <field name="reference_image" widget="image" options="{'size': [0, 300]}" filename="reference_image_name"/>
                         <field name="reference_image_name" invisible="1"/>
                         <field name="description"/>
+                        <label for="length_cm" string="Dimensions (cm)"/>
+                        <div class="o_row">
+                            <field name="length_cm" placeholder="L"/> x <field name="width_cm" placeholder="W"/> x <field name="height_cm" placeholder="H"/>
+                        </div>
+                        <field name="delivery_address"/>
                         <field name="notes"/>
                         <field name="rejection_reason" invisible="state != 'rejected'"/>
                     </group>
-                    <group string="Commercial terms (set after review, before the quotation)">
+                    <group string="Quotation">
                         <field name="currency_id" invisible="1"/>
                         <field name="agreed_price"/>
+                        <field name="amount_total"/>
+                        <field name="lead_time_days"/>
+                        <field name="quoted_on"/>
                         <field name="commercial_terms"/>
                         <field name="sale_order_id"/>
                     </group>

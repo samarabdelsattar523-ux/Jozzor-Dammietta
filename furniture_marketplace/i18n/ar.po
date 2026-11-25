@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 20.0+e-20261005\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 19:16+0000\n"
-"PO-Revision-Date: 2026-11-25 19:16+0000\n"
+"POT-Creation-Date: 2026-11-25 20:12+0000\n"
+"PO-Revision-Date: 2026-11-25 20:12+0000\n"
 "Last-Translator: AbdelRahman Ali\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -61,6 +61,12 @@ msgstr "حجم الملف «%s» يتجاوز الحد الأقصى المسمو
 
 #. module: furniture_marketplace
 #. odoo-python
+#: code:addons/furniture_marketplace/models/allocation.py:0
+msgid "%(maker)s: fulfilment status is now %(state)s."
+msgstr "%(maker)s: أصبحت حالة التنفيذ الآن %(state)s."
+
+#. module: furniture_marketplace
+#. odoo-python
 #: code:addons/furniture_marketplace/models/manufacturer.py:0
 msgid ""
 "%s belongs to an internal user; a portal account cannot be created with the "
@@ -100,6 +106,11 @@ msgstr ""
 msgid ""
 ". You will receive your portal access once the application is approved."
 msgstr ". ستصلكم بيانات الدخول إلى بوابة الورش فور اعتماد طلبكم."
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
+msgid "<br/>The platform team will contact you and the customer."
+msgstr "<br/>سيتواصل فريق المنصة معك ومع العميل."
 
 #. module: furniture_marketplace
 #: model:mail.template,body_html:furniture_marketplace.mail_request_submitted_manufacturer
@@ -172,6 +183,21 @@ msgid ""
 msgstr ""
 "<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
 "<p>عزيزي/عزيزتي <t t-out=\"object.representative\"/>,</p><p>نشكرك على اهتمامك. نعتذر عن عدم إمكانية اعتماد طلب انضمام <b><t t-out=\"object.manufacturer_name\"/></b> في الوقت الحالي.</p><p><b>السبب:</b> <t t-out=\"object.rejection_reason\"/></p>\n"
+"<p style=\"margin-top:24px;\">مع أطيب التحيات،<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+
+#. module: furniture_marketplace
+#: model:mail.template,body_html:furniture_marketplace.mail_application_more_info
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>Dear <t t-out=\"object.representative\"/>,</p><p>To continue reviewing the application of <b><t t-out=\"object.manufacturer_name\"/></b> we need more information:</p><p style=\"white-space: pre-wrap;\"><t t-out=\"object.info_request\"/></p><p><a t-att-href=\"object.update_url()\">Send the requested information</a></p>\n"
+"<p style=\"margin-top:24px;\">Best regards,<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+msgstr ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>عزيزي/عزيزتي <t t-out=\"object.representative\"/>,</p><p>لمتابعة مراجعة طلب انضمام <b><t t-out=\"object.manufacturer_name\"/></b> نحتاج إلى معلومات إضافية:</p><p style=\"white-space: pre-wrap;\"><t t-out=\"object.info_request\"/></p><p><a t-att-href=\"object.update_url()\">إرسال المعلومات المطلوبة</a></p>\n"
 "<p style=\"margin-top:24px;\">مع أطيب التحيات،<br/><t t-out=\"object.env.company.name\"/></p>\n"
 "</div>\n"
 "        "
@@ -278,6 +304,11 @@ msgstr ""
 "<strong>يحتوي الملف على الأخطاء التالية — لم يتم استيراد أي بيانات:</strong>"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_update
+msgid "<strong>The platform team needs more information:</strong>"
+msgstr "<strong>يحتاج فريق المنصة إلى معلومات إضافية:</strong>"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_thanks
 msgid "A confirmation e-mail was sent to"
 msgstr "تم إرسال رسالة تأكيد إلى البريد الإلكتروني"
@@ -287,6 +318,12 @@ msgstr "تم إرسال رسالة تأكيد إلى البريد الإلكتر
 #: code:addons/furniture_marketplace/models/catalog.py:0
 msgid "A manufacturer is required to import the catalog."
 msgstr "يجب تحديد الورشة أو المُصنّع قبل استيراد الكتالوج."
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "A quotation can only be sent for a request under review."
+msgstr "لا يمكن إرسال عرض سعر إلا لطلب قيد المراجعة."
 
 #. module: furniture_marketplace
 #. odoo-python
@@ -302,13 +339,32 @@ msgstr "يوجد حساب مستخدم مسجّل بالفعل بالبريد %s
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
-msgid "Accept"
-msgstr "قبول الطلب"
+msgid "Accept (no quotation round)"
+msgstr "قبول (بدون عرض سعر)"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Accept quotation"
+msgstr "قبول عرض السعر"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__accepted
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_order_allocation__state__accepted
 msgid "Accepted"
 msgstr "مقبول"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__terms_accepted
+msgid "Accepted Marketplace Terms"
+msgstr "وافق على شروط المنصة"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid ""
+"Accepting creates an order you can confirm and pay. Production starts only "
+"after that."
+msgstr ""
+"عند القبول يتم إنشاء طلب يمكنك تأكيده ودفعه. لا يبدأ التصنيع إلا بعد ذلك."
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__access_token
@@ -322,10 +378,18 @@ msgid "Access warning"
 msgstr "تحذير الوصول"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__bank_account_holder
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__bank_account_holder
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Account Holder"
+msgstr "صاحب الحساب"
+
+#. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_needaction
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_needaction
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_needaction
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_needaction
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_needaction
 msgid "Action Needed"
 msgstr "إجراء مطلوب"
 
@@ -340,6 +404,7 @@ msgstr "نشط"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_ids
 msgid "Activities"
 msgstr "الأنشطة"
 
@@ -347,6 +412,7 @@ msgstr "الأنشطة"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_exception_decoration
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_exception_decoration
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_exception_decoration
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_exception_decoration
 msgid "Activity Exception Decoration"
 msgstr "زخرفة استثناء النشاط"
 
@@ -354,6 +420,7 @@ msgstr "زخرفة استثناء النشاط"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_plans_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_plans_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_plans_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_plans_ids
 msgid "Activity Plans"
 msgstr "خطط الأنشطة"
 
@@ -361,6 +428,7 @@ msgstr "خطط الأنشطة"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_state
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_state
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_state
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_state
 msgid "Activity State"
 msgstr "حالة النشاط"
 
@@ -368,6 +436,7 @@ msgstr "حالة النشاط"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_type_icon
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_type_icon
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_type_icon
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_type_icon
 msgid "Activity Type Icon"
 msgstr "أيقونة نوع النشاط"
 
@@ -394,22 +463,6 @@ msgid "Administrator"
 msgstr "مدير النظام"
 
 #. module: furniture_marketplace
-#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__commercial_terms
-msgid "Agreed Commercial Terms"
-msgstr "الشروط التجارية المتفق عليها"
-
-#. module: furniture_marketplace
-#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__agreed_price
-msgid "Agreed Price"
-msgstr "السعر المتفق عليه"
-
-#. module: furniture_marketplace
-#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
-#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
-msgid "Agreed price"
-msgstr "السعر المتفق عليه"
-
-#. module: furniture_marketplace
 #: model:ir.actions.act_window,name:furniture_marketplace.action_application_all
 #: model:ir.ui.menu,name:furniture_marketplace.menu_requests_all
 msgid "All Requests"
@@ -432,6 +485,18 @@ msgstr "جميع المنتجات"
 
 #. module: furniture_marketplace
 #. odoo-python
+#: code:addons/furniture_marketplace/models/catalog.py:0
+msgid "Already in your catalog: \"%s\" (skipped)."
+msgstr "موجود بالفعل في الكتالوج الخاص بك: «%s» (تم تخطيه)."
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__amount_untaxed
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_orders
+msgid "Amount"
+msgstr "المبلغ"
+
+#. module: furniture_marketplace
+#. odoo-python
 #: code:addons/furniture_marketplace/controllers/main.py:0
 msgid "An application with this e-mail is already pending approval."
 msgstr ""
@@ -446,6 +511,7 @@ msgstr "هذا البريد الإلكتروني (%s) مستخدم بالفعل 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__application_id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__application_id
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_update
 msgid "Application"
 msgstr "طلب الانضمام"
 
@@ -518,6 +584,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_attachment_count
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_attachment_count
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_attachment_count
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_attachment_count
 msgid "Attachment Count"
 msgstr "عدد المرفقات"
 
@@ -550,6 +617,24 @@ msgid "Back to the marketplace"
 msgstr "العودة إلى سوق الأثاث"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__bank_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__bank_name
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Bank Name"
+msgstr "اسم البنك"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid "Banking (restricted)"
+msgstr "البيانات البنكية (مقيدة)"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Banking details (optional, only visible to the platform team)"
+msgstr "البيانات البنكية (اختياري، تظهر لفريق المنصة فقط)"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
 msgid "Business"
 msgstr "بيانات الورشة / المنشأة"
@@ -580,14 +665,34 @@ msgid "Cancel"
 msgstr "إلغاء"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_allocation_form
+msgid "Cancel Allocation"
+msgstr "إلغاء التخصيص"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
 msgid "Cancel request"
 msgstr "إلغاء الطلب"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_allocation_form
+msgid ""
+"Cancel this manufacturer's part of the order? Handle the refund / customer "
+"communication from the sales order."
+msgstr ""
+"إلغاء جزء هذه الورشة من الطلب؟ تتم معالجة الاسترداد / التواصل مع العميل من "
+"أمر البيع."
+
+#. module: furniture_marketplace
 #: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__cancelled
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_order_allocation__state__cancelled
 msgid "Cancelled"
 msgstr "ملغي"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
+msgid "Cannot fulfil? Explain why (out of stock, delay...)"
+msgstr "لا يمكنك التنفيذ؟ اذكر السبب (نفاد المخزون، تأخير...)"
 
 #. module: furniture_marketplace
 #: model:furniture.manufacturer.type,name:furniture_marketplace.mtype_workshop
@@ -659,6 +764,8 @@ msgstr "تصنيفات الأثاث"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__category
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
 msgid "Category"
 msgstr "التصنيف"
@@ -694,9 +801,16 @@ msgid "City and country are required."
 msgstr "يرجى إدخال المدينة والدولة."
 
 #. module: furniture_marketplace
-#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
-msgid "Commercial terms (set after review, before the quotation)"
-msgstr "الشروط التجارية (تُحدَّد بعد المراجعة وقبل إصدار عرض السعر)"
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__commercial_registration
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__commercial_registration
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Commercial Registration No."
+msgstr "رقم السجل التجاري"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__commercial_terms
+msgid "Commercial Terms"
+msgstr "الشروط التجارية"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__company_id
@@ -740,6 +854,11 @@ msgid "Contact"
 msgstr "جهة الاتصال"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__quotation
+msgid "Converted to Order"
+msgstr "تم التحويل إلى طلب"
+
+#. module: furniture_marketplace
 #. odoo-python
 #: code:addons/furniture_marketplace/controllers/main.py:0
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__country_id
@@ -768,6 +887,7 @@ msgstr "إنشاء عرض سعر"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__create_uid
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__create_uid
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__create_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__create_uid
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__create_uid
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__create_uid
 msgid "Created by"
@@ -781,13 +901,24 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__create_date
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__create_date
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__create_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__create_date
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__create_date
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__date_order
+msgid ""
+"Creation date of draft/sent orders,\n"
+"Confirmation date of confirmed orders."
+msgstr ""
+"تاريخ إنشاء الطلبات المسودة / المرسلة،\n"
+"تاريخ تأكيد الطلبات المؤكدة."
+
+#. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__currency_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__currency_id
 msgid "Currency"
 msgstr "العملة"
 
@@ -849,9 +980,21 @@ msgstr "طلبات التصنيع المخصص"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__partner_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__partner_id
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_orders
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
 msgid "Customer"
 msgstr "العميل"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Customer Accepted"
+msgstr "وافق العميل"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__order_id
+msgid "Customer Order"
+msgstr "طلب العميل"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__access_url
@@ -885,9 +1028,58 @@ msgstr "لوحة التحكم"
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_orders
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
 msgid "Date"
 msgstr "التاريخ"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__accuracy_declared
+msgid "Declared Information Accurate"
+msgstr "أقر بصحة المعلومات"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Decline"
+msgstr "رفض"
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "Declined by the customer: %s"
+msgstr "رفضه العميل: %s"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
+msgid "Deliver to"
+msgstr "التسليم إلى"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_order_allocation__state__delivered
+msgid "Delivered"
+msgstr "تم التسليم"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__picking_ids
+msgid "Deliveries"
+msgstr "عمليات التسليم"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__partner_shipping_id
+msgid "Delivery Address"
+msgstr "عنوان التسليم"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__delivery_address
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Delivery Location"
+msgstr "موقع التسليم"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Delivery location"
+msgstr "موقع التسليم"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__description
@@ -911,6 +1103,39 @@ msgid "Detailed address"
 msgstr "العنوان التفصيلي"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Dimensions"
+msgstr "الأبعاد"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Dimensions (cm)"
+msgstr "الأبعاد (سم)"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Dimensions (cm, optional)"
+msgstr "الأبعاد (سم، اختياري)"
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Dimensions must be positive numbers."
+msgstr "يجب أن تكون الأبعاد أرقامًا موجبة."
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "Dimensions: %s"
+msgstr "الأبعاد: %s"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_order_allocation__state__dispatched
+msgid "Dispatched"
+msgstr "تم الشحن"
+
+#. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__display_name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__display_name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__display_name
@@ -918,6 +1143,7 @@ msgstr "العنوان التفصيلي"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__display_name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__display_name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__display_name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__display_name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__display_name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_product_public_category__display_name
@@ -928,6 +1154,7 @@ msgid "Display Name"
 msgstr "اسم العرض"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_update
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
 msgid "Documents"
 msgstr "المستندات المرفقة"
@@ -950,6 +1177,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_search
 msgid "Draft"
 msgstr "مسودة"
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "Duplicate of row %d (same SKU or product name)."
+msgstr "مكرر للصف %d (نفس رمز المنتج أو اسم المنتج)."
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
@@ -993,6 +1226,13 @@ msgstr "قوالب البريد الإلكتروني والإشعارات"
 
 #. module: furniture_marketplace
 #. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "Enter a unit price greater than zero."
+msgstr "أدخل سعر وحدة أكبر من صفر."
+
+#. module: furniture_marketplace
+#. odoo-python
 #: code:addons/furniture_marketplace/models/custom_request.py:0
 msgid "Enter the agreed price before creating the quotation."
 msgstr "يرجى إدخال السعر المتفق عليه قبل إنشاء عرض السعر."
@@ -1020,9 +1260,24 @@ msgid "Excel template"
 msgstr "نموذج Excel"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_order_allocation__state__exception
+msgid "Exception"
+msgstr "مشكلة"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__exception_note
+msgid "Exception Details"
+msgstr "تفاصيل المشكلة"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_allocation_search
+msgid "Exceptions"
+msgstr "المشكلات"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_reject_wizard_form
-msgid "Explain why this is rejected - the applicant/customer is notified."
-msgstr "وضح سبب الرفض (سيتم إرسال هذا السبب في إشعار لمقدّم الطلب أو العميل)."
+msgid "Explain why - the applicant/customer is notified by e-mail."
+msgstr "اذكر السبب - سيتم إشعار مقدم الطلب / العميل بالبريد الإلكتروني."
 
 #. module: furniture_marketplace
 #: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_catalog_line__import_state__failed
@@ -1050,6 +1305,7 @@ msgstr "تصفية"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_follower_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_follower_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_follower_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_follower_ids
 msgid "Followers"
 msgstr "المتابعون"
 
@@ -1058,6 +1314,7 @@ msgstr "المتابعون"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_partner_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_partner_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_partner_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_partner_ids
 msgid "Followers (Partners)"
 msgstr "المتابعون (جهات الاتصال)"
 
@@ -1067,9 +1324,40 @@ msgid "From Website"
 msgstr "من الموقع الإلكتروني"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_sale_order_line__allocation_id
+msgid "Fulfilment Allocation"
+msgstr "تخصيص التنفيذ"
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_manufacturer_allocations
+msgid "Fulfilment Allocations"
+msgstr "تخصيصات التنفيذ"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.sale_order_portal_allocations
+msgid "Fulfilment by manufacturer"
+msgstr "التنفيذ حسب الورشة"
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/allocation.py:0
+msgid "Fulfilment exception: %s"
+msgstr "مشكلة في التنفيذ: %s"
+
+#. module: furniture_marketplace
 #: model:res.groups,comment:furniture_marketplace.group_marketplace_admin
 msgid "Full control of the marketplace, including configuration."
 msgstr "تحكم كامل في سوق الأثاث، بما في ذلك الإعدادات."
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__public_categ_id
+msgid "Furniture Category"
+msgstr "فئة الأثاث"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Furniture Category *"
+msgstr "فئة الأثاث *"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__description
@@ -1138,12 +1426,45 @@ msgid "Granted automatically to approved manufacturers. Own data only."
 msgstr "تُمنح تلقائيًا للمُصنّعين المعتمدين. الوصول إلى بياناتهم فقط."
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "H"
+msgstr "ر"
+
+#. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__has_message
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__has_message
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__has_message
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__has_message
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__has_message
 msgid "Has Message"
 msgstr "يحتوي على رسالة"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Height"
+msgstr "الارتفاع"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__height_cm
+msgid "Height (cm)"
+msgstr "الارتفاع (سم)"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "I accept the marketplace terms and conditions *"
+msgstr "أوافق على الشروط والأحكام الخاصة بالمنصة *"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "I declare that the information and documents provided are accurate *"
+msgstr "أقر بأن المعلومات والمستندات المقدمة صحيحة *"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__bank_iban
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__bank_iban
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "IBAN / Account No."
+msgstr "رقم الآيبان / الحساب"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__id
@@ -1153,6 +1474,7 @@ msgstr "يحتوي على رسالة"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_product_public_category__id
@@ -1166,6 +1488,7 @@ msgstr "المعرف"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_exception_icon
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_exception_icon
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_exception_icon
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_exception_icon
 msgid "Icon"
 msgstr "الأيقونة"
 
@@ -1173,6 +1496,7 @@ msgstr "الأيقونة"
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__activity_exception_icon
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__activity_exception_icon
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__activity_exception_icon
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__activity_exception_icon
 msgid "Icon to indicate an exception activity."
 msgstr "أيقونة تشير إلى نشاط استثنائي."
 
@@ -1181,6 +1505,7 @@ msgstr "أيقونة تشير إلى نشاط استثنائي."
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__message_needaction
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__message_needaction
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_needaction
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__message_needaction
 msgid "If checked, new messages require your attention."
 msgstr "إذا كان محددًا، فهناك رسائل جديدة تتطلب انتباهك."
 
@@ -1193,6 +1518,8 @@ msgstr "إذا كان محددًا، فهناك رسائل جديدة تتطلب
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__message_has_sms_error
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_has_error
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_has_sms_error
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__message_has_error
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr "إذا كان محددًا، فهناك رسائل بها خطأ في التسليم."
 
@@ -1296,6 +1623,11 @@ msgid "Industrial factory (200+ workers)"
 msgstr "مصنع كبير (أكثر من 200 عامل)"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__info_request
+msgid "Information Requested"
+msgstr "المعلومات المطلوبة"
+
+#. module: furniture_marketplace
 #: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_internal_categories
 msgid "Internal Categories"
 msgstr "التصنيفات الداخلية"
@@ -1316,6 +1648,7 @@ msgstr "التصنيف الداخلي"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_is_follower
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_is_follower
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_is_follower
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_is_follower
 msgid "Is Follower"
 msgstr "متابع"
 
@@ -1326,6 +1659,11 @@ msgstr "متابع"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
 msgid "Join as a Manufacturer"
 msgstr "انضم كـ مُصنّع / ورشة"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "L"
+msgstr "ط"
 
 #. module: furniture_marketplace
 #: model:furniture.workshop.size,name:furniture_marketplace.workshop_size_large
@@ -1340,6 +1678,7 @@ msgstr "مصنع متوسط / كبير (51 - 200 عامل)"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__write_uid
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__write_uid
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__write_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__write_uid
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__write_uid
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__write_uid
 msgid "Last Updated by"
@@ -1353,10 +1692,61 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__write_date
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__write_date
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__write_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__write_date
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__write_date
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__lead_time_days
+msgid "Lead Time (days)"
+msgstr "مدة التنفيذ (أيام)"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Lead time"
+msgstr "مدة التنفيذ"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+msgid "Lead time (days)"
+msgstr "مدة التنفيذ (أيام)"
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "Lead time: %s days"
+msgstr "مدة التنفيذ: %s يوم"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid "Legal"
+msgstr "البيانات القانونية"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid "Legal & Banking"
+msgstr "البيانات القانونية والبنكية"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__legal_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__legal_name
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Legal / Company Name"
+msgstr "الاسم القانوني / اسم الشركة"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Length"
+msgstr "الطول"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__length_cm
+msgid "Length (cm)"
+msgstr "الطول (سم)"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__line_count
@@ -1398,6 +1788,7 @@ msgstr "مشرف السوق"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_allocation_search
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_search
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_order_line_by_manufacturer_search
 msgid "Manufacturer"
@@ -1405,6 +1796,7 @@ msgstr "الورشة / المُصنّع"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__manufacturer_id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_product_product__manufacturer_id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__manufacturer_id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_sale_order_line__manufacturer_id
@@ -1438,6 +1830,11 @@ msgid "Manufacturer Application: approved"
 msgstr "طلب انضمام ورشة: تم الاعتماد"
 
 #. module: furniture_marketplace
+#: model:mail.template,name:furniture_marketplace.mail_application_more_info
+msgid "Manufacturer Application: more information required"
+msgstr "طلب انضمام ورشة: مطلوب معلومات إضافية"
+
+#. module: furniture_marketplace
 #: model:mail.template,name:furniture_marketplace.mail_application_received
 msgid "Manufacturer Application: received"
 msgstr "طلب انضمام ورشة: تم الاستلام"
@@ -1464,6 +1861,18 @@ msgstr "فئات وتخصصات الورش والمصانع"
 #: model:ir.model,name:furniture_marketplace.model_furniture_manufacturer_type
 msgid "Manufacturer Category / Type"
 msgstr "فئة / تخصص المُصنّع"
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_allocations
+#: model:ir.model.fields,field_description:furniture_marketplace.field_sale_order__allocation_ids
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_order_form_allocations
+msgid "Manufacturer Fulfilment"
+msgstr "تنفيذ الطلبات حسب الورشة"
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_order_allocation
+msgid "Manufacturer Fulfilment Allocation"
+msgstr "تخصيص تنفيذ الطلب للورشة"
 
 #. module: furniture_marketplace
 #: model:ir.actions.act_window,name:furniture_marketplace.action_manufacturer
@@ -1502,6 +1911,11 @@ msgstr "السماح للورش برفع ملفات الكتالوج"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
 msgid "Mark Completed"
 msgstr "تحديد كمكتمل"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_allocation_form
+msgid "Mark Delivered"
+msgstr "تم التسليم"
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_form_marketplace
@@ -1570,6 +1984,7 @@ msgstr "سوق الأثاث: مستخدم بوابة الورش"
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__activity_type_icon
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__activity_type_icon
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__activity_type_icon
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__activity_type_icon
 msgid "Material Symbols icon e.g. checklist"
 msgstr "أيقونة Material Symbols مثل checklist"
 
@@ -1590,10 +2005,16 @@ msgid "Medium (11-50 workers)"
 msgstr "ورشة متوسطة (11 - 50 عامل)"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_reject_wizard_form
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_has_error
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_has_error
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_has_error
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_has_error
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_has_error
 msgid "Message Delivery error"
 msgstr "خطأ في تسليم الرسالة"
 
@@ -1602,6 +2023,7 @@ msgstr "خطأ في تسليم الرسالة"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_ids
 msgid "Messages"
 msgstr "الرسائل"
 
@@ -1640,6 +2062,21 @@ msgid "Mobile number is required."
 msgstr "رقم الهاتف المحمول مطلوب."
 
 #. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__mode
+msgid "Mode"
+msgstr "النوع"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_manufacturer_application__state__more_info
+msgid "More Information Required"
+msgstr "مطلوب معلومات إضافية"
+
+#. module: furniture_marketplace
+#: model:mail.template,subject:furniture_marketplace.mail_application_more_info
+msgid "More information needed for your application {{ object.name }}"
+msgstr "مطلوب معلومات إضافية لطلب الانضمام {{ object.name }}"
+
+#. module: furniture_marketplace
 #: model:ir.module.module,summary:base.module_furniture_marketplace
 msgid ""
 "Multi-manufacturer furniture marketplace with manufacturer onboarding, "
@@ -1652,6 +2089,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__my_activity_date_deadline
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__my_activity_date_deadline
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__my_activity_date_deadline
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__my_activity_date_deadline
 msgid "My Activity Deadline"
 msgstr "موعد نشاطي النهائي"
 
@@ -1669,6 +2107,7 @@ msgstr "منتجاتي"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__name
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__name
 msgid "Name"
 msgstr "الاسم"
@@ -1683,6 +2122,7 @@ msgstr "الاسم (أ - ي)"
 #. odoo-python
 #: code:addons/furniture_marketplace/models/application.py:0
 #: code:addons/furniture_marketplace/models/custom_request.py:0
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_order_allocation__state__new
 msgid "New"
 msgstr "جديد"
 
@@ -1696,6 +2136,12 @@ msgstr "طلب تصنيع أثاث مخصص جديد {{ object.name }}"
 #: code:addons/furniture_marketplace/models/application.py:0
 msgid "New manufacturer application %s"
 msgstr "طلب انضمام ورشة / مُصنّع جديد %s"
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/allocation.py:0
+msgid "New order lines were assigned to you for fulfilment: %s"
+msgstr "تم تخصيص بنود طلب جديدة لك للتنفيذ: %s"
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_nav
@@ -1718,6 +2164,7 @@ msgstr "الأحدث أولاً"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_date_deadline
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_date_deadline
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_date_deadline
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr "الموعد النهائي للنشاط التالي"
 
@@ -1725,6 +2172,7 @@ msgstr "الموعد النهائي للنشاط التالي"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_summary
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_summary
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_summary
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_summary
 msgid "Next Activity Summary"
 msgstr "ملخص النشاط التالي"
 
@@ -1732,6 +2180,7 @@ msgstr "ملخص النشاط التالي"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_type_id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_type_id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_type_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_type_id
 msgid "Next Activity Type"
 msgstr "نوع النشاط التالي"
 
@@ -1744,6 +2193,15 @@ msgstr "لا"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
 msgid "No categories yet."
 msgstr "لا توجد تصنيفات مضافة بعد."
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_orders
+msgid ""
+"No orders yet. Order lines for your products appear here once the customer's"
+" order is confirmed."
+msgstr ""
+"لا توجد طلبات بعد. تظهر هنا بنود الطلبات الخاصة بمنتجاتك بعد تأكيد طلب "
+"العميل."
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
@@ -1799,6 +2257,7 @@ msgstr "البريد الإلكتروني لاستقبال إشعارات طلب
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_needaction_counter
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_needaction_counter
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_needaction_counter
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_needaction_counter
 msgid "Number of Actions"
 msgstr "عدد الإجراءات"
 
@@ -1807,6 +2266,7 @@ msgstr "عدد الإجراءات"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_has_error_counter
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_has_error_counter
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_has_error_counter
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_has_error_counter
 msgid "Number of errors"
 msgstr "عدد الأخطاء"
 
@@ -1815,6 +2275,7 @@ msgstr "عدد الأخطاء"
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__message_needaction_counter
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__message_needaction_counter
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_needaction_counter
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__message_needaction_counter
 msgid "Number of messages requiring action"
 msgstr "عدد الرسائل التي تتطلب إجراءً"
 
@@ -1823,8 +2284,19 @@ msgstr "عدد الرسائل التي تتطلب إجراءً"
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__message_has_error_counter
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__message_has_error_counter
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_has_error_counter
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr "عدد الرسائل التي بها خطأ في التسليم"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_marketplace_settings__show_exact_stock
+msgid "Off: customers only see In stock / Low stock / Out of stock."
+msgstr "عند الإيقاف: يرى العملاء فقط متوفر / كمية محدودة / غير متوفر."
+
+#. module: furniture_marketplace
+#: model:ir.model.constraint,message:furniture_marketplace.constraint_furniture_order_allocation_order_manufacturer_unique
+msgid "One allocation per order and manufacturer."
+msgstr "تخصيص واحد لكل طلب ولكل ورشة."
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,help:furniture_marketplace.field_product_product__marketplace_specifications
@@ -1858,6 +2330,7 @@ msgid "Only the platform can publish products."
 msgstr "إدارة المنصة فقط هي المخوّلة بنشر المنتجات على المتجر."
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_allocation_search
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_search
 msgid "Open"
 msgstr "قيد المتابعة"
@@ -1868,15 +2341,38 @@ msgid "Optional"
 msgstr "اختياري"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_orders
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_order_line_by_manufacturer_search
 msgid "Order"
 msgstr "أمر البيع"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__date_order
+msgid "Order Date"
+msgstr "تاريخ الطلب"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__line_ids
+msgid "Order Lines"
+msgstr "بنود الطلب"
 
 #. module: furniture_marketplace
 #: model:ir.actions.act_window,name:furniture_marketplace.action_order_lines_by_manufacturer
 #: model:ir.ui.menu,name:furniture_marketplace.menu_manufacturer_order_lines
 msgid "Order Lines by Manufacturer"
 msgstr "بنود الطلبات حسب الورشة / المُصنّع"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_nav
+msgid "Orders"
+msgstr "الطلبات"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_orders
+msgid "Orders to fulfil"
+msgstr "طلبات بانتظار التنفيذ"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields.selection,name:furniture_marketplace.selection__product_template__marketplace_stock_status__out_of_stock
@@ -1935,6 +2431,14 @@ msgid "Phone"
 msgstr "الهاتف"
 
 #. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid ""
+"Please accept the marketplace terms and confirm that your information is "
+"accurate."
+msgstr "يرجى الموافقة على شروط المنصة وتأكيد صحة المعلومات."
+
+#. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__access_url
 msgid "Portal Access URL"
 msgstr "رابط الوصول إلى البوابة"
@@ -1960,6 +2464,11 @@ msgstr "المُصنّع المفضل"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
 msgid "Preferred Manufacturer *"
 msgstr "الورشة أو المصنع المفضل *"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_order_allocation__state__preparing
+msgid "Preparing"
+msgstr "قيد التجهيز"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__price
@@ -2005,6 +2514,7 @@ msgstr "السعر: من الأقل إلى الأعلى"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
 msgid "Product"
 msgstr "المنتج"
 
@@ -2156,13 +2666,22 @@ msgstr "المنتجات المنشورة"
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
 msgid "Qty"
 msgstr "الكمية"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__quantity
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__quantity
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
 msgid "Quantity"
 msgstr "الكمية"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Quantity *"
+msgstr "الكمية *"
 
 #. module: furniture_marketplace
 #. odoo-python
@@ -2178,9 +2697,20 @@ msgstr "يجب أن تكون الكمية رقماً صحيحاً (القيمة 
 
 #. module: furniture_marketplace
 #. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Quantity must be at least 1."
+msgstr "يجب ألا تقل الكمية عن 1."
+
+#. module: furniture_marketplace
+#. odoo-python
 #: code:addons/furniture_marketplace/controllers/portal.py:0
 msgid "Quantity must be zero or a positive number."
 msgstr "يجب أن تكون الكمية صفراً أو رقماً موجباً."
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Quotation"
+msgstr "عرض السعر"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__sale_order_id
@@ -2188,24 +2718,31 @@ msgid "Quotation / Order"
 msgstr "عرض السعر / أمر البيع"
 
 #. module: furniture_marketplace
-#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__quotation
-msgid "Quotation Sent"
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__quoted
+msgid "Quotation Submitted"
 msgstr "تم إرسال عرض السعر"
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
-msgid ""
-"Quotations and pricing are handled by the platform team once you accept the "
-"request."
-msgstr ""
-"يتولى فريق إدارة المنصة إعداد التسعير وإرسال عرض السعر الرسمي للعميل فور "
-"قبولكم للطلب."
+msgid "Quotation sent. Waiting for the customer's decision."
+msgstr "تم إرسال عرض السعر. بانتظار قرار العميل."
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__quoted_on
+msgid "Quoted On"
+msgstr "تاريخ عرض السعر"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__amount_total
+msgid "Quoted Total"
+msgstr "إجمالي عرض السعر"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__rating_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__rating_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__rating_ids
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__rating_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__rating_ids
 msgid "Ratings"
 msgstr "التقييمات"
 
@@ -2213,6 +2750,16 @@ msgstr "التقييمات"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
 msgid "Re-activate"
 msgstr "إعادة تفعيل"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_order_allocation__state__ready
+msgid "Ready for Dispatch"
+msgstr "جاهز للشحن"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Reason (optional)"
+msgstr "السبب (اختياري)"
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
@@ -2264,6 +2811,7 @@ msgid "Registration Month"
 msgstr "شهر التسجيل"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_reject_wizard__mode__reject
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
@@ -2316,6 +2864,21 @@ msgid "Rejection reason"
 msgstr "سبب الرفض"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_allocation_form
+msgid "Reopen"
+msgstr "إعادة فتح"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
+msgid "Report problem"
+msgstr "الإبلاغ عن مشكلة"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
+msgid "Reported problem:"
+msgstr "المشكلة المُبلغ عنها:"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
 msgid "Representative"
@@ -2332,6 +2895,13 @@ msgid "Request Date"
 msgstr "تاريخ الطلب"
 
 #. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Request More Information"
+msgstr "طلب معلومات إضافية"
+
+#. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__title
 msgid "Request Title"
 msgstr "عنوان الطلب"
@@ -2346,6 +2916,11 @@ msgstr "عنوان الطلب *"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
 msgid "Request date"
 msgstr "تاريخ الطلب"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_reject_wizard__mode__info
+msgid "Request information"
+msgstr "طلب معلومات"
 
 #. module: furniture_marketplace
 #. odoo-python
@@ -2382,6 +2957,7 @@ msgstr "إعادة إلى مسودة"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_user_id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_user_id
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_user_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__activity_user_id
 msgid "Responsible User"
 msgstr "المستخدم المسؤول"
 
@@ -2416,10 +2992,16 @@ msgid "Row"
 msgstr "الصف"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__sku
+msgid "SKU / Internal Reference"
+msgstr "رمز المنتج / المرجع الداخلي"
+
+#. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_has_sms_error
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_has_sms_error
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_has_sms_error
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_has_sms_error
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr "خطأ في تسليم الرسائل النصية"
 
@@ -2476,6 +3058,12 @@ msgstr "يرجى اختيار ملف بصيغة CSV أو Excel."
 
 #. module: furniture_marketplace
 #. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Select a furniture category."
+msgstr "اختر فئة الأثاث."
+
+#. module: furniture_marketplace
+#. odoo-python
 #: code:addons/furniture_marketplace/models/product.py:0
 msgid "Select a manufacturer first."
 msgstr "يرجى اختيار الورشة أو المُصنّع أولاً."
@@ -2517,15 +3105,45 @@ msgid "Selling price *"
 msgstr "سعر البيع *"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Send Quotation to Customer"
+msgstr "إرسال عرض السعر للعميل"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_reject_wizard_form
+msgid "Send Request"
+msgstr "إرسال الطلب"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+msgid "Send a quotation to the customer"
+msgstr "إرسال عرض سعر للعميل"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_update
+msgid "Send and resubmit"
+msgstr "إرسال وإعادة التقديم"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
 msgid "Send portal invitation"
 msgstr "إرسال دعوة تفعيل البوابة"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+msgid "Send quotation"
+msgstr "إرسال عرض السعر"
 
 #. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__sequence
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__sequence
 msgid "Sequence"
 msgstr "التسلسل"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__approved
+msgid "Set by application approval or the Activate button."
+msgstr "يتم تعيينه عند اعتماد طلب الانضمام أو بزر التفعيل."
 
 #. module: furniture_marketplace
 #: model:ir.actions.act_url,name:furniture_marketplace.action_url_cart
@@ -2536,6 +3154,11 @@ msgstr "سلة المشتريات"
 #: model:ir.ui.menu,name:furniture_marketplace.menu_customer_cart
 msgid "Shopping Cart & Checkout"
 msgstr "سلة المشتريات وإتمام الطلب"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__show_exact_stock
+msgid "Show exact available quantity to customers"
+msgstr "عرض الكمية المتاحة بالضبط للعملاء"
 
 #. module: furniture_marketplace
 #: model:furniture.workshop.size,name:furniture_marketplace.workshop_size_small
@@ -2578,13 +3201,16 @@ msgstr "البدء من جديد"
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__state
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__state
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__state
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_order_allocation__state
 msgid "State"
 msgstr "الحالة"
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_orders
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_allocation_search
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_search
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_search
 msgid "Status"
@@ -2594,6 +3220,7 @@ msgstr "الحالة"
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__activity_state
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__activity_state
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__activity_state
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__activity_state
 msgid ""
 "Status based on activities\n"
 "Overdue: Due date is already passed\n"
@@ -2648,6 +3275,11 @@ msgid "Submitted On"
 msgstr "تاريخ الإرسال"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
+msgid "Subtotal"
+msgstr "المجموع الفرعي"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
 msgid "Suspend"
 msgstr "إيقاف مؤقت"
@@ -2667,9 +3299,45 @@ msgstr ""
 "منتجاتها. هل تريد المتابعة؟"
 
 #. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__tax_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__tax_id
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Tax ID"
+msgstr "الرقم الضريبي"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Terms"
+msgstr "الشروط"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+msgid "Terms (material, deposit, delivery...)"
+msgstr "الشروط (الخامة، العربون، التسليم...)"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_thanks
 msgid "Thank you!"
 msgstr "شكراً لتواصلكم معنا!"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_update
+msgid ""
+"Thank you, your answer was sent. Your application is pending approval again."
+msgstr "شكرًا لك، تم إرسال ردك. طلب الانضمام بانتظار الاعتماد مرة أخرى."
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+msgid "The applicant sent the requested information: %s"
+msgstr "أرسل مقدم الطلب المعلومات المطلوبة: %s"
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "The customer accepted the quotation."
+msgstr "وافق العميل على عرض السعر."
 
 #. module: furniture_marketplace
 #. odoo-python
@@ -2738,6 +3406,11 @@ msgid "The manufacturer needs an e-mail address to create a portal user."
 msgstr "يجب تسجيل بريد إلكتروني للورشة لإنشاء حساب بوابة إلكترونية لها."
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "The manufacturer sent you a quotation"
+msgstr "أرسلت لك الورشة عرض سعر"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
 msgid "The name and e-mail can only be changed by the platform team."
 msgstr ""
@@ -2791,12 +3464,21 @@ msgid "This catalog was already imported ("
 msgstr "تم استيراد هذا الكتالوج مسبقاً ("
 
 #. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/allocation.py:0
+msgid "This status change is not allowed."
+msgstr "تغيير الحالة هذا غير مسموح."
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
 msgid "Title"
 msgstr "العنوان"
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_allocation_list
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_order_line_by_manufacturer_list
 msgid "Total"
 msgstr "الإجمالي"
@@ -2810,6 +3492,7 @@ msgstr "التخصص / النوع"
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__activity_exception_decoration
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__activity_exception_decoration
 #: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__activity_exception_decoration
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_order_allocation__activity_exception_decoration
 msgid "Type of the exception activity on record."
 msgstr "نوع النشاط الاستثنائي في السجل."
 
@@ -2817,6 +3500,22 @@ msgstr "نوع النشاط الاستثنائي في السجل."
 #: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__under_review
 msgid "Under Review"
 msgstr "قيد المراجعة"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__agreed_price
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Unit price"
+msgstr "سعر الوحدة"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+msgid "Unit price *"
+msgstr "سعر الوحدة *"
 
 #. module: furniture_marketplace
 #. odoo-python
@@ -2889,6 +3588,11 @@ msgid "Visible to the platform team only..."
 msgstr "ملاحظات داخلية لفريق المنصة فقط..."
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "W"
+msgstr "ع"
+
+#. module: furniture_marketplace
 #: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__warning
 msgid "Warning"
 msgstr "تحذير"
@@ -2912,6 +3616,16 @@ msgstr "فئة المنتج في الموقع"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
 msgid "Website category *"
 msgstr "تصنيف المتجر الإلكتروني *"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Width"
+msgstr "العرض"
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__width_cm
+msgid "Width (cm)"
+msgstr "العرض (سم)"
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
@@ -2991,6 +3705,11 @@ msgid "You have no requests yet."
 msgstr "ليس لديك أي طلبات تصنيع مخصص حتى الآن."
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_update
+msgid "Your answer *"
+msgstr "ردك *"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_thanks
 msgid "Your application"
 msgstr "طلب انضمامكم"
@@ -3017,6 +3736,11 @@ msgid "Your manufacturer account is not active."
 msgstr "حساب الورشة الخاص بكم غير نشط حالياً."
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
+msgid "Your products in this order"
+msgstr "منتجاتك في هذا الطلب"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
 msgid "Your request was submitted. We will keep you updated by e-mail."
 msgstr ""
@@ -3026,6 +3750,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
 msgid "created,"
 msgstr "تم إنشاؤه،"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "days"
+msgstr "يوم"
 
 #. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
@@ -3072,6 +3802,11 @@ msgid "was submitted and is pending approval."
 msgstr "تم إرساله بنجاح وهو الآن بانتظار المراجعة والاعتماد."
 
 #. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "x"
+msgstr "x"
+
+#. module: furniture_marketplace
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
 msgid "← All my requests"
 msgstr "→ العودة إلى جميع طلباتي"
@@ -3080,3 +3815,8 @@ msgstr "→ العودة إلى جميع طلباتي"
 #: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
 msgid "← Dashboard"
 msgstr "→ العودة إلى لوحة التحكم"
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_order_detail
+msgid "← Orders"
+msgstr "→ الطلبات"

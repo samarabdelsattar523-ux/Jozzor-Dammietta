@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Furniture Marketplace & Manufacturer Portal',
-    'version': '20.0.3.2.0',
+    'version': '20.0.4.0.0',
     'category': 'Website/eCommerce',
     'summary': 'Multi-manufacturer furniture marketplace with manufacturer onboarding, '
                'catalog import, product approval and custom furniture requests',

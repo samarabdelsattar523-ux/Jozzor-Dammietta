@@ -44,7 +44,7 @@
             <form create="false" delete="false" string="Marketplace Settings">
                 <sheet>
                     <h2>Marketplace Settings</h2>
-                    <group><field name="products_per_page"/></group>
+                    <group><field name="products_per_page"/><field name="show_exact_stock"/></group>
                 </sheet>
             </form>
         </field>
@@ -162,10 +162,12 @@
                 <group>
                     <field name="res_model" invisible="1"/>
                     <field name="res_id" invisible="1"/>
-                    <field name="reason" placeholder="Explain why this is rejected - the applicant/customer is notified."/>
+                    <field name="mode" invisible="1"/>
+                    <field name="reason" string="Message" placeholder="Explain why - the applicant/customer is notified by e-mail."/>
                 </group>
                 <footer>
-                    <button name="action_confirm" type="object" string="Reject" class="btn-danger" data-hotkey="q"/>
+                    <button name="action_confirm" type="object" string="Reject" class="btn-danger" data-hotkey="q" invisible="mode != 'reject'"/>
+                    <button name="action_confirm" type="object" string="Send Request" class="btn-primary" data-hotkey="q" invisible="mode != 'info'"/>
                     <button string="Cancel" special="cancel" data-hotkey="x"/>
                 </footer>
             </form>

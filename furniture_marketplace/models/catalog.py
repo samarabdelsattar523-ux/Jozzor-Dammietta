@@ -74,7 +74,8 @@ class FurnitureCatalogImport(models.Model):
             'manufacturer_id': manufacturer.id if manufacturer else False,
             'application_id': application.id if application else False,
             'line_ids': [(0, 0, {
-                'sequence': r['row_no'], 'product_name': r['product_name'], 'category': r['category'],
+                'sequence': r['row_no'], 'product_name': r['product_name'], 'sku': r.get('sku') or False,
+                'category': r['category'],
                 'description': r['description'], 'price': r['price'], 'quantity': r['quantity'],
                 'image_ref': r['image'], 'specifications': r['specifications'],
             }) for r in rows],
@@ -113,6 +114,12 @@ class FurnitureCatalogImport(models.Model):
             _logger.info('Image %s could not be fetched: %s', ref, exc)
         return False
 
+    def _find_existing_product(self, manufacturer, line):
+        """Duplicate rule: same manufacturer and same SKU (or same name when the row has no SKU)."""
+        domain = [('manufacturer_id', '=', manufacturer.id)]
+        domain += [('default_code', '=ilike', line.sku)] if line.sku else [('name', '=ilike', line.product_name)]
+        return self.env['product.template'].sudo().with_context(active_test=False).search(domain, limit=1)
+
     def action_import(self, manufacturer=None):
         """Create the products (pending approval, never published) from validated lines."""
         Product = self.env['product.template'].sudo()
@@ -122,12 +129,18 @@ class FurnitureCatalogImport(models.Model):
                 raise UserError(self.env._('A manufacturer is required to import the catalog.'))
             rec.manufacturer_id = manufacturer
             for line in rec.line_ids.filtered(lambda l: l.import_state != 'imported'):
+                existing = rec._find_existing_product(manufacturer, line)
+                if existing:  # never create the same product twice for one manufacturer (spec 8.3)
+                    line.write({'import_state': 'failed', 'product_id': existing.id,
+                                'error_message': self.env._('Already in your catalog: "%s" (skipped).', existing.name)})
+                    continue
                 try:
                     with self.env.cr.savepoint():
                         vals = Product._marketplace_type_vals()
                         image = rec._resolve_image(line.image_ref)
                         vals.update({
                             'name': line.product_name,
+                            'default_code': line.sku or False,
                             'list_price': line.price,
                             'description_sale': line.description,
                             'categ_id': Product._marketplace_internal_category(line.category).id,
@@ -162,6 +175,7 @@ class FurnitureCatalogLine(models.Model):
     manufacturer_id = fields.Many2one(related='import_id.manufacturer_id', store=True, index=True)
     sequence = fields.Integer('Row')
     product_name = fields.Char(required=True)
+    sku = fields.Char('SKU / Internal Reference')
     category = fields.Char(required=True)
     description = fields.Text()
     price = fields.Float()

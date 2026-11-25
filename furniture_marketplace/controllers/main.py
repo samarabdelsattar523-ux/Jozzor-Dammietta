@@ -36,6 +36,13 @@ def _int(value):
         return 0
 
 
+def _float(value):
+    try:
+        return float(str(value).replace(',', '.'))
+    except (TypeError, ValueError):
+        return None
+
+
 def read_upload(file_storage, max_size=MAX_UPLOAD):
     """-> (filename, bytes) or (None, None). Raises ValueError when too big."""
     if not file_storage or not getattr(file_storage, 'filename', None):
@@ -129,6 +136,8 @@ class FurnitureMarketplaceController(http.Controller):
         email = (post.get('email') or '').strip()
         if email and not EMAIL_RE.match(email):
             errors.append(_('The e-mail address is not valid.'))
+        if not post.get('terms_accepted') or not post.get('accuracy_declared'):
+            errors.append(_('Please accept the marketplace terms and confirm that your information is accurate.'))
         country = env['res.country'].sudo().browse(_int(post.get('country_id'))).exists()
         size = env['furniture.workshop.size'].sudo().browse(_int(post.get('workshop_size_id'))).exists()
         if post.get('country_id') and not country:
@@ -178,6 +187,9 @@ class FurnitureMarketplaceController(http.Controller):
             'email': email, 'phone': post['phone'].strip(), 'address': (post.get('address') or '').strip(),
             'country_id': country.id, 'city': post['city'].strip(), 'workshop_size_id': size.id,
             'description': (post.get('description') or '').strip(), 'from_website': True,
+            **{key: (post.get(key) or '').strip() or False for key in (
+                'legal_name', 'commercial_registration', 'tax_id', 'bank_name', 'bank_account_holder', 'bank_iban')},
+            'terms_accepted': True, 'accuracy_declared': True,
             'catalog_import_id': catalog.id,
         })
         catalog.write({'application_id': application.id})
@@ -203,6 +215,27 @@ class FurnitureMarketplaceController(http.Controller):
             return request.redirect('/manufacturer/apply')
         return request.render('furniture_marketplace.manufacturer_apply_review', {'application': app})
 
+    @http.route('/manufacturer/apply/update/<int:app_id>/<string:token>', type='http', auth='public',
+                website=True, methods=['GET', 'POST'], csrf=True)
+    def manufacturer_apply_update(self, app_id, token, **post):
+        app = self._get_draft_application(app_id, token)
+        if not app or app.state not in ('more_info', 'submitted'):
+            return request.redirect('/manufacturer/apply')
+        if request.httprequest.method == 'POST' and app.state == 'more_info':
+            attachments = request.env['ir.attachment'].sudo()
+            try:
+                for f in request.httprequest.files.getlist('documents'):
+                    name, data = read_upload(f)
+                    if name:
+                        attachments |= attachments.create({'name': name, 'raw': data,
+                                                           'res_model': app._name, 'res_id': app.id})
+            except ValueError as exc:
+                return request.render('furniture_marketplace.manufacturer_apply_update',
+                                      {'application': app, 'done': False, 'error': str(exc)})
+            app._resubmit((post.get('reply') or '').strip(), attachments)
+        return request.render('furniture_marketplace.manufacturer_apply_update',
+                              {'application': app, 'done': app.state == 'submitted'})
+
     @http.route('/manufacturer/apply/submit', type='http', auth='public', website=True, methods=['POST'], csrf=True)
     def manufacturer_apply_submit(self, app_id=None, token=None, **kw):
         app = self._get_draft_application(app_id, token)
@@ -215,9 +248,14 @@ class FurnitureMarketplaceController(http.Controller):
     # 3. Custom furniture request (customers)
     # ------------------------------------------------------------------
     def _request_form_context(self, values=None, errors=None):
+        partner = request.env.user.partner_id
+        values = dict(values or {})
+        values.setdefault('delivery_address', partner.sudo()._display_address(without_name=True).strip())
+        values.setdefault('quantity', 1)
         return {
             'manufacturers': request.env['furniture.manufacturer'].sudo().search([('approved', '=', True)]),
-            'partner': request.env.user.partner_id, 'values': values or {}, 'errors': errors or [],
+            'categories': request.env['product.public.category'].sudo().search([]),
+            'partner': partner, 'values': values, 'errors': errors or [],
         }
 
     @http.route('/custom-furniture-request', type='http', auth='user', website=True)
@@ -238,6 +276,20 @@ class FurnitureMarketplaceController(http.Controller):
             [('id', '=', _int(post.get('manufacturer_id'))), ('approved', '=', True)], limit=1)
         if not maker:
             errors.append(_('Select a preferred manufacturer from the list.'))
+        category = env['product.public.category'].sudo().browse(_int(post.get('public_categ_id'))).exists()
+        if not category:
+            errors.append(_('Select a furniture category.'))
+        quantity = _int(post.get('quantity'))
+        if quantity < 1:
+            errors.append(_('Quantity must be at least 1.'))
+        dims = {}
+        for key in ('length_cm', 'width_cm', 'height_cm'):
+            raw = (post.get(key) or '').strip()
+            value = _float(raw) if raw else 0.0
+            if value is None or value < 0:
+                errors.append(_('Dimensions must be positive numbers.'))
+                break
+            dims[key] = value
         name = data = None
         try:
             name, data = read_upload(post.get('reference_image'))
@@ -253,6 +305,8 @@ class FurnitureMarketplaceController(http.Controller):
         rec = env['furniture.custom.request'].sudo().create({
             'title': title, 'description': description, 'notes': (post.get('notes') or '').strip(),
             'manufacturer_id': maker.id, 'partner_id': env.user.partner_id.id,
+            'public_categ_id': category.id, 'quantity': quantity, **dims,
+            'delivery_address': (post.get('delivery_address') or '').strip(),
             'reference_image': base64.b64encode(data).decode(), 'reference_image_name': name,
         })
         rec.action_submit()
@@ -280,6 +334,18 @@ class FurnitureMarketplaceController(http.Controller):
             'req': rec, 'submitted': bool(submitted), 'order_url': order_url,
             'can_cancel': settings().customer_allow_request_cancel and rec.state in ('draft', 'submitted'),
             'page_name': 'furniture_requests'})
+
+    @http.route('/my/furniture-requests/<int:req_id>/<any(accept,decline):decision>', type='http',
+                auth='user', website=True, methods=['POST'], csrf=True)
+    def my_request_decide(self, req_id, decision, reason=None, **kw):
+        rec = request.env['furniture.custom.request'].sudo().search(
+            self._customer_requests_domain() + [('id', '=', req_id), ('state', '=', 'quoted')], limit=1)
+        if rec:
+            if decision == 'accept':
+                rec.action_customer_accept()
+            else:
+                rec.action_customer_reject((reason or '').strip())
+        return request.redirect('/my/furniture-requests/%s' % req_id)
 
     @http.route('/my/furniture-requests/<int:req_id>/cancel', type='http', auth='user', website=True,
                 methods=['POST'], csrf=True)

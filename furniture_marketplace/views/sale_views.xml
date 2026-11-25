@@ -31,6 +31,114 @@
             </search>
         </field>
     </record>
+    <!-- Manufacturer fulfilment allocations: one per (customer order, manufacturer) -->
+    <record id="view_allocation_list" model="ir.ui.view">
+        <field name="name">furniture.order.allocation.list</field>
+        <field name="model">furniture.order.allocation</field>
+        <field name="arch" type="xml">
+            <list create="false" decoration-danger="state == 'exception'" decoration-muted="state in ('delivered', 'cancelled')">
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="manufacturer_id"/>
+                <field name="date_order"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="amount_untaxed" sum="Total"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_allocation_form" model="ir.ui.view">
+        <field name="name">furniture.order.allocation.form</field>
+        <field name="model">furniture.order.allocation</field>
+        <field name="arch" type="xml">
+            <form create="false">
+                <header>
+                    <button name="action_mark_delivered" type="object" string="Mark Delivered" class="btn-primary"
+                            invisible="state != 'dispatched'" groups="furniture_marketplace.group_marketplace_manager"/>
+                    <button name="action_reset_new" type="object" string="Reopen"
+                            invisible="state not in ('exception', 'cancelled')" groups="furniture_marketplace.group_marketplace_manager"/>
+                    <button name="action_cancel" type="object" string="Cancel Allocation"
+                            invisible="state in ('delivered', 'cancelled')" groups="furniture_marketplace.group_marketplace_manager"
+                            confirm="Cancel this manufacturer's part of the order? Handle the refund / customer communication from the sales order."/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,accepted,preparing,ready,dispatched,delivered"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="order_id"/>
+                            <field name="manufacturer_id"/>
+                            <field name="date_order"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="partner_shipping_id"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount_untaxed"/>
+                            <field name="picking_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <field name="exception_note" invisible="state != 'exception'" readonly="1"/>
+                    <field name="line_ids">
+                        <list>
+                            <field name="product_id"/>
+                            <field name="name"/>
+                            <field name="product_uom_qty"/>
+                            <field name="price_subtotal"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_allocation_search" model="ir.ui.view">
+        <field name="name">furniture.order.allocation.search</field>
+        <field name="model">furniture.order.allocation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="manufacturer_id"/>
+                <filter name="open" string="Open" domain="[('state', 'not in', ('delivered', 'cancelled'))]"/>
+                <filter name="exception" string="Exceptions" domain="[('state', '=', 'exception')]"/>
+                <group>
+                    <filter name="group_manufacturer" string="Manufacturer" context="{'group_by': 'manufacturer_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_allocations" model="ir.actions.act_window">
+        <field name="name">Manufacturer Fulfilment</field>
+        <field name="res_model">furniture.order.allocation</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <!-- Sales order: show each manufacturer's fulfilment status -->
+    <record id="view_order_form_allocations" model="ir.ui.view">
+        <field name="name">sale.order.form.marketplace.allocations</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Manufacturer Fulfilment" name="marketplace_allocations" invisible="not allocation_ids">
+                    <field name="allocation_ids" readonly="1">
+                        <list>
+                            <field name="manufacturer_id"/>
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="amount_untaxed"/>
+                            <field name="state" widget="badge"/>
+                            <field name="exception_note"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
     <record id="action_order_lines_by_manufacturer" model="ir.actions.act_window">
         <field name="name">Order Lines by Manufacturer</field>
         <field name="res_model">sale.order.line</field>

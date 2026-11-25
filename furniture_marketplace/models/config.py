@@ -30,6 +30,9 @@ class FurnitureMarketplaceSettings(models.Model):
     name = fields.Char(default='Marketplace Settings', readonly=True)
     # Marketplace
     products_per_page = fields.Integer(default=12, string='Products per page')
+    show_exact_stock = fields.Boolean(
+        default=False, string='Show exact available quantity to customers',
+        help='Off: customers only see In stock / Low stock / Out of stock.')
     # Manufacturer approval
     notify_email = fields.Char(string='Notify e-mail for new applications')
     auto_import_catalog = fields.Boolean(

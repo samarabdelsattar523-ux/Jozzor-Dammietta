@@ -151,3 +151,85 @@ class TestFurnitureMarketplace(TransactionCase):
         self.assertEqual(req.state, 'quotation')
         req.sale_order_id.action_confirm()
         self.assertEqual(req.state, 'confirmed')
+
+    def test_custom_request_quotation_round(self):
+        maker = self._approved('maker7@example.com', 'Maker Seven')
+        customer = self.env['res.partner'].create({'name': 'Customer 2', 'email': 'cust2@example.com'})
+        req = self.env['furniture.custom.request'].create({
+            'title': 'Wardrobe', 'description': '3 doors', 'partner_id': customer.id, 'quantity': 2,
+            'manufacturer_id': maker.id, 'reference_image': 'R0lGODlhAQABAAAAACw=',
+        })
+        req.action_submit()
+        with self.assertRaises(UserError):
+            req.action_send_quote(price=0)
+        req.action_send_quote(price=1500.0, lead_time=20, terms='50% deposit')
+        self.assertEqual(req.state, 'quoted')
+        self.assertEqual(req.amount_total, 3000.0)
+        req.action_customer_accept()
+        self.assertEqual(req.state, 'quotation')
+        line = req.sale_order_id.order_line
+        self.assertEqual((line.product_uom_qty, line.price_unit), (2, 1500.0))
+        self.assertEqual(req.sale_order_id.state, 'draft')  # never auto-confirmed (spec 6.2)
+
+    def test_custom_request_customer_declines(self):
+        maker = self._approved('maker8@example.com', 'Maker Eight')
+        customer = self.env['res.partner'].create({'name': 'Customer 3', 'email': 'cust3@example.com'})
+        req = self.env['furniture.custom.request'].create({
+            'title': 'Bed', 'description': 'King size', 'partner_id': customer.id,
+            'manufacturer_id': maker.id, 'reference_image': 'R0lGODlhAQABAAAAACw=',
+        })
+        req.action_submit()
+        req.action_send_quote(price=700.0)
+        req.action_customer_reject('Too expensive')
+        self.assertEqual(req.state, 'rejected')
+        self.assertFalse(req.sale_order_id)
+
+    def test_order_allocations_per_manufacturer(self):
+        maker_a = self._approved('alloc_a@example.com', 'Alloc A')
+        maker_b = self._approved('alloc_b@example.com', 'Alloc B')
+        products = (maker_a.product_ids[0] | maker_b.product_ids[0]).with_user(self.manager)
+        products.sudo().action_approve_marketplace_product()
+        customer = self.env['res.partner'].create({'name': 'Buyer', 'email': 'buyer@example.com'})
+        order = self.env['sale.order'].create({
+            'partner_id': customer.id,
+            'order_line': [(0, 0, {'product_id': p.product_variant_id.id, 'product_uom_qty': 1}) for p in products],
+        })
+        order.action_confirm()
+        self.assertEqual(len(order.allocation_ids), 2)
+        self.assertEqual(order.allocation_ids.manufacturer_id, maker_a | maker_b)
+        alloc_a = order.allocation_ids.filtered(lambda a: a.manufacturer_id == maker_a)
+        self.assertEqual(alloc_a.line_ids.product_id.product_tmpl_id, maker_a.product_ids[0])
+        # manufacturer A only sees its own allocation
+        visible = self.env['furniture.order.allocation'].with_user(maker_a.user_id).search([])
+        self.assertEqual(visible, alloc_a)
+        alloc_a._manufacturer_transition('accept')
+        self.assertEqual(alloc_a.state, 'accepted')
+        with self.assertRaises(UserError):
+            alloc_a._manufacturer_transition('dispatch')  # cannot skip steps
+        alloc_a._report_exception('Wood not available')
+        self.assertEqual(alloc_a.state, 'exception')
+        order.allocation_ids._create_for_orders(order)  # idempotent
+        self.assertEqual(len(order.allocation_ids), 2)
+
+    def test_catalog_duplicates(self):
+        dup = (b"product_name,sku,category,description,price,quantity\n"
+               b"Table,T-1,Dining,Oak,100,1\nTable 2,T-1,Dining,Oak,100,1\n")
+        _rec, errors = self.env['furniture.catalog.import']._create_from_upload('d.csv', dup)
+        self.assertTrue(any('Duplicate of row 2' in e for e in errors))
+        maker = self._approved('maker9@example.com', 'Maker Nine')
+        before = len(maker.product_ids)
+        again, errors = self.env['furniture.catalog.import']._create_from_upload('c.csv', CSV)
+        self.assertFalse(errors)
+        again.action_import(maker)
+        self.assertEqual(len(maker.product_ids), before)  # same names -> skipped, not duplicated
+        self.assertTrue(all(l.import_state == 'failed' for l in again.line_ids))
+
+    def test_application_more_information(self):
+        app = self._application('maker10@example.com', 'Maker Ten')
+        app.action_submit()
+        app.with_user(self.manager)._do_request_info('Please send your commercial registration.')
+        self.assertEqual(app.state, 'more_info')
+        app._resubmit('Attached', self.env['ir.attachment'])
+        self.assertEqual(app.state, 'submitted')
+        app.with_user(self.manager).action_approve()
+        self.assertEqual(app.state, 'approved')

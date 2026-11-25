@@ -8,6 +8,8 @@ class SaleOrderLine(models.Model):
     manufacturer_id = fields.Many2one(
         'furniture.manufacturer', string='Manufacturer / Workshop',
         related='product_id.product_tmpl_id.manufacturer_id', store=True, readonly=True, index=True)
+    allocation_id = fields.Many2one('furniture.order.allocation', 'Fulfilment Allocation',
+                                    readonly=True, copy=False, index=True, ondelete='set null')
 
     def _compute_name_short(self):
         # one cart / one order: every line shows which workshop provides it
@@ -26,6 +28,7 @@ class SaleOrder(models.Model):
 
     manufacturer_ids = fields.Many2many(
         'furniture.manufacturer', string='Manufacturers', compute='_compute_manufacturer_ids')
+    allocation_ids = fields.One2many('furniture.order.allocation', 'order_id', 'Manufacturer Fulfilment')
 
     @api.depends('order_line.manufacturer_id')
     def _compute_manufacturer_ids(self):
@@ -34,8 +37,14 @@ class SaleOrder(models.Model):
 
     def action_confirm(self):
         res = super().action_confirm()
+        self.env['furniture.order.allocation']._create_for_orders(self)
         requests = self.env['furniture.custom.request'].sudo().search(
             [('sale_order_id', 'in', self.ids), ('state', '=', 'quotation')])
         for req in requests:
             req._set_state('confirmed')
+        return res
+
+    def _action_cancel(self):
+        res = super()._action_cancel()
+        self.sudo().allocation_ids.filtered(lambda a: a.state != 'delivered').write({'state': 'cancelled'})
         return res

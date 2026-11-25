@@ -22,7 +22,7 @@ class FurnitureManufacturerApplication(models.Model):
     representative = fields.Char('Owner / Authorized Representative', required=True)
     email = fields.Char('Email', required=True, tracking=True)
     phone = fields.Char('Mobile Number', required=True)
-    address = fields.Text('Detailed Address', required=True)
+    address = fields.Text('Detailed Address', required=False)
     country_id = fields.Many2one('res.country', 'Country', required=True)
     city = fields.Char(required=True)
     workshop_size_id = fields.Many2one('furniture.workshop.size', 'Workshop Size', required=True)
@@ -56,7 +56,7 @@ class FurnitureManufacturerApplication(models.Model):
 
     def state_label(self):
         self.ensure_one()
-        return dict(self._fields['state'].selection).get(self.state, self.state)
+        return dict(self._fields['state']._description_selection(self.env)).get(self.state, self.state)
 
     # ------------------------------------------------------------------
     def _send_template(self, xmlid):
@@ -99,7 +99,7 @@ class FurnitureManufacturerApplication(models.Model):
         partner = Partner.search([('email', '=ilike', self.email)], limit=1)
         values = {
             'name': self.manufacturer_name, 'email': self.email, 'phone': self.phone,
-            'street': self.address, 'city': self.city, 'country_id': self.country_id.id,
+            'street': self.address or False, 'city': self.city, 'country_id': self.country_id.id,
             'is_company': True,
         }
         if partner:  # link: only fill what is empty, never overwrite or retype an existing contact
@@ -112,7 +112,7 @@ class FurnitureManufacturerApplication(models.Model):
         manufacturer = Manufacturer.search([('partner_id', '=', partner.id)], limit=1)
         mvals = {
             'name': self.manufacturer_name, 'partner_id': partner.id, 'representative': self.representative,
-            'address': self.address, 'city': self.city, 'country_id': self.country_id.id,
+            'address': self.address or False, 'city': self.city, 'country_id': self.country_id.id,
             'workshop_size_id': self.workshop_size_id.id, 'description': self.description,
             'application_id': self.id, 'approved': True, 'active': True,
         }

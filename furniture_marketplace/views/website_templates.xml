@@ -207,8 +207,8 @@
                             <input type="tel" id="phone" name="phone" class="form-control" required="required" t-att-value="values.get('phone')"/>
                         </div>
                         <div class="col-12">
-                            <label class="form-label" for="address">Detailed Address *</label>
-                            <textarea id="address" name="address" class="form-control" rows="2" required="required" t-out="values.get('address')"/>
+                            <label class="form-label" for="address">Detailed Address</label>
+                            <textarea id="address" name="address" class="form-control" rows="2" placeholder="Optional" t-out="values.get('address')"/>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="country_id">Country *</label>
@@ -275,7 +275,7 @@
                             <dt class="col-sm-3">Workshop</dt><dd class="col-sm-9" t-out="application.manufacturer_name"/>
                             <dt class="col-sm-3">Representative</dt><dd class="col-sm-9" t-out="application.representative"/>
                             <dt class="col-sm-3">Email / Phone</dt><dd class="col-sm-9"><t t-out="application.email"/> / <t t-out="application.phone"/></dd>
-                            <dt class="col-sm-3">Location</dt><dd class="col-sm-9"><t t-out="application.address"/>, <t t-out="application.city"/>, <t t-out="application.country_id.name"/></dd>
+                            <dt class="col-sm-3">Location</dt><dd class="col-sm-9"><t t-if="application.address"><t t-out="application.address"/>, </t><t t-out="application.city"/>, <t t-out="application.country_id.name"/></dd>
                             <dt class="col-sm-3">Workshop size</dt><dd class="col-sm-9" t-out="application.workshop_size_id.name"/>
                         </dl>
                     </div></div>

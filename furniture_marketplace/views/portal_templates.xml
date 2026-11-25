@@ -97,7 +97,7 @@
                     <div class="col-md-6"><label class="form-label">E-mail</label><input type="text" class="form-control" t-att-value="maker.email" disabled="disabled"/></div>
                     <div class="col-md-6"><label class="form-label" for="representative">Representative</label><input type="text" id="representative" name="representative" class="form-control" t-att-value="maker.representative"/></div>
                     <div class="col-md-6"><label class="form-label" for="phone">Mobile number *</label><input type="tel" id="phone" name="phone" class="form-control" required="required" t-att-value="maker.phone"/></div>
-                    <div class="col-12"><label class="form-label" for="address">Detailed address *</label><textarea id="address" name="address" class="form-control" rows="2" required="required" t-out="maker.address"/></div>
+                    <div class="col-12"><label class="form-label" for="address">Detailed address</label><textarea id="address" name="address" class="form-control" rows="2" t-out="maker.address"/></div>
                     <div class="col-md-6"><label class="form-label" for="city">City *</label><input type="text" id="city" name="city" class="form-control" required="required" t-att-value="maker.city"/></div>
                     <div class="col-md-6"><label class="form-label" for="country_id">Country *</label>
                         <select id="country_id" name="country_id" class="form-select" required="required">

@@ -10,6 +10,12 @@ import zipfile
 
 from lxml import etree
 
+try:
+    from odoo import _
+except ImportError:
+    def _(s, *args):
+        return s % args if args else s
+
 REQUIRED = ('product_name', 'category', 'description', 'price', 'quantity')
 OPTIONAL = ('image', 'specifications')
 IMAGE_EXT = ('.png', '.jpg', '.jpeg', '.gif', '.webp')
@@ -71,7 +77,7 @@ def _number_to_text(text):
 def read_xlsx(raw):
     zf = zipfile.ZipFile(io.BytesIO(raw))
     if sum(i.file_size for i in zf.infolist()) > MAX_UNZIPPED:
-        raise ValueError('The spreadsheet is too large once unpacked.')
+        raise ValueError(_('The spreadsheet is too large once unpacked.'))
     parser = etree.XMLParser(resolve_entities=False, no_network=True, huge_tree=False)
     names = zf.namelist()
     shared = []
@@ -81,7 +87,7 @@ def read_xlsx(raw):
             shared.append(''.join(t.text or '' for t in si.iter(T_TAG)))
     sheets = sorted(n for n in names if re.match(r'xl/worksheets/sheet\d+\.xml$', n))
     if not sheets:
-        raise ValueError('No worksheet found in the file.')
+        raise ValueError(_('No worksheet found in the file.'))
     sheet = 'xl/worksheets/sheet1.xml' if 'xl/worksheets/sheet1.xml' in names else sheets[0]
     root = etree.fromstring(zf.read(sheet), parser)
     table = []
@@ -125,30 +131,29 @@ def parse_catalog(filename, raw, max_rows=500):
     errors = []
     fname = (filename or '').lower()
     if not raw:
-        return [], ['The uploaded file is empty.']
+        return [], [_('The uploaded file is empty.')]
     if len(raw) > MAX_BYTES:
-        return [], ['The file is larger than %d MB.' % (MAX_BYTES // 1024 // 1024)]
+        return [], [_('The file is larger than %d MB.', MAX_BYTES // 1024 // 1024)]
     try:
         if fname.endswith('.csv'):
             table = read_csv(raw)
         elif fname.endswith('.xlsx'):
             table = read_xlsx(raw)
         else:
-            return [], ['Unsupported file type. Please upload a .csv or .xlsx file.']
+            return [], [_('Unsupported file type. Please upload a .csv or .xlsx file.')]
     except Exception as exc:  # noqa: BLE001 - any parsing failure is a user error
-        return [], ['The file could not be read (%s). Please use the provided template.' % exc]
+        return [], [_('The file could not be read (%s). Please use the provided template.', exc)]
 
     table = [list(r) for r in table]
     while table and not any(str(c).strip() for c in table[0]):
         table.pop(0)
     if not table:
-        return [], ['The file does not contain any data.']
+        return [], [_('The file does not contain any data.')]
 
     headers = [normalize_header(h) for h in table[0]]
     missing = [c for c in REQUIRED if c not in headers]
     if missing:
-        return [], ['Missing required column(s): %s. Please use the provided template.'
-                    % ', '.join(missing)]
+        return [], [_('Missing required column(s): %s. Please use the provided template.', ', '.join(missing))]
 
     rows = []
     for offset, raw_row in enumerate(table[1:], start=2):
@@ -161,24 +166,23 @@ def parse_catalog(filename, raw, max_rows=500):
         row_errors = []
         for col in ('product_name', 'category', 'description'):
             if not data.get(col):
-                row_errors.append('%s is required.' % col.replace('_', ' ').title())
+                row_errors.append(_('%s is required.', col.replace('_', ' ').title()))
         price = quantity = 0.0
         try:
             price = _to_float(data.get('price', ''))
             if price < 0:
-                row_errors.append('Price cannot be negative.')
+                row_errors.append(_('Price cannot be negative.'))
         except ValueError:
-            row_errors.append('Price must be a number (got "%s").' % data.get('price', ''))
+            row_errors.append(_('Price must be a number (got "%s").', data.get('price', '')))
         try:
             quantity = _to_float(data.get('quantity', ''))
             if quantity < 0:
-                row_errors.append('Quantity cannot be negative.')
+                row_errors.append(_('Quantity cannot be negative.'))
         except ValueError:
-            row_errors.append('Quantity must be a number (got "%s").' % data.get('quantity', ''))
+            row_errors.append(_('Quantity must be a number (got "%s").', data.get('quantity', '')))
         image = data.get('image', '')
         if image and not (re.match(r'https?://', image, re.I) or image.lower().endswith(IMAGE_EXT)):
-            row_errors.append('Image must be an http(s) URL or an image file name (%s).'
-                              % ', '.join(IMAGE_EXT))
+            row_errors.append(_('Image must be an http(s) URL or an image file name (%s).', ', '.join(IMAGE_EXT)))
         rows.append({
             'row_no': offset,
             'product_name': data.get('product_name', ''),
@@ -191,10 +195,9 @@ def parse_catalog(filename, raw, max_rows=500):
             'errors': row_errors,
         })
     if not rows:
-        errors.append('The file has a header row but no product rows.')
+        errors.append(_('The file has a header row but no product rows.'))
     if len(rows) > max_rows:
-        errors.append('The file has %d products; the maximum per upload is %d.'
-                      % (len(rows), max_rows))
+        errors.append(_('The file has %d products; the maximum per upload is %d.', len(rows), max_rows))
     for r in rows:
         errors.extend('Row %d: %s' % (r['row_no'], e) for e in r['errors'])
     return rows, errors

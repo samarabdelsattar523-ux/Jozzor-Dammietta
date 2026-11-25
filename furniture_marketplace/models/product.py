@@ -98,6 +98,14 @@ class ProductTemplate(models.Model):
                 vals['website_published'] = False
                 if vals.get('marketplace_approval_state') not in ('not_required', 'pending'):
                     vals['marketplace_approval_state'] = 'pending'
+        if not is_manufacturer_portal_user(self.env):
+            is_mgr = self.env.user.has_group('furniture_marketplace.group_marketplace_manager')
+            for vals in vals_list:
+                if vals.get('manufacturer_id') and vals.get('marketplace_approval_state', 'not_required') == 'not_required':
+                    if vals.get('website_published') and is_mgr:
+                        vals['marketplace_approval_state'] = 'approved'
+                    else:
+                        vals['marketplace_approval_state'] = 'pending'
         return super().create(vals_list)
 
     def write(self, vals):
@@ -112,6 +120,24 @@ class ProductTemplate(models.Model):
                 raise AccessError(self.env._('Only the platform can publish products.'))
             if vals.get('marketplace_approval_state') in ('approved', 'rejected'):
                 raise AccessError(self.env._('Only the platform can approve or reject products.'))
+        if not is_manufacturer_portal_user(self.env) and vals.get('manufacturer_id') and 'marketplace_approval_state' not in vals:
+            is_mgr = self.env.user.has_group('furniture_marketplace.group_marketplace_manager')
+            unapproved_recs = self.filtered(lambda r: r.marketplace_approval_state == 'not_required')
+            if unapproved_recs:
+                published_recs = unapproved_recs.filtered(lambda r: vals.get('website_published', r.website_published))
+                draft_recs = unapproved_recs - published_recs
+                if published_recs and is_mgr:
+                    super(ProductTemplate, published_recs).write(dict(vals, marketplace_approval_state='approved'))
+                elif published_recs:
+                    super(ProductTemplate, published_recs).write(dict(vals, marketplace_approval_state='pending'))
+                if draft_recs:
+                    super(ProductTemplate, draft_recs).write(dict(vals, marketplace_approval_state='pending'))
+                other_recs = self - unapproved_recs
+                if other_recs:
+                    if vals.get('marketplace_approval_state') in ('pending', 'rejected') and 'website_published' not in vals:
+                        vals = dict(vals, website_published=False)
+                    super(ProductTemplate, other_recs).write(vals)
+                return True
         if vals.get('marketplace_approval_state') in ('pending', 'rejected') and 'website_published' not in vals:
             vals = dict(vals, website_published=False)
         return super().write(vals)

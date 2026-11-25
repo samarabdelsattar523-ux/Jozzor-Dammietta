@@ -12,13 +12,21 @@ _logger = logging.getLogger(__name__)
 
 EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
 IMAGE_EXT = ('.png', '.jpg', '.jpeg', '.gif', '.webp')
-MAX_UPLOAD = 8 * 1024 * 1024
+MAX_UPLOAD = 15 * 1024 * 1024
 SORTS = {
     'newest': ('Newest', 'create_date desc, id desc'),
     'price_asc': ('Price: low to high', 'list_price asc, id'),
     'price_desc': ('Price: high to low', 'list_price desc, id'),
     'name': ('Name (A-Z)', 'name asc, id'),
 }
+
+def _translated_sorts():
+    return {
+        'newest': (_('Newest'), 'create_date desc, id desc'),
+        'price_asc': (_('Price: low to high'), 'list_price asc, id'),
+        'price_desc': (_('Price: high to low'), 'list_price desc, id'),
+        'name': (_('Name (A-Z)'), 'name asc, id'),
+    }
 
 
 def _int(value):
@@ -32,6 +40,10 @@ def read_upload(file_storage, max_size=MAX_UPLOAD):
     """-> (filename, bytes) or (None, None). Raises ValueError when too big."""
     if not file_storage or not getattr(file_storage, 'filename', None):
         return None, None
+    try:
+        file_storage.seek(0)
+    except Exception:
+        pass
     data = file_storage.read()
     if len(data) > max_size:
         raise ValueError(_('"%s" is larger than %d MB.', file_storage.filename, max_size // 1024 // 1024))
@@ -80,7 +92,7 @@ class FurnitureMarketplaceController(http.Controller):
             'manufacturers': request.env['furniture.manufacturer'].sudo().search([('approved', '=', True)]),
             'pager': pager,
             'search': q, 'current_category': Public.browse(category_id).exists(),
-            'current_manufacturer': manufacturer_id, 'sort': sort, 'sorts': SORTS,
+            'current_manufacturer': manufacturer_id, 'sort': sort, 'sorts': _translated_sorts(),
             'in_stock': bool(in_stock), 'total': total,
         }
         return request.render('furniture_marketplace.marketplace_home', values)
@@ -108,7 +120,7 @@ class FurnitureMarketplaceController(http.Controller):
         errors = []
         required = {
             'manufacturer_name': _('Manufacturer / Workshop name'), 'representative': _('Owner / Representative'),
-            'email': _('Email'), 'phone': _('Mobile number'), 'address': _('Detailed address'),
+            'email': _('Email'), 'phone': _('Mobile number'),
             'country_id': _('Country'), 'city': _('City'), 'workshop_size_id': _('Workshop size'),
         }
         for key, label in required.items():
@@ -130,7 +142,8 @@ class FurnitureMarketplaceController(http.Controller):
         catalog_name = catalog_raw = None
         documents, images = [], []
         try:
-            catalog_name, catalog_raw = read_upload(post.get('catalog'))
+            catalog_file = post.get('catalog') or request.httprequest.files.get('catalog')
+            catalog_name, catalog_raw = read_upload(catalog_file)
             for f in request.httprequest.files.getlist('documents'):
                 name, data = read_upload(f)
                 if name:
@@ -162,7 +175,7 @@ class FurnitureMarketplaceController(http.Controller):
 
         application = env['furniture.manufacturer.application'].sudo().create({
             'manufacturer_name': post['manufacturer_name'].strip(), 'representative': post['representative'].strip(),
-            'email': email, 'phone': post['phone'].strip(), 'address': post['address'].strip(),
+            'email': email, 'phone': post['phone'].strip(), 'address': (post.get('address') or '').strip(),
             'country_id': country.id, 'city': post['city'].strip(), 'workshop_size_id': size.id,
             'description': (post.get('description') or '').strip(), 'from_website': True,
             'catalog_import_id': catalog.id,

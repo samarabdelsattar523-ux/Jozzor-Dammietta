@@ -84,12 +84,12 @@ class FurnitureManufacturerPortal(http.Controller):
             country = request.env['res.country'].sudo().browse(_int(post.get('country_id'))).exists()
             if not phone:
                 errors.append(_('Mobile number is required.'))
-            if not vals['address'] or not vals['city'] or not country:
-                errors.append(_('Address, city and country are required.'))
+            if not vals['city'] or not country:
+                errors.append(_('City and country are required.'))
             if not errors:
                 # whitelist: name, email, approval flags can NOT be changed from the portal
                 maker.write(dict(vals, country_id=country.id))
-                maker.partner_id.write({'phone': phone, 'street': vals['address'],
+                maker.partner_id.write({'phone': phone, 'street': vals['address'] or False,
                                         'city': vals['city'], 'country_id': country.id})
                 return self._back('notice', _('Profile updated.'))
         return request.render('furniture_marketplace.manufacturer_profile', self._base_values(

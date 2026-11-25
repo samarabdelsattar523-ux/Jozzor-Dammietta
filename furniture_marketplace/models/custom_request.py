@@ -54,7 +54,7 @@ class FurnitureCustomRequest(models.Model):
 
     def state_label(self):
         self.ensure_one()
-        return dict(self._fields['state'].selection).get(self.state, self.state)
+        return dict(self._fields['state']._description_selection(self.env)).get(self.state, self.state)
 
     # ------------------------------------------------------------------
     def _send_template(self, xmlid):

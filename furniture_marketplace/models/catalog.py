@@ -70,7 +70,7 @@ class FurnitureCatalogImport(models.Model):
         rec = self.sudo().create({
             'name': filename or self.env._('Catalog'),
             'filename': filename,
-            'datafile': base64.b64encode(raw),
+            'datafile': base64.b64encode(raw).decode(),
             'manufacturer_id': manufacturer.id if manufacturer else False,
             'application_id': application.id if application else False,
             'line_ids': [(0, 0, {
@@ -88,7 +88,7 @@ class FurnitureCatalogImport(models.Model):
 
     # ------------------------------------------------------------------
     def _resolve_image(self, ref):
-        """Return base64 image data (bytes) or False. Never raises."""
+        """Return base64 image data (str) or False. Never raises."""
         self.ensure_one()
         if not ref:
             return False
@@ -103,7 +103,7 @@ class FurnitureCatalogImport(models.Model):
                 content = resp.raw.read(MAX_IMAGE_BYTES + 1, decode_content=True)
                 if len(content) > MAX_IMAGE_BYTES:
                     return False
-                return base64.b64encode(content)
+                return base64.b64encode(content).decode()
             wanted = os.path.basename(ref).lower()
             attachments = self.image_attachment_ids | self.application_id.document_ids
             for att in attachments:

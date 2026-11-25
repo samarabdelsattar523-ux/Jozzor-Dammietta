@@ -1,0 +1,2980 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* furniture_marketplace
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 20.0+e-20261005\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-25 19:16+0000\n"
+"PO-Revision-Date: 2026-11-25 19:16+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: furniture_marketplace
+#: model:ir.module.module,description:base.module_furniture_marketplace
+msgid ""
+"\n"
+"Furniture Marketplace & Manufacturer Portal\n"
+"===========================================\n"
+"* Public storefront (categories with live product counts, filters, sorting) on top of Website / eCommerce\n"
+"* One cart, one checkout, one sales order - every order line is linked to its manufacturer\n"
+"* Manufacturer registration with validated CSV / Excel catalog and preview\n"
+"* Approval workflow: contact + portal user + invitation e-mail created automatically\n"
+"* Manufacturer portal (own profile, products, catalog upload, custom requests)\n"
+"* Product approval before publication, enforced server-side\n"
+"* Custom furniture requests with a separate workflow, quotation only after agreement\n"
+"* Security groups, ACLs and record rules for strict data isolation\n"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid ""
+"\"%s\" cannot be published before the platform approves it. Approve it from "
+"the Marketplace tab first."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "\"%s\" is larger than %d MB."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/manufacturer.py:0
+msgid ""
+"%s belongs to an internal user; a portal account cannot be created with the "
+"same login."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "%s is required."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "(same as website category)"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "- Manufacturer Portal"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid ""
+".\n"
+"                                    Your file is validated now and you can review the products before submitting. Products stay hidden until the platform approves them."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_thanks
+msgid ""
+". You will receive your portal access once the application is approved."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,body_html:furniture_marketplace.mail_request_submitted_manufacturer
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>A customer submitted a custom furniture request addressed to <b><t t-out=\"object.manufacturer_id.name\"/></b>: <b><t t-out=\"object.title\"/></b>.</p><p>Review it in your Manufacturer Portal.</p>\n"
+"<p style=\"margin-top:24px;\">Best regards,<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,body_html:furniture_marketplace.mail_request_state_changed
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>Dear <t t-out=\"object.partner_id.name\"/>,</p><p>The status of your request <b><t t-out=\"object.title\"/></b> (<t t-out=\"object.name\"/>) is now: <b><t t-out=\"object.state_label()\"/></b>.</p><t t-if=\"object.rejection_reason and object.state == 'rejected'\"><p><b>Reason:</b> <t t-out=\"object.rejection_reason\"/></p></t>\n"
+"<p style=\"margin-top:24px;\">Best regards,<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,body_html:furniture_marketplace.mail_request_submitted_customer
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>Dear <t t-out=\"object.partner_id.name\"/>,</p><p>We received your request <b><t t-out=\"object.title\"/></b> (<t t-out=\"object.name\"/>). The selected manufacturer will review it and we will keep you updated.</p>\n"
+"<p style=\"margin-top:24px;\">Best regards,<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,body_html:furniture_marketplace.mail_application_approved
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>Dear <t t-out=\"object.representative\"/>,</p><p>Congratulations! <b><t t-out=\"object.manufacturer_name\"/></b> has been approved as a marketplace manufacturer.</p><p>You will receive a separate e-mail with a link to set your password. Then sign in to the Manufacturer Portal at <t t-out=\"object.get_base_url()\"/>/my/manufacturer to manage your products.</p><p>Products from your catalog are submitted for product approval and become visible to customers once approved.</p>\n"
+"<p style=\"margin-top:24px;\">Best regards,<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,body_html:furniture_marketplace.mail_application_rejected
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>Dear <t t-out=\"object.representative\"/>,</p><p>Thank you for your interest. Unfortunately we cannot approve the application of <b><t t-out=\"object.manufacturer_name\"/></b> at this time.</p><p><b>Reason:</b> <t t-out=\"object.rejection_reason\"/></p>\n"
+"<p style=\"margin-top:24px;\">Best regards,<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,body_html:furniture_marketplace.mail_application_received
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>Dear <t t-out=\"object.representative\"/>,</p><p>We received the application of <b><t t-out=\"object.manufacturer_name\"/></b> (reference <b><t t-out=\"object.name\"/></b>). Our team will review it and contact you shortly.</p><p>You will receive your portal access once the application is approved.</p>\n"
+"<p style=\"margin-top:24px;\">Best regards,<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,body_html:furniture_marketplace.mail_product_approved
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>Your product <b><t t-out=\"object.name\"/></b> has been approved by the marketplace team.</p>\n"
+"<p style=\"margin-top:24px;\">Best regards,<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,body_html:furniture_marketplace.mail_product_rejected
+msgid ""
+"<div style=\"font-family: Arial, sans-serif; font-size: 14px;\">\n"
+"<p>Your product <b><t t-out=\"object.name\"/></b> was not approved.</p><p><b>Reason:</b> <t t-out=\"object.marketplace_rejection_reason\"/></p><p>You can edit the product in your portal and submit it again.</p>\n"
+"<p style=\"margin-top:24px;\">Best regards,<br/><t t-out=\"object.env.company.name\"/></p>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "<i class=\"fa fa-industry me-1\"/>Join as a Manufacturer"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_page_marketplace
+msgid "<i class=\"fa fa-industry me-1\"/>Made by"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "<i class=\"fa fa-pencil-square-o me-1\"/>Custom Furniture Request"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "<i class=\"fa fa-shopping-cart me-1\"/>Add to cart"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "<i class=\"fa fa-shopping-cart me-1\"/>Cart"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+msgid ""
+"<p>A new application from <b>%(name)s</b> (%(ref)s) is waiting for "
+"approval.</p>"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "<span class=\"o_stat_text\">Quotation / Order</span>"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "<strong>Customer:</strong>"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "<strong>Please fix the following:</strong>"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_upload
+msgid "<strong>The file has problems - nothing was imported:</strong>"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_thanks
+msgid "A confirmation e-mail was sent to"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/catalog.py:0
+msgid "A manufacturer is required to import the catalog."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "A reference image is required."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/manufacturer.py:0
+msgid "A user with login %s already exists for a different contact."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Accept"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__accepted
+msgid "Accepted"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__access_token
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__access_token
+msgid "Access Token"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__access_warning
+msgid "Access warning"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_needaction
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_needaction
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_needaction
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__active
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__active
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__active
+msgid "Active"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_exception_decoration
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_exception_decoration
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_plans_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_plans_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_plans_ids
+msgid "Activity Plans"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_state
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_state
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_type_icon
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_type_icon
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__document_ids
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Additional Documents"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__notes
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Additional Notes"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Additional images"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:res.groups,name:furniture_marketplace.group_marketplace_admin
+msgid "Administrator"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__commercial_terms
+msgid "Agreed Commercial Terms"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__agreed_price
+msgid "Agreed Price"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Agreed price"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_application_all
+#: model:ir.ui.menu,name:furniture_marketplace.menu_requests_all
+msgid "All Requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "All categories"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "All manufacturers"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "All products"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "An application with this e-mail is already pending approval."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/manufacturer.py:0
+msgid "Another manufacturer already uses the e-mail %s."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__application_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__application_id
+msgid "Application"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,subject:furniture_marketplace.mail_application_received
+msgid "Application received - {{ object.name }}"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid ""
+"Apply to sell your furniture through the marketplace. After approval you "
+"receive a portal account to manage your products."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Approval"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
+msgid "Approval Status"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Approve"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_form_marketplace
+msgid "Approve Product"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_application_approved
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_manufacturer_application__state__approved
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__product_template__marketplace_approval_state__approved
+#: model:ir.ui.menu,name:furniture_marketplace.menu_requests_approved
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_search
+msgid "Approved"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_search
+msgid "Approved / Active"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__approved
+msgid "Approved / Active in Marketplace"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid ""
+"Approving creates the contact, the portal user and sends the invitation. "
+"Continue?"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_attachment_count
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_attachment_count
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_attachment_count
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__product_template__marketplace_stock_status__unlimited
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.products_item_manufacturer
+msgid "Available"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Available quantity"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_page_marketplace
+msgid "Available quantity:"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.products_item_manufacturer
+msgid "Available:"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_thanks
+msgid "Back to the marketplace"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Business"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_upload
+msgid "CSV template"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid ""
+"Can't find what you need? Describe it, upload a reference image and choose "
+"the manufacturer you prefer. A quotation is only created after the "
+"manufacturer reviewed the request and terms are agreed."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_reject_wizard_form
+msgid "Cancel"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Cancel request"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__cancelled
+msgid "Cancelled"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:furniture.manufacturer.type,name:furniture_marketplace.mtype_workshop
+msgid "Carpentry Workshop"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/catalog.py:0
+msgid "Catalog"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__catalog_file
+msgid "Catalog File"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_catalog_line
+msgid "Catalog Line"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__catalog_line_ids
+msgid "Catalog Products"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_catalog_import
+#: model:ir.ui.menu,name:furniture_marketplace.menu_manufacturer_catalogs
+msgid "Catalog Uploads"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_upload
+msgid "Catalog file (.xlsx / .csv) *"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Catalog imported: %(n)s product(s) created and submitted for approval."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+msgid ""
+"Catalog imported: %(ok)s product(s) created, %(ko)s failed. Products stay "
+"unpublished until approved."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Catalog upload is disabled."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "Categories"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__category
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
+msgid "Category"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__type_id
+msgid "Category / Type"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "Choose options"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__city
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__city
+msgid "City"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "City *"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "City and country are required."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Commercial terms (set after review, before the quotation)"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__company_id
+msgid "Company"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_nav
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "Company profile"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__completed
+msgid "Completed"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_configuration
+msgid "Configuration"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Confirm"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+msgid "Confirm and import"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__confirmed
+msgid "Confirmed"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__partner_id
+msgid "Contact"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__country_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__country_id
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_search
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_search
+msgid "Country"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "Country *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Create Quotation"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__create_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__create_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__create_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__create_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__create_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__create_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__create_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__create_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__create_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__create_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__create_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__create_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__create_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__create_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__create_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__create_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__currency_id
+msgid "Currency"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:product.template,name:furniture_marketplace.product_custom_manufacturing
+msgid "Custom Furniture Manufacturing"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_custom_request
+msgid "Custom Furniture Manufacturing Request"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_url,name:furniture_marketplace.action_url_custom_request
+#: model:ir.ui.menu,name:furniture_marketplace.menu_customer_custom_request
+#: model:website.menu,name:furniture_marketplace.website_menu_custom_request
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Custom Furniture Request"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_custom_request
+#: model:ir.ui.menu,name:furniture_marketplace.menu_custom_requests
+msgid "Custom Furniture Requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,name:furniture_marketplace.mail_request_submitted_customer
+msgid "Custom Request: confirmation to customer"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,name:furniture_marketplace.mail_request_submitted_manufacturer
+msgid "Custom Request: new request for manufacturer"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,name:furniture_marketplace.mail_request_state_changed
+msgid "Custom Request: status update"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/manufacturer.py:0
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid "Custom Requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Custom manufacturing requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Custom requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__partner_id
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+msgid "Customer"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__access_url
+msgid "Customer Portal URL"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_customer_view
+msgid "Customer View"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_settings_portal
+msgid "Customer and Manufacturer Portal Permissions"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_settings_portal
+msgid "Customers"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__customer_allow_request_cancel
+msgid "Customers can cancel their own custom requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_nav
+msgid "Dashboard"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
+msgid "Date"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__description
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid "Description"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__address
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__address
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Detailed Address"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "Detailed address"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_public_category__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_sale_order__display_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_sale_order_line__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Documents"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_upload
+msgid ""
+"Download the template, fill it in, then upload it. You can review every row "
+"before the products are created."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_application_draft
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__draft
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_manufacturer_application__state__draft
+#: model:ir.ui.menu,name:furniture_marketplace.menu_requests_draft
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_search
+msgid "Draft"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "E-mail"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Edit"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Edit product"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__customer_email
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__email
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__email
+msgid "Email"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+msgid "Email / Phone"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Email Address *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_email_templates
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_email
+msgid "Email Templates and Notifications"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "Enter the agreed price before creating the quotation."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__error_count
+msgid "Error Count"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__error_message
+msgid "Error Message"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "Every marketplace product must be linked to a manufacturer / workshop."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_upload
+msgid "Excel template"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_reject_wizard_form
+msgid "Explain why this is rejected - the applicant/customer is notified."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_catalog_line__import_state__failed
+msgid "Failed"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__datafile
+msgid "File"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__filename
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__catalog_filename
+msgid "Filename"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "Filter"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_follower_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_follower_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_follower_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_partner_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_partner_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_partner_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__from_website
+msgid "From Website"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:res.groups,comment:furniture_marketplace.group_marketplace_admin
+msgid "Full control of the marketplace, including configuration."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__description
+msgid "Furniture Description"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Furniture Description *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:furniture.manufacturer.type,name:furniture_marketplace.mtype_factory
+msgid "Furniture Factory"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_manufacturer
+msgid "Furniture Manufacturer / Workshop"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_root
+#: model:res.groups.privilege,name:furniture_marketplace.res_groups_privilege_marketplace
+#: model:website.menu,name:furniture_marketplace.website_menu_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "Furniture Marketplace"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.module.module,shortdesc:base.module_furniture_marketplace
+msgid "Furniture Marketplace & Manufacturer Portal"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.server,name:furniture_marketplace.cron_cleanup_application_drafts_ir_actions_server
+msgid "Furniture Marketplace: clean abandoned application drafts"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_product_categories
+msgid "Furniture Product Categories"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_product_category
+msgid "Furniture Product Categories (internal)"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Furniture description is required."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid ""
+"Furniture from trusted workshops and manufacturers - one cart, one checkout."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:res.groups,comment:furniture_marketplace.group_manufacturer_portal
+msgid "Granted automatically to approved manufacturers. Own data only."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__has_message
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__has_message
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__has_message
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_public_category__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_sale_order__id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_sale_order_line__id
+msgid "ID"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_exception_icon
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_exception_icon
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__activity_exception_icon
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__activity_exception_icon
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_catalog_import__message_needaction
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__message_needaction
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__message_needaction
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_catalog_import__message_has_error
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_catalog_import__message_has_sms_error
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__message_has_error
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__message_has_sms_error
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__message_has_error
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__message_has_sms_error
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_has_error
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid ""
+"If the \"image\" column of your catalog contains file names, upload those "
+"images here (or use public http(s) URLs)."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__image_ref
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+msgid "Image"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Image \"%s\" must be PNG, JPG, GIF or WEBP."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/catalog.py:0
+msgid "Image could not be loaded."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "Image must be an http(s) URL or an image file name (%s)."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__import_id
+msgid "Import"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_catalog_import_form
+msgid "Import Products"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__import_state
+msgid "Import State"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__auto_import_catalog
+msgid "Import catalog automatically on approval"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_catalog_import__state__imported
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_catalog_line__import_state__imported
+msgid "Imported"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__imported_count
+msgid "Imported Count"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__imported_on
+msgid "Imported On"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__in_production
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_search
+msgid "In Production"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__product_template__marketplace_stock_status__in_stock
+msgid "In Stock"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_page_marketplace
+msgid "In stock"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "In stock only"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:furniture.workshop.size,name:furniture_marketplace.workshop_size_industrial
+msgid "Industrial factory (200+ workers)"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_internal_categories
+msgid "Internal Categories"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__internal_notes
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Internal Notes"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Internal category"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_is_follower
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_is_follower
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_is_follower
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_url,name:furniture_marketplace.action_url_join
+#: model:ir.ui.menu,name:furniture_marketplace.menu_customer_join
+#: model:website.menu,name:furniture_marketplace.website_menu_join_manufacturer
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Join as a Manufacturer"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:furniture.workshop.size,name:furniture_marketplace.workshop_size_large
+msgid "Large (51-200 workers)"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__write_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__write_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__write_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__write_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__write_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__write_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__write_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__write_uid
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__write_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__write_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__write_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__write_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__write_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__write_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__write_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__write_date
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__line_count
+msgid "Line Count"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Location"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__product_template__marketplace_stock_status__low_stock
+msgid "Low Stock"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_page_marketplace
+msgid "Low stock"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Main image"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:res.groups,name:furniture_marketplace.group_marketplace_manager
+msgid "Manager"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__manufacturer_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__manufacturer_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__manufacturer_id
+#: model:ir.ui.menu,name:furniture_marketplace.menu_manufacturer
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_search
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_order_line_by_manufacturer_search
+msgid "Manufacturer"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_product__manufacturer_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__manufacturer_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_sale_order_line__manufacturer_id
+msgid "Manufacturer / Workshop"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__manufacturer_name
+msgid "Manufacturer / Workshop Name"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Manufacturer / Workshop Name *"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Manufacturer / Workshop name"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_manufacturer_application
+msgid "Manufacturer Application"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,name:furniture_marketplace.mail_application_approved
+msgid "Manufacturer Application: approved"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,name:furniture_marketplace.mail_application_received
+msgid "Manufacturer Application: received"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,name:furniture_marketplace.mail_application_rejected
+msgid "Manufacturer Application: rejected"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_settings_manufacturer_approval
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_manufacturer_approval
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_settings_manufacturer_approval
+msgid "Manufacturer Approval Settings"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_manufacturer_type
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_manufacturer_types
+msgid "Manufacturer Categories / Types"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_manufacturer_type
+msgid "Manufacturer Category / Type"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_manufacturer
+#: model:ir.model.fields,field_description:furniture_marketplace.field_sale_order__manufacturer_ids
+#: model:ir.ui.menu,name:furniture_marketplace.menu_manufacturer_list
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_settings_portal
+msgid "Manufacturers"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__portal_allow_request_review
+msgid "Manufacturers can accept/reject/progress custom requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__portal_allow_product_create
+msgid "Manufacturers can create/edit products"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__portal_allow_profile_edit
+msgid "Manufacturers can edit their profile"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__portal_allow_stock_update
+msgid "Manufacturers can update stock quantity"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__portal_allow_catalog_upload
+msgid "Manufacturers can upload catalogs"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Mark Completed"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_form_marketplace
+msgid "Marketplace"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_product__marketplace_approval_state
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__marketplace_approval_state
+msgid "Marketplace Approval"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_product__marketplace_available_qty
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__marketplace_available_qty
+msgid "Marketplace Available Qty"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_product__marketplace_manufacturer_name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__marketplace_manufacturer_name
+msgid "Marketplace Manufacturer Name"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,name:furniture_marketplace.mail_product_approved
+msgid "Marketplace Product: approved"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,name:furniture_marketplace.mail_product_rejected
+msgid "Marketplace Product: rejected"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_product__marketplace_rejection_reason
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__marketplace_rejection_reason
+msgid "Marketplace Rejection Reason"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_settings_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_marketplace_settings
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_settings_marketplace
+msgid "Marketplace Settings"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_product__marketplace_stock_status
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__marketplace_stock_status
+msgid "Marketplace Stock Status"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_customer_storefront
+msgid "Marketplace Storefront"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:res.groups,name:furniture_marketplace.group_manufacturer_portal
+msgid "Marketplace: Manufacturer Portal User"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__activity_type_icon
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__activity_type_icon
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__activity_type_icon
+msgid "Material Symbols icon e.g. checklist"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_form_marketplace
+msgid "Material: Oak; Color: Walnut; Dimensions: 180x90x75 cm"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__catalog_max_rows
+msgid "Max products per catalog file"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:furniture.workshop.size,name:furniture_marketplace.workshop_size_medium
+msgid "Medium (11-50 workers)"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_has_error
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_has_error
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_has_error
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "Missing required column(s): %s. Please use the provided template."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__phone
+msgid "Mobile Number"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Mobile Number *"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Mobile number"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "Mobile number *"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Mobile number is required."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.module.module,summary:base.module_furniture_marketplace
+msgid ""
+"Multi-manufacturer furniture marketplace with manufacturer onboarding, "
+"catalog import, product approval and custom furniture requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__my_activity_date_deadline
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__my_activity_date_deadline
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
+msgid "My Custom Furniture Requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "My products"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__name
+msgid "Name"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Name (A-Z)"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "New"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,subject:furniture_marketplace.mail_request_submitted_manufacturer
+msgid "New custom furniture request {{ object.name }}"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+msgid "New manufacturer application %s"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_nav
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "New product"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
+msgid "New request"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Newest"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_date_deadline
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_date_deadline
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_summary
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_summary
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_type_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_type_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:res.groups.privilege,placeholder:furniture_marketplace.res_groups_privilege_marketplace
+msgid "No"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "No categories yet."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "No products match your selection."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "No products yet. Upload a catalog or create a product."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "No requests assigned to you."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "No warehouse is configured: stock quantity cannot be set."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "No worksheet found in the file."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
+msgid "Not Published"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__product_template__marketplace_approval_state__not_required
+msgid "Not a marketplace product"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Notes"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__notify_email
+msgid "Notify e-mail for new applications"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_needaction_counter
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_needaction_counter
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_needaction_counter
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_has_error_counter
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_has_error_counter
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_has_error_counter
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_catalog_import__message_needaction_counter
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__message_needaction_counter
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__message_needaction_counter
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_catalog_import__message_has_error_counter
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__message_has_error_counter
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__message_has_error_counter
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_product_product__marketplace_specifications
+#: model:ir.model.fields,help:furniture_marketplace.field_product_template__marketplace_specifications
+msgid "One per line or separated by \";\" e.g. Material: Oak"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/utils.py:0
+msgid "Only Marketplace Managers or Administrators can perform this action."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+msgid "Only applications pending approval can be approved."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "Only the platform can approve or reject products."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "Only the platform can publish products."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_search
+msgid "Open"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Optional"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_order_line_by_manufacturer_search
+msgid "Order"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_order_lines_by_manufacturer
+#: model:ir.ui.menu,name:furniture_marketplace.menu_manufacturer_order_lines
+msgid "Order Lines by Manufacturer"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__product_template__marketplace_stock_status__out_of_stock
+msgid "Out of Stock"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_page_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.products_item_manufacturer
+msgid "Out of stock"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__representative
+msgid "Owner / Authorized Representative"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Owner / Authorized Representative *"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__representative
+msgid "Owner / Representative"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_catalog_line__import_state__pending
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Pending"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_application_pending
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_manufacturer_application__state__submitted
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__product_template__marketplace_approval_state__pending
+#: model:ir.ui.menu,name:furniture_marketplace.menu_requests_pending
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_search
+msgid "Pending Approval"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Pending approval"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__customer_phone
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__phone
+msgid "Phone"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__access_url
+msgid "Portal Access URL"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_settings_portal
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_portal
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_settings_portal
+msgid "Portal Permissions"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__user_id
+msgid "Portal User"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__manufacturer_id
+msgid "Preferred Manufacturer"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Preferred Manufacturer *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__price
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Price"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "Price cannot be negative."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "Price must be a number (got \"%s\")."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Price must be a positive number."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Price: high to low"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Price: low to high"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_product_template
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__product_id
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Product"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_settings_product_approval
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_product_approval
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_settings_product_approval
+msgid "Product Approval Settings"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__catalog_import_id
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Product Catalog"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Product Catalog (Excel or CSV) *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_catalog_import
+msgid "Product Catalog Upload"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__product_count
+msgid "Product Count"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__product_name
+msgid "Product Name"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,subject:furniture_marketplace.mail_product_approved
+msgid "Product approved: {{ object.name }}"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Product creation is disabled."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Product image \"%s\" must be PNG, JPG, GIF or WEBP."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__image_attachment_ids
+msgid "Product images"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Product images (optional)"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_upload
+msgid "Product images (when the catalog references file names)"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Product name *"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Product name is required."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,subject:furniture_marketplace.mail_product_rejected
+msgid "Product rejected: {{ object.name }}"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Product saved and submitted for approval."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Product submitted for approval."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/manufacturer.py:0
+#: model:ir.actions.act_window,name:furniture_marketplace.action_marketplace_products
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__line_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__product_ids
+#: model:ir.ui.menu,name:furniture_marketplace.menu_products
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid "Products"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__products_per_page
+msgid "Products per page"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Profile editing is disabled."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Profile updated."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_marketplace_settings__auto_publish_on_approval
+msgid "Publish product automatically once approved"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
+msgid "Published"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_product_public_category__marketplace_product_count
+msgid ""
+"Published and approved marketplace products in this category and its sub-"
+"categories."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_public_category__marketplace_product_count
+msgid "Published products"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+msgid "Qty"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__quantity
+msgid "Quantity"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "Quantity cannot be negative."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "Quantity must be a number (got \"%s\")."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Quantity must be zero or a positive number."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__sale_order_id
+msgid "Quotation / Order"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__quotation
+msgid "Quotation Sent"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+msgid ""
+"Quotations and pricing are handled by the platform team once you accept the "
+"request."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__rating_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__rating_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__rating_ids
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid "Re-activate"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+msgid "Reason for rejection"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Recent catalog uploads"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__name
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__name
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
+msgid "Reference"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__reference_image
+msgid "Reference Image"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Reference Image *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__reference_image_name
+msgid "Reference Image Name"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Reference image"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__registration_date
+msgid "Registration Date"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_search
+msgid "Registration Month"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_reject_wizard_form
+msgid "Reject"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+msgid "Reject Application"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_form_marketplace
+msgid "Reject Product"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "Reject Request"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_application_rejected
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__rejected
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_manufacturer_application__state__rejected
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__product_template__marketplace_approval_state__rejected
+#: model:ir.ui.menu,name:furniture_marketplace.menu_requests_rejected
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_search_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_search
+msgid "Rejected"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_reject_wizard
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__rejection_reason
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__rejection_reason
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__reason
+msgid "Rejection Reason"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Rejection reason"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "Representative"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__request_count
+msgid "Request Count"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__request_date
+msgid "Request Date"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__title
+msgid "Request Title"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Request Title *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Request date"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Request title is required."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,subject:furniture_marketplace.mail_request_state_changed
+msgid "Request {{ object.name }}: {{ object.state_label() }}"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_requests
+msgid "Requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__res_id
+msgid "Res"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_reject_wizard__res_model
+msgid "Res Model"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Reset to Draft"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__activity_user_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__activity_user_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+msgid "Review catalog:"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+msgid "Review your application"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__reviewed_by
+msgid "Reviewed By"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__reviewed_on
+msgid "Reviewed On"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:res.groups,comment:furniture_marketplace.group_marketplace_manager
+msgid "Reviews applications and products, monitors custom requests."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__sequence
+msgid "Row"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__message_has_sms_error
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__message_has_sms_error
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__message_has_sms_error
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_sale_order
+msgid "Sales Order"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_sale_order_line
+msgid "Sales Order Line"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "Save"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Save and submit for approval"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid ""
+"Saving sends the product to the platform for approval; it is hidden from "
+"customers until approved."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "Search furniture..."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_marketplace_groups
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_groups
+msgid "Security Groups and Access Rights"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__access_token
+msgid "Security Token"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Select a CSV or Excel file."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "Select a manufacturer first."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Select a preferred manufacturer from the list."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Select a valid country."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "Select a valid workshop size."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "Select a website category."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Select..."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Selling price *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid "Send portal invitation"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_type__sequence
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_workshop_size__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_url,name:furniture_marketplace.action_url_cart
+msgid "Shopping Cart"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_customer_cart
+msgid "Shopping Cart & Checkout"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:furniture.workshop.size,name:furniture_marketplace.workshop_size_small
+msgid "Small (1-10 workers)"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "Specification"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__specifications
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_product__marketplace_specifications
+#: model:ir.model.fields,field_description:furniture_marketplace.field_product_template__marketplace_specifications
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_page_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_form_marketplace
+msgid "Specifications"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Start Production"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Start Review"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+msgid "Start over"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_import__state
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_custom_request__state
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__state
+msgid "State"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_search
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_search
+msgid "Status"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__activity_state
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__activity_state
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_url,name:furniture_marketplace.action_url_storefront
+msgid "Storefront"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_form
+msgid "Submit"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+msgid "Submit Application"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.custom_request_form
+msgid "Submit Request"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.product_template_form_marketplace
+msgid "Submit for Approval"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "Submit for approval"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__submitted
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_custom_request_search
+msgid "Submitted"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__submitted_on
+msgid "Submitted On"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid "Suspend"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_search
+msgid "Suspended"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_form
+msgid ""
+"Suspending disables the portal login and unpublishes all products. Continue?"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_thanks
+msgid "Thank you!"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "The e-mail address is not valid."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "The file could not be read (%s). Please use the provided template."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "The file does not contain any data."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "The file has %d products; the maximum per upload is %d."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "The file has a header row but no product rows."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "The file is larger than %d MB."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/manufacturer.py:0
+msgid ""
+"The invitation e-mail could not be sent (%s). Use \"Send invitation\" once "
+"the outgoing mail server works."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/portal.py:0
+msgid "The main image must be PNG, JPG, GIF or WEBP."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "The manufacturer must be approved/active first."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/manufacturer.py:0
+msgid "The manufacturer needs an e-mail address to create a portal user."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "The name and e-mail can only be changed by the platform team."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "The product catalog file (Excel or CSV) is required."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+msgid "The product catalog is required before submitting."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+msgid "The reference must be a PNG, JPG, GIF or WEBP image."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/custom_request.py:0
+msgid "The request must be accepted before a quotation is created."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "The spreadsheet is too large once unpacked."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "The uploaded file is empty."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/application.py:0
+msgid "This application cannot be rejected in its current state."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+msgid "This catalog was already imported ("
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
+msgid "Title"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_order_line_by_manufacturer_list
+msgid "Total"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_search
+msgid "Type"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_custom_request__activity_exception_decoration
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer__activity_exception_decoration
+#: model:ir.model.fields,help:furniture_marketplace.field_furniture_manufacturer_application__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_custom_request__state__under_review
+msgid "Under Review"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid ""
+"Unpublished from the website: the product is waiting for marketplace "
+"approval."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/tools/catalog_parser.py:0
+msgid "Unsupported file type. Please upload a .csv or .xlsx file."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/wizard/reject_wizard.py:0
+msgid "Unsupported record type."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,subject:furniture_marketplace.mail_application_rejected
+msgid "Update on your application {{ object.name }}"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:furniture.manufacturer.type,name:furniture_marketplace.mtype_upholstery
+msgid "Upholstery Specialist"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_nav
+msgid "Upload catalog"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_upload
+msgid "Upload product catalog"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Use our template:"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Validate and Review"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_upload
+msgid "Validate and review"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields.selection,name:furniture_marketplace.selection__furniture_catalog_import__state__draft
+msgid "Validated - not imported"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "View quotation / order"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Visible to the platform team only..."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_catalog_line__warning
+msgid "Warning"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_website_categories
+msgid "Website Categories"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_public_category
+msgid "Website Furniture Categories"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_product_public_category
+msgid "Website Product Category"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_product_form
+msgid "Website category *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+msgid "Workshop"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__description
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__description
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_application_form
+msgid "Workshop Description"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model,name:furniture_marketplace.model_furniture_workshop_size
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer__workshop_size_id
+#: model:ir.model.fields,field_description:furniture_marketplace.field_furniture_manufacturer_application__workshop_size_id
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_manufacturer_search
+msgid "Workshop Size"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply
+msgid "Workshop Size *"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.ui.menu,name:furniture_marketplace.menu_cfg_workshop_sizes
+msgid "Workshop Size Options"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.actions.act_window,name:furniture_marketplace.action_workshop_size
+msgid "Workshop Sizes"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "Workshop description"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_profile
+msgid "Workshop name"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:ir.model.fields,help:furniture_marketplace.field_product_product__manufacturer_id
+#: model:ir.model.fields,help:furniture_marketplace.field_product_template__manufacturer_id
+#: model:ir.model.fields,help:furniture_marketplace.field_sale_order_line__manufacturer_id
+msgid "Workshop responsible for this product."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/controllers/main.py:0
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+msgid "Workshop size"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "You can only modify your own products."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "You cannot assign a product to another manufacturer."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_requests
+msgid "You have no requests yet."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_thanks
+msgid "Your application"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,subject:furniture_marketplace.mail_application_approved
+msgid "Your application {{ object.name }} was approved"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+msgid "Your catalog file is valid:"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model:mail.template,subject:furniture_marketplace.mail_request_submitted_customer
+msgid "Your custom furniture request {{ object.name }}"
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/product.py:0
+msgid "Your manufacturer account is not active."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "Your request was submitted. We will keep you updated by e-mail."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+msgid "created,"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+msgid "failed)."
+msgstr ""
+
+#. module: furniture_marketplace
+#. odoo-python
+#: code:addons/furniture_marketplace/models/manufacturer.py:0
+msgid "manufacturer_id"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.view_settings_manufacturer_approval
+msgid "procurement@yourcompany.com"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_catalog_review
+msgid ""
+"product(s) are valid. Confirm to create them; they will be submitted for "
+"platform approval."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_review
+msgid "product(s) found. Check the data below, then submit."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.marketplace_home
+msgid "products"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_dashboard
+msgid "products ("
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_apply_thanks
+msgid "was submitted and is pending approval."
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.my_request_detail
+msgid "← All my requests"
+msgstr ""
+
+#. module: furniture_marketplace
+#: model_terms:ir.ui.view,arch_db:furniture_marketplace.manufacturer_request_detail
+msgid "← Dashboard"
+msgstr ""

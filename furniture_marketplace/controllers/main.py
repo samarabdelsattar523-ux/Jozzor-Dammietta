@@ -184,7 +184,7 @@ class FurnitureMarketplaceController(http.Controller):
         Attachment = env['ir.attachment'].sudo()
         doc_ids = []
         for name, data in documents + images:
-            att = Attachment.create({'name': name, 'datas': base64.b64encode(data),
+            att = Attachment.create({'name': name, 'raw': data,
                                      'res_model': application._name, 'res_id': application.id})
             doc_ids.append(att.id)
         application.write({'document_ids': [(6, 0, doc_ids)]})
@@ -253,7 +253,7 @@ class FurnitureMarketplaceController(http.Controller):
         rec = env['furniture.custom.request'].sudo().create({
             'title': title, 'description': description, 'notes': (post.get('notes') or '').strip(),
             'manufacturer_id': maker.id, 'partner_id': env.user.partner_id.id,
-            'reference_image': base64.b64encode(data), 'reference_image_name': name,
+            'reference_image': base64.b64encode(data).decode(), 'reference_image_name': name,
         })
         rec.action_submit()
         return request.redirect('/my/furniture-requests/%s?submitted=1' % rec.id)

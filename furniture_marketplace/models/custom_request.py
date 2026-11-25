@@ -103,7 +103,7 @@ class FurnitureCustomRequest(models.Model):
                 raise UserError(self.env._('The request must be accepted before a quotation is created.'))
             if rec.agreed_price <= 0:
                 raise UserError(self.env._('Enter the agreed price before creating the quotation.'))
-            order = self.env['sale.order'].create({
+            order = self.env['sale.order'].sudo().create({  # manager rights checked above
                 'partner_id': rec.partner_id.id,
                 'origin': rec.name,
                 'note': rec.commercial_terms or False,

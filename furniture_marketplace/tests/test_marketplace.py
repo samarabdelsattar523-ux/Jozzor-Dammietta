@@ -102,6 +102,21 @@ class TestFurnitureMarketplace(TransactionCase):
         self.assertIn(product, self.env['product.template'].search(
             self.env['product.template']._marketplace_visible_domain()))
 
+    def test_assign_manufacturer_to_published_product(self):
+        """Setting the workshop on a live product must not raise 'cannot be published'."""
+        maker = self._approved('maker6@example.com', 'Maker Six')
+        live = self.env['product.template'].create({'name': 'Live', 'is_published': True})
+        live.with_user(self.manager).sudo().write({'manufacturer_id': maker.id})
+        self.assertEqual(live.marketplace_approval_state, 'approved')
+        self.assertTrue(live.is_published)
+        # a pending product left published by older data is unpublished on the next edit, not blocked
+        stale = maker.product_ids[0]
+        self.env.cr.execute('UPDATE product_template SET is_published = TRUE WHERE id = %s', [stale.id])
+        stale.invalidate_recordset(['is_published'])
+        stale.write({'manufacturer_id': maker.id})
+        self.assertFalse(stale.is_published)
+        self.assertEqual(stale.marketplace_approval_state, 'pending')
+
     def test_manufacturer_isolation(self):
         maker_a = self._approved('a@example.com', 'Maker A')
         maker_b = self._approved('b@example.com', 'Maker B')
@@ -114,7 +129,8 @@ class TestFurnitureMarketplace(TransactionCase):
             own.with_user(user_a).write({'manufacturer_id': maker_b.id})
         with self.assertRaises(AccessError):
             own.with_user(user_a).write({'website_published': True})
-        created = self.env['product.template'].with_user(user_a).create(
+        # same call as the portal controller: sudo() keeps env.user, so the manufacturer rules still apply
+        created = self.env['product.template'].with_user(user_a).sudo().create(
             {'name': 'Mine', 'manufacturer_id': maker_b.id})
         self.assertEqual(created.sudo().manufacturer_id, maker_a)  # forced to the caller's own company
         self.assertFalse(created.sudo().website_published)

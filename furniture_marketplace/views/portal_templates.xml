@@ -66,7 +66,7 @@
                             <t t-foreach="requests" t-as="r">
                                 <tr>
                                     <td><a t-attf-href="/my/manufacturer/request/#{r.id}" t-out="r.name"/></td>
-                                    <td t-out="r.title"/><td t-out="r.request_date"/>
+                                    <td t-out="r.title"/><td t-out="r.request_date or ''"/>
                                     <td><span class="badge text-bg-secondary" t-out="r.state_label()"/></td>
                                 </tr>
                             </t>
@@ -97,13 +97,13 @@
                     <div class="col-md-6"><label class="form-label">E-mail</label><input type="text" class="form-control" t-att-value="maker.email" disabled="disabled"/></div>
                     <div class="col-md-6"><label class="form-label" for="representative">Representative</label><input type="text" id="representative" name="representative" class="form-control" t-att-value="maker.representative"/></div>
                     <div class="col-md-6"><label class="form-label" for="phone">Mobile number *</label><input type="tel" id="phone" name="phone" class="form-control" required="required" t-att-value="maker.phone"/></div>
-                    <div class="col-12"><label class="form-label" for="address">Detailed address</label><textarea id="address" name="address" class="form-control" rows="2" t-out="maker.address"/></div>
+                    <div class="col-12"><label class="form-label" for="address">Detailed address</label><textarea id="address" name="address" class="form-control" rows="2" t-out="(maker.address) or ''"/></div>
                     <div class="col-md-6"><label class="form-label" for="city">City *</label><input type="text" id="city" name="city" class="form-control" required="required" t-att-value="maker.city"/></div>
                     <div class="col-md-6"><label class="form-label" for="country_id">Country *</label>
                         <select id="country_id" name="country_id" class="form-select" required="required">
                             <t t-foreach="countries" t-as="c"><option t-att-value="c.id" t-att-selected="'selected' if maker.country_id == c else None" t-out="c.name"/></t>
                         </select></div>
-                    <div class="col-12"><label class="form-label" for="description">Workshop description</label><textarea id="description" name="description" class="form-control" rows="3" t-out="maker.description"/></div>
+                    <div class="col-12"><label class="form-label" for="description">Workshop description</label><textarea id="description" name="description" class="form-control" rows="3" t-out="(maker.description) or ''"/></div>
                     <div class="col-12"><button type="submit" class="btn btn-primary">Save</button></div>
                 </form>
             </div>
@@ -141,10 +141,10 @@
                             </t>
                         </select></div>
                     <div class="col-12"><label class="form-label" for="description">Description</label>
-                        <textarea id="description" name="description" rows="4" class="form-control" t-out="post.get('description') or (product.description_sale if product else '')"/></div>
+                        <textarea id="description" name="description" rows="4" class="form-control" t-out="(post.get('description') or (product.description_sale if product else '')) or ''"/></div>
                     <div class="col-12"><label class="form-label" for="specifications">Specifications</label>
                         <textarea id="specifications" name="specifications" rows="3" class="form-control" placeholder="Material: Oak; Color: Walnut; Dimensions: 180x90x75 cm"
-                                  t-out="post.get('specifications') or (product.marketplace_specifications if product else '')"/></div>
+                                  t-out="(post.get('specifications') or (product.marketplace_specifications if product else '')) or ''"/></div>
                     <div class="col-md-6"><label class="form-label" for="image">Main image</label>
                         <input type="file" id="image" name="image" class="form-control" accept=".png,.jpg,.jpeg,.gif,.webp"/></div>
                     <div class="col-md-6"><label class="form-label" for="extra_images">Additional images</label>
@@ -195,9 +195,9 @@
                         <tbody>
                             <t t-foreach="imp.line_ids" t-as="l">
                                 <tr>
-                                    <td t-out="l.sequence"/><td t-out="l.product_name"/><td t-out="l.category"/>
+                                    <td t-out="l.sequence"/><td t-out="l.product_name or ''"/><td t-out="l.category or ''"/>
                                     <td class="text-end" t-out="'%.2f' % l.price"/><td class="text-end" t-out="int(l.quantity)"/>
-                                    <td t-out="l.image_ref"/>
+                                    <td t-out="l.image_ref or ''"/>
                                     <td><span t-out="l.import_state"/> <small class="text-danger" t-out="l.error_message"/> <small class="text-warning" t-out="l.warning"/></td>
                                 </tr>
                             </t>
@@ -224,7 +224,7 @@
                     <div class="col-md-7">
                         <dl class="row">
                             <dt class="col-sm-4">Customer</dt><dd class="col-sm-8"><t t-out="req.partner_id.name"/> · <t t-out="req.customer_email"/> <t t-if="req.customer_phone">· <t t-out="req.customer_phone"/></t></dd>
-                            <dt class="col-sm-4">Request date</dt><dd class="col-sm-8" t-out="req.request_date"/>
+                            <dt class="col-sm-4">Request date</dt><dd class="col-sm-8" t-out="req.request_date or ''"/>
                             <dt class="col-sm-4">Description</dt><dd class="col-sm-8" style="white-space: pre-wrap;" t-out="req.description"/>
                             <dt class="col-sm-4" t-if="req.notes">Notes</dt><dd class="col-sm-8" t-if="req.notes" style="white-space: pre-wrap;" t-out="req.notes"/>
                             <dt class="col-sm-4" t-if="req.agreed_price">Agreed price</dt>

@@ -168,7 +168,7 @@ class FurnitureManufacturerPortal(http.Controller):
                 if not fname.lower().endswith(IMAGE_EXT):
                     errors.append(_('The main image must be PNG, JPG, GIF or WEBP.'))
                 else:
-                    image = base64.b64encode(fdata)
+                    image = base64.b64encode(fdata).decode()
             extra = []
             for f in request.httprequest.files.getlist('extra_images'):
                 n, d = read_upload(f)
@@ -176,7 +176,7 @@ class FurnitureManufacturerPortal(http.Controller):
                     if not n.lower().endswith(IMAGE_EXT):
                         errors.append(_('Image "%s" must be PNG, JPG, GIF or WEBP.', n))
                     else:
-                        extra.append((n, base64.b64encode(d)))
+                        extra.append((n, base64.b64encode(d).decode()))
         except ValueError as exc:
             errors.append(str(exc))
         if errors:
@@ -255,7 +255,7 @@ class FurnitureManufacturerPortal(http.Controller):
             return request.render('furniture_marketplace.manufacturer_catalog_upload',
                                   self._base_values(maker, errors=errors))
         att_ids = [request.env['ir.attachment'].sudo().create({
-            'name': n, 'datas': base64.b64encode(d), 'res_model': rec._name, 'res_id': rec.id}).id
+            'name': n, 'raw': d, 'res_model': rec._name, 'res_id': rec.id}).id
             for n, d in images]
         rec.write({'image_attachment_ids': [(6, 0, att_ids)]})
         return request.redirect('/my/manufacturer/catalog/%s' % rec.id)

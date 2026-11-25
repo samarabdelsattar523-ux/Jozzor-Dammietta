@@ -72,13 +72,15 @@ class ProductTemplate(models.Model):
     # ------------------------------------------------------------------
     # Constraints
     # ------------------------------------------------------------------
-    @api.constrains('manufacturer_id', 'marketplace_approval_state', 'website_published')
+    @api.constrains('manufacturer_id', 'marketplace_approval_state', 'is_published')
     def _check_marketplace_consistency(self):
         for rec in self:
             if rec.marketplace_approval_state != 'not_required' and not rec.manufacturer_id:
                 raise ValidationError(self.env._('Every marketplace product must be linked to a manufacturer / workshop.'))
-            if rec.manufacturer_id and rec.website_published and rec.marketplace_approval_state != 'approved':
-                raise ValidationError(self.env._('"%s" cannot be published before the platform approves it.', rec.name))
+            if rec.manufacturer_id and rec.is_published and rec.marketplace_approval_state != 'approved':
+                raise ValidationError(self.env._(
+                    '"%s" cannot be published before the platform approves it. '
+                    'Approve it from the Marketplace tab first.', rec.name))
 
     # ------------------------------------------------------------------
     # Server-side isolation of manufacturer portal users
@@ -87,28 +89,63 @@ class ProductTemplate(models.Model):
         return self.env['furniture.manufacturer'].sudo().search(
             [('user_id', '=', self.env.user.id), ('approved', '=', True)], limit=1)
 
+    @staticmethod
+    def _marketplace_normalize_publish(vals):
+        """website_published is only a related alias of the stored is_published
+        (website.published.mixin); work on is_published so both keys behave the same."""
+        vals = dict(vals)
+        if 'website_published' in vals:
+            published = vals.pop('website_published')
+            vals.setdefault('is_published', published)
+        return vals
+
+    def _marketplace_resolve(self, vals, is_mgr):
+        """Extra values that keep manufacturer / approval / publication consistent
+        for one record (or a new record when self is empty) after ``vals``.
+
+        * a product gets a manufacturer -> it becomes a marketplace product
+          (approved when a platform manager publishes it, otherwise pending);
+        * a product left published by a change that did not ask for it (e.g. a
+          pending product edited, sent back to pending/rejected) is unpublished
+          instead of blocking the save;
+        * only an explicit publish of an unapproved product still raises the
+          constraint error: approval goes through "Approve Product".
+        """
+        extra = {}
+        maker = vals['manufacturer_id'] if 'manufacturer_id' in vals else self.manufacturer_id.id
+        state = vals.get('marketplace_approval_state', self.marketplace_approval_state or 'not_required')
+        published = vals['is_published'] if 'is_published' in vals else self.is_published
+        if not maker:
+            if 'manufacturer_id' in vals and state != 'not_required' and 'marketplace_approval_state' not in vals:
+                extra['marketplace_approval_state'] = 'not_required'
+            return extra
+        if state == 'not_required':
+            state = 'approved' if (published and is_mgr) else 'pending'
+            extra['marketplace_approval_state'] = state
+        if published and state != 'approved' and not vals.get('is_published'):
+            extra['is_published'] = False
+        return extra
+
     @api.model_create_multi
     def create(self, vals_list):
+        vals_list = [self._marketplace_normalize_publish(vals) for vals in vals_list]
         if is_manufacturer_portal_user(self.env):
             mine = self._own_manufacturer()
             if not mine:
                 raise AccessError(self.env._('Your manufacturer account is not active.'))
             for vals in vals_list:
                 vals['manufacturer_id'] = mine.id
-                vals['website_published'] = False
+                vals['is_published'] = False
                 if vals.get('marketplace_approval_state') not in ('not_required', 'pending'):
                     vals['marketplace_approval_state'] = 'pending'
-        if not is_manufacturer_portal_user(self.env):
+        else:
             is_mgr = self.env.user.has_group('furniture_marketplace.group_marketplace_manager')
             for vals in vals_list:
-                if vals.get('manufacturer_id') and vals.get('marketplace_approval_state', 'not_required') == 'not_required':
-                    if vals.get('website_published') and is_mgr:
-                        vals['marketplace_approval_state'] = 'approved'
-                    else:
-                        vals['marketplace_approval_state'] = 'pending'
+                vals.update(self.browse()._marketplace_resolve(vals, is_mgr))
         return super().create(vals_list)
 
     def write(self, vals):
+        vals = self._marketplace_normalize_publish(vals)
         if is_manufacturer_portal_user(self.env):
             mine = self._own_manufacturer()
             for rec in self.sudo():
@@ -116,31 +153,29 @@ class ProductTemplate(models.Model):
                     raise AccessError(self.env._('You can only modify your own products.'))
             if 'manufacturer_id' in vals and vals['manufacturer_id'] != mine.id:
                 raise AccessError(self.env._('You cannot assign a product to another manufacturer.'))
-            if vals.get('website_published'):
+            if vals.get('is_published'):
                 raise AccessError(self.env._('Only the platform can publish products.'))
             if vals.get('marketplace_approval_state') in ('approved', 'rejected'):
                 raise AccessError(self.env._('Only the platform can approve or reject products.'))
-        if not is_manufacturer_portal_user(self.env) and vals.get('manufacturer_id') and 'marketplace_approval_state' not in vals:
-            is_mgr = self.env.user.has_group('furniture_marketplace.group_marketplace_manager')
-            unapproved_recs = self.filtered(lambda r: r.marketplace_approval_state == 'not_required')
-            if unapproved_recs:
-                published_recs = unapproved_recs.filtered(lambda r: vals.get('website_published', r.website_published))
-                draft_recs = unapproved_recs - published_recs
-                if published_recs and is_mgr:
-                    super(ProductTemplate, published_recs).write(dict(vals, marketplace_approval_state='approved'))
-                elif published_recs:
-                    super(ProductTemplate, published_recs).write(dict(vals, marketplace_approval_state='pending'))
-                if draft_recs:
-                    super(ProductTemplate, draft_recs).write(dict(vals, marketplace_approval_state='pending'))
-                other_recs = self - unapproved_recs
-                if other_recs:
-                    if vals.get('marketplace_approval_state') in ('pending', 'rejected') and 'website_published' not in vals:
-                        vals = dict(vals, website_published=False)
-                    super(ProductTemplate, other_recs).write(vals)
-                return True
-        if vals.get('marketplace_approval_state') in ('pending', 'rejected') and 'website_published' not in vals:
-            vals = dict(vals, website_published=False)
-        return super().write(vals)
+            if vals.get('marketplace_approval_state') == 'pending':
+                vals['is_published'] = False
+            return super().write(vals)
+        if not {'manufacturer_id', 'marketplace_approval_state', 'is_published'} & set(vals):
+            return super().write(vals)
+        is_mgr = self.env.user.has_group('furniture_marketplace.group_marketplace_manager')
+        # group records needing the same extra values -> one write per group
+        groups = {}
+        for rec in self:
+            extra = rec._marketplace_resolve(vals, is_mgr)
+            key = tuple(sorted(extra.items()))
+            groups[key] = groups.get(key, self.browse()) | rec
+        for key, recs in groups.items():
+            super(ProductTemplate, recs).write(dict(vals, **dict(key)))
+            if dict(key).get('is_published') is False and 'is_published' not in vals:
+                for rec in recs:
+                    rec.message_post(body=self.env._(
+                        'Unpublished from the website: the product is waiting for marketplace approval.'))
+        return True
 
     # ------------------------------------------------------------------
     # Approval workflow
@@ -165,8 +200,9 @@ class ProductTemplate(models.Model):
                 raise UserError(self.env._('The manufacturer must be approved/active first.'))
             vals = {'marketplace_approval_state': 'approved', 'marketplace_rejection_reason': False}
             if auto_publish:
-                vals['website_published'] = True
-            rec.write(vals)
+                vals['is_published'] = True
+            # manager rights were checked above; the marketplace group itself does not grant product write access
+            rec.sudo().write(vals)
             rec._send_marketplace_mail('mail_product_approved')
 
     def action_reject_marketplace_product(self):
@@ -181,8 +217,8 @@ class ProductTemplate(models.Model):
     def _do_reject(self, reason):
         check_marketplace_manager(self.env)
         for rec in self:
-            rec.write({'marketplace_approval_state': 'rejected', 'marketplace_rejection_reason': reason,
-                       'website_published': False})
+            rec.sudo().write({'marketplace_approval_state': 'rejected', 'marketplace_rejection_reason': reason,
+                              'is_published': False})
             rec._send_marketplace_mail('mail_product_rejected')
 
     # ------------------------------------------------------------------
